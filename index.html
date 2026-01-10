@@ -3,25 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>האתר שלי</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+  <title>דולב ורועי</title>
 
-    body {
-      /* רקע בלי תמונה */
+  <style>
+    html, body { height: 100%; margin: 0; }
+
+    body{
       background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
+      font-family: Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: Arial, sans-serif;
       text-align: center;
       padding: 24px;
+      color: #fff;
     }
 
-    .card {
+    .logo{
+      position: fixed;
+      top: 18px;
+      left: 18px;       /* אם את רוצה בצד ימין במקום שמאל — תחליפי ל: right: 18px; ותמחקי left */
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 10px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    .card{
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
@@ -30,27 +42,23 @@
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
 
-    h1 {
+    h1{
       margin: 0;
       color: #1e90ff; /* כחול */
       font-size: clamp(28px, 5vw, 64px);
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.2;
       text-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    }
-
-    p {
-      margin: 14px 0 0;
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 16px;
     }
   </style>
 </head>
 
 <body>
+  <!-- הלוגו -->
+  <img class="logo" src="logo.png" alt="לוגו" />
+
   <div class="card">
-    <h1>למה הבנים החופשיים שייכים לאבי ביטר</h1>
-    <p>האתר רץ דרך GitHub Pages</p>
+    <h1>דולב ורועי המלך</h1>
   </div>
 </body>
 </html>
