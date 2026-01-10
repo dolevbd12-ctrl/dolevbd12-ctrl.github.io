@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>דולב ורועי</title>
+  <title>דולב ורועי המלך</title>
+
+  <!-- Favicon (האייקון ליד שם האתר בלשונית) -->
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+  <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
   <style>
     html, body { height: 100%; margin: 0; }
@@ -19,17 +23,18 @@
       color: #fff;
     }
 
+    /* הלוגו למעלה */
     .logo{
       position: fixed;
       top: 18px;
       left: 18px; /* אם רוצה בצד ימין: החליפי ל right:18px; ומחקי left */
       width: 90px;
       height: 90px;
-      object-fit: contain;
+      object-fit: cover;
       border-radius: 14px;
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
-      padding: 10px;
+      padding: 6px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.35);
     }
 
@@ -44,7 +49,7 @@
 
     h1{
       margin: 0;
-      color: #1e90ff;
+      color: #1e90ff; /* כחול */
       font-size: clamp(28px, 5vw, 64px);
       font-weight: 900;
       line-height: 1.2;
@@ -54,8 +59,12 @@
 </head>
 
 <body>
-  <img class="logo" src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="לוגו" />
+  <!-- לוגו בפינה -->
+  <img class="logo"
+       src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
+       alt="לוגו" />
 
+  <!-- טקסט באמצע -->
   <div class="card">
     <h1>דולב ורועי המלך</h1>
   </div>
