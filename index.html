@@ -1,205 +1,56 @@
-<html>
-    <head>
-        <style>
-		body {
-  direction: rtl;
-  background-image: url('https://i2.wp.com/www.touristisrael.com/wp-content/uploads/2020/05/Tel-Aviv-4-scaled-e1589807189455.jpg?fit=1683%2C1000&ssl=1');
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.container {
-  position: fixed;
-  margin: 15px;
-  left: 50%;
-  margin-left: -300px;
-  width: 600px;
-  height: 370px;
-  background-color: white;
-  border-radius: 10%;
-  color: black;
-  text-align: center;
-}
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid #e7e7e7;
-  background-color: #f3f3f3;
-}
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>האתר שלי</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
-li {
-  float: right;
-}
+    body {
+      /* רקע בלי תמונה */
+      background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
 
-li a {
-  display: block;
-  color: #666;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 22px 26px;
+      max-width: 900px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
 
-li a:hover:not(.active) {
-  background-color: #ddd;
-}
+    h1 {
+      margin: 0;
+      color: #1e90ff; /* כחול */
+      font-size: clamp(28px, 5vw, 64px);
+      font-weight: 800;
+      line-height: 1.2;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
 
-li a.active {
-  color: white;
-  background-color: #4CAF50;
-}
+    p {
+      margin: 14px 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 16px;
+    }
+  </style>
+</head>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* start da css for da buttons */
-.btn {
-  border-radius: 5px;
-  padding: 15px 25px;
-  font-size: 22px;
-  text-decoration: none;
-  margin: 20px;
-  color: #fff;
-  position: relative;
-  display: inline-block;
-}
-
-.btn:active {
-  transform: translate(0px, 5px);
-  -webkit-transform: translate(0px, 5px);
-  box-shadow: 0px 1px 0px 0px;
-}
-
-.blue {
-  background-color: #55acee;
-  box-shadow: 0px 5px 0px 0px #3C93D5;
-}
-
-.blue:hover {
-  background-color: #6FC6FF;
-}
-
-.green {
-  background-color: #2ecc71;
-  box-shadow: 0px 5px 0px 0px #15B358;
-}
-
-.green:hover {
-  background-color: #48E68B;
-}
-
-.red {
-  background-color: #e74c3c;
-  box-shadow: 0px 5px 0px 0px #CE3323;
-}
-
-.red:hover {
-  background-color: #FF6656;
-}
-
-.purple {
-  background-color: #9b59b6;
-  box-shadow: 0px 5px 0px 0px #82409D;
-}
-
-.purple:hover {
-  background-color: #B573D0;
-}
-
-.orange {
-  background-color: #e67e22;
-  box-shadow: 0px 5px 0px 0px #CD6509;
-}
-
-.orange:hover {
-  background-color: #FF983C;
-}
-
-.yellow {
-  background-color: #f1c40f;
-  box-shadow: 0px 5px 0px 0px #D8AB00;
-}
-
-.yellow:hover {
-  background-color: #FFDE29;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        </style>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <ul>
-            <li style =color:blue><a href="https://www.gov.il/" target="_blank">אתר המממשלה</a></li>
-            <li style =color:blue v><a href="https://he.wikipedia.org/wiki/%D7%90%D7%99%D7%9C%D7%95%D7%9F_%D7%9E%D7%90%D7%A1%D7%A7" target="_blank">על אלון מאסק</a></li>
-            <li style =color:blue><a href="https://www.youtube.com" target="_blank">לאתר יוטיוב33</a></li>
-            <li style =color:blue><a href="https://www.youtube.com/watch?v=SU25C3rMUaw" target="_blank">סרטון על ישראל</a></li>
-            <li style =color:blue><a href="https://www.internetlivestats.com/" target="_blank">סטטיסטיקות על האינטרנט</a></li>
-          </ul>
-               
-<div class="container">
-            <h1>התחברות לאתר</h1>
-            <form>
-                שם משתמש: <br>
-                <input type="text" placeholder="user name" id="userName"> <br>
-                סיסמא: <br>
-                <input type="password" placeholder="password" id="password">
-                <br> <br>
-                <input type="button" value="login" class="btn red"> <br> <br> 
-                <img src="https://image.flaticon.com/icons/png/512/891/891399.png" style="width: 100px;">
-            </form>
-          </div>
-		  <script>
-              const btn = document.querySelector('.btn');
-              const site_userName = "dolev";
-              const site_password = "1212";
-              btn.addEventListener("click", () => {
-                  const user = document.querySelector('#userName').value;
-                  const password = document.querySelector('#password').value;
- 
-                  if (user == site_userName && password == site_password) {
-                      alert("its a win!!!!!");
-                  }
-                  else {
-                      alert("its a lose!!!!!!");
-                  }
-              });
-          </script>
-            
-         
-
-    </body>
+<body>
+  <div class="card">
+    <h1>למה הבנים החופשיים שייכים לאבי ביטר</h1>
+    <p>האתר רץ דרך GitHub Pages</p>
+  </div>
+</body>
 </html>
