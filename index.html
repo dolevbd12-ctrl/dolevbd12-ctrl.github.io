@@ -22,8 +22,8 @@
       --parashaText:#000;
       --parashaBg:rgba(255,255,255,.88);
 
-      /* מהירות ריצה "כמו בהתחלה" (לא מהר) */
-      --marqueeSpeed: 34s; /* קטן=מהיר, גדול=איטי */
+      /* מהירות ריצה נעימה (לא מהיר) */
+      --marqueeSpeed: 34s;
     }
 
     html,body{margin:0;height:100%}
@@ -41,7 +41,7 @@
       background:var(--bar);
       border-bottom:1px solid var(--barBorder);
       backdrop-filter:blur(10px);
-      z-index:30;
+      z-index:40;
     }
     .headerRow{
       display:flex;
@@ -99,6 +99,7 @@
       flex:0 0 auto;
     }
 
+    /* טקסט הפרשה — בלי חיתוך בכלל */
     .parasha-text{
       font-family:"Frank Ruhl Libre","Times New Roman",serif;
       font-size:22px;
@@ -109,9 +110,12 @@
       border-radius:10px;
       border:1px solid rgba(0,0,0,.12);
       box-shadow:0 12px 34px rgba(0,0,0,.25);
-      max-width: min(1200px, 92vw);
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+      /* חשוב: לא לחתוך */
+      white-space:nowrap;
+      overflow:visible;
+      text-overflow:unset;
+      max-width:none;
     }
 
     @keyframes scroll{
@@ -129,26 +133,27 @@
       padding:12px;
       border:1px solid rgba(255,255,255,.2);
       font-size:13px;
-      z-index:25;
+      z-index:35;
     }
     .security strong{display:block;margin-bottom:6px}
 
-    /* כפתור ענק באמצע */
+    /* כפתור ענק באמצע (אבל גבוה יותר + מופיע באיחור) */
     .doom-wrap{
       position:fixed;
       inset:0;
       display:flex;
-      align-items:center;
       justify-content:center;
-      z-index:20; /* מתחת ל-Header, מעל הריצה */
+      align-items:flex-start;     /* ⬅️ למעלה */
+      padding-top:170px;          /* ⬅️ מרחק מהכותרת והפרשה */
+      z-index:25;
       pointer-events:none;
     }
     .doom-btn{
       pointer-events:auto;
       font-family:"IBM Plex Sans Hebrew",sans-serif;
-      font-size:clamp(28px,6vw,72px);
+      font-size:clamp(26px,5.5vw,68px);
       font-weight:900;
-      padding:26px 44px;
+      padding:24px 42px;
       color:#fff;
       background:radial-gradient(circle at center,#b00000,#4a0000);
       border:4px solid #ff2a2a;
@@ -159,13 +164,23 @@
       cursor:pointer;
       letter-spacing:2px;
       border-radius:14px;
-      animation:pulse 1.6s infinite;
       user-select:none;
+
+      /* מופיע רק אחרי שהוספנו .show */
+      opacity:0;
+      transform:translateY(-12px) scale(.98);
+      transition:opacity .5s ease, transform .5s ease;
+      animation:none;
+    }
+    .doom-btn.show{
+      opacity:1;
+      transform:translateY(0) scale(1);
+      animation:pulse 1.6s infinite;
     }
     @keyframes pulse{
-      0%{ transform:scale(1); }
-      50%{ transform:scale(1.06); }
-      100%{ transform:scale(1); }
+      0%{ transform:translateY(0) scale(1); }
+      50%{ transform:translateY(0) scale(1.06); }
+      100%{ transform:translateY(0) scale(1); }
     }
 
     .doom-btn.triggered{
@@ -182,19 +197,19 @@
       100%{transform:translate(0,0)}
     }
 
-    /* פלאש אדום על כל המסך בלחיצה */
+    /* פלאש אדום */
     .flash{
       position:fixed;
       inset:0;
-      background:rgba(180,0,0,.0);
-      z-index:40;
+      background:rgba(180,0,0,0);
+      z-index:60;
       pointer-events:none;
       transition:background .08s linear;
     }
 
     @media (prefers-reduced-motion: reduce){
       .marquee-track.running{animation:none}
-      .doom-btn{animation:none}
+      .doom-btn.show{animation:none}
       body{overflow:auto}
     }
   </style>
@@ -202,7 +217,6 @@
 
 <body>
 
-  <!-- פלאש -->
   <div class="flash" id="flash"></div>
 
   <!-- HEADER -->
@@ -220,7 +234,7 @@
     </div>
   </div>
 
-  <!-- כפתור ענק באמצע -->
+  <!-- כפתור ענק (מופיע באיחור) -->
   <div class="doom-wrap">
     <button class="doom-btn" id="doomBtn">❌ לא ללחוץ ❌</button>
   </div>
@@ -228,14 +242,11 @@
   <!-- MARQUEE -->
   <div class="marquee-wrap">
     <div class="marquee-track" id="marqueeTrack">
-      <!-- עותק 1 (עם IDs) -->
       <div class="marquee-content" id="marqueeContent">
         <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
         <div class="parasha-text" id="parashaText">טוען את טקסט הפרשה…</div>
         <span class="marquee-gap"></span>
       </div>
-
-      <!-- עותק 2 (נבנה בלי IDs) -->
       <div class="marquee-content" id="marqueeClone"></div>
     </div>
   </div>
@@ -264,6 +275,11 @@
       doomBtn: document.getElementById("doomBtn"),
       flash: document.getElementById("flash"),
     };
+
+    /* הכפתור מופיע אחרי 6 שניות */
+    setTimeout(() => {
+      el.doomBtn.classList.add("show");
+    }, 6000);
 
     /* JSONP (לעקוף CORS מול Sefaria ב-GitHub Pages) */
     function jsonp(url){
@@ -325,7 +341,7 @@
     /* ריצה רציפה בלי IDs כפולים */
     function refreshSeamlessMarquee(){
       let html = el.content.innerHTML;
-      html = html.replace(/\sid="[^"]*"/g, ""); // להימנע מ-IDs כפולים
+      html = html.replace(/\sid="[^"]*"/g, "");
       el.clone.innerHTML = html;
       el.track.classList.add("running");
     }
@@ -385,19 +401,18 @@
       }
     }
 
-    /* כפתור "לא ללחוץ" → אנימציה ואז מעבר לרשות המיסים */
+    /* כפתור "לא ללחוץ" → אנימציה ואז מעבר למשרד ראש הממשלה */
     el.doomBtn.addEventListener("click", () => {
       el.doomBtn.classList.add("triggered");
       el.doomBtn.textContent = "טעית.";
 
       let flashes = 0;
       const iv = setInterval(() => {
-        el.flash.style.background = (flashes % 2 === 0) ? "rgba(180,0,0,.55)" : "rgba(0,0,0,.0)";
+        el.flash.style.background = (flashes % 2 === 0) ? "rgba(180,0,0,.55)" : "rgba(0,0,0,0)";
         flashes++;
         if (flashes > 10) {
           clearInterval(iv);
-          // מעבר לרשות המיסים (gov.il)
-          window.location.href = "https://www.gov.il/he/departments/taxes";
+          window.location.href = "https://www.gov.il/he/departments/prime_ministers_office";
         }
       }, 90);
     });
