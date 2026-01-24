@@ -28,7 +28,7 @@
     .logo{
       position: fixed;
       top: 18px;
-      left: 18px;            /* הלוגו נשאר משמאל */
+      left: 18px;
       width: 90px;
       height: 90px;
       object-fit: cover;
@@ -44,7 +44,7 @@
     .topTicker{
       position: fixed;
       top: 18px;
-      left: 130px;          /* מתחיל אחרי הלוגו */
+      left: 130px;
       right: 18px;
       height: 44px;
       display: flex;
@@ -91,67 +91,17 @@
       overflow: hidden;
     }
 
-    /* כותרת עם ירידה עדינה */
-    .headerZone{
-      position: relative;
-      height: 140px;
-      background: rgba(255,255,255,0.03);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      overflow: hidden;
-    }
-
-    .headerDrop{
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: -130px;
-      width: min(900px, 90vw);
-      text-align: center;
-      padding: 18px 14px 10px;
-      animation: dropDown 10s ease-in-out infinite;
-    }
-
-    @keyframes dropDown{
-      0%   { top: -130px; opacity: 0; }
-      16%  { top: 16px; opacity: 1; }
-      65%  { top: 60px; opacity: 1; }
-      100% { top: -130px; opacity: 0; }
-    }
-
-    .label{
-      font-size: 14px;
-      color: rgba(255,255,255,0.70);
-      margin: 0 0 8px;
-      font-family: "Inter", Arial, sans-serif;
-    }
-
-    h1{
-      margin: 0;
-      color: #1e90ff;
-      font-size: clamp(28px, 5vw, 58px);
-      font-weight: 900;
-      line-height: 1.15;
-      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    }
-
-    .dateLine{
-      margin-top: 8px;
-      font-size: 15px;
-      color: rgba(255,255,255,0.75);
-      font-family: "Inter", Arial, sans-serif;
-    }
-
     .content{
       padding: 18px 18px 22px;
     }
 
     .parshaTextBox{
-      margin-top: 10px;
+      margin-top: 0;
       background: rgba(0,0,0,0.18);
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 14px;
       padding: 16px;
-      max-height: min(58vh, 520px);
+      max-height: min(68vh, 640px);
       overflow: auto;
       line-height: 1.9;
       font-size: 18px;
@@ -172,25 +122,21 @@
     }
 
     @media (prefers-reduced-motion: reduce){
-      .headerDrop{ animation: none; top: 18px; opacity: 1; }
       .marquee{ animation: none; padding-right: 0; }
     }
 
-    /* ==========================================================
-       ווידג׳ט קטן: "פינת דיווחים ביטחוניים" (פינה שמאלית עליונה)
-       - לא פולשני, צבעים כהים, אדום עדין להתרעות חשובות
-       ========================================================== */
+    /* ======================
+       ווידג׳ט דיווחים (שמאל עליון)
+       ====================== */
     :root{
       --w-bg: rgba(10,12,16,.78);
       --w-stroke: rgba(255,255,255,.12);
       --w-text: rgba(255,255,255,.92);
       --w-muted: rgba(255,255,255,.62);
-
       --w-red: #7a0f18;
       --w-red2:#b51a26;
       --w-ok: #2f9b68;
       --w-warn:#c9a84a;
-
       --w-shadow: 0 14px 38px rgba(0,0,0,.45);
       --w-radius: 14px;
       --w-font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -198,10 +144,8 @@
 
     .secWidget{
       position: fixed;
-      /* מתחת ללוגו כדי שלא יכסה אותו */
-      top: 120px;
+      top: 120px;     /* מתחת ללוגו */
       left: 18px;
-
       width: 320px;
       max-width: calc(100vw - 36px);
       border-radius: var(--w-radius);
@@ -210,7 +154,7 @@
       box-shadow: var(--w-shadow);
       backdrop-filter: blur(10px);
       overflow: hidden;
-      z-index: 40; /* מעל הכל */
+      z-index: 40;
       font-family: var(--w-font);
     }
 
@@ -350,7 +294,6 @@
     .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
     .miniBtn:active{ transform: translateY(0); opacity:.9; }
 
-    /* אנימציה מאופקת בעת עדכון */
     .updated{
       animation: fadeIn .28s ease, softGlow 1.2s ease;
     }
@@ -382,7 +325,7 @@
        src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
        alt="לוגו" />
 
-  <!-- טיקר -->
+  <!-- טיקר (כאן בלבד מופיע שם הפרשה) -->
   <div class="topTicker" aria-label="טקסט רץ">
     <div id="marquee" class="marquee">טוען פרשת השבוע…</div>
   </div>
@@ -422,17 +365,9 @@
     </div>
   </aside>
 
-  <!-- תוכן הפרשה -->
+  <!-- באמצע: רק טקסט הפרשה (בלי כותרת גדולה) -->
   <div class="wrap">
     <div class="card" aria-live="polite">
-      <div class="headerZone">
-        <div id="headerDrop" class="headerDrop">
-          <p class="label">פרשת השבוע</p>
-          <h1 id="parshaName">טוען…</h1>
-          <div id="parshaDate" class="dateLine"></div>
-        </div>
-      </div>
-
       <div class="content">
         <div id="parshaText" class="parshaTextBox">טוען את טקסט הפרשה…</div>
         <div id="status" class="status"></div>
@@ -442,11 +377,9 @@
 
   <script>
     /* ============================
-       חלק 1: פרשת השבוע + טקסט
+       פרשת השבוע: רק לטיקר למעלה + טקסט באמצע
        ============================ */
     (function(){
-      const elName   = document.getElementById("parshaName");
-      const elDate   = document.getElementById("parshaDate");
       const elText   = document.getElementById("parshaText");
       const elStatus = document.getElementById("status");
       const elMarq   = document.getElementById("marquee");
@@ -485,7 +418,7 @@
         if(!it) return null;
         return {
           hebrewName: it.hebrew || null,
-          title: it.title || null,   // "Parashat Noach" וכו'
+          title: it.title || null,   // "Parashat Noach"
           dateIso: it.date || null
         };
       }
@@ -509,13 +442,8 @@
       function getAliyotRefs(nextReadJson){
         const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
         if(!torah) return [];
-
-        if(Array.isArray(torah)){
-          return torah.map(x => x?.ref).filter(Boolean);
-        }
-        if(Array.isArray(torah?.aliyot)){
-          return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
-        }
+        if(Array.isArray(torah)) return torah.map(x => x?.ref).filter(Boolean);
+        if(Array.isArray(torah?.aliyot)) return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
 
         const refs = [];
         for(const k of Object.keys(torah)){
@@ -553,13 +481,11 @@
 
       async function loadParshaAndText(){
         clearError();
-        elName.textContent = "טוען…";
-        elDate.textContent = "";
         elText.textContent = "טוען את טקסט הפרשה…";
         elMarq.textContent = "טוען פרשת השבוע…";
 
         try{
-          // 1) Hebcal
+          // 1) Hebcal => שם פרשה + תאריך (לטיקר בלבד)
           const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
           if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
           const hebJson = await hebRes.json();
@@ -569,10 +495,10 @@
 
           const parashaEn = cleanEnglishParasha(p.title);
           const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
+          const dateHe = formatDateHe(p.dateIso);
 
-          elName.textContent = parashaHe;
-          elDate.textContent = formatDateHe(p.dateIso);
-          elMarq.textContent = "פרשת השבוע: " + parashaHe + "  •  " + (elDate.textContent || "");
+          // רק למעלה בטיקר:
+          elMarq.textContent = "פרשת השבוע: " + parashaHe + (dateHe ? " • " + dateHe : "");
 
           if(!parashaEn){
             elText.textContent = "לא נמצא שם פרשה באנגלית כדי להביא טקסט מלא.";
@@ -590,7 +516,7 @@
             return;
           }
 
-          // 3) Texts for each aliyah
+          // 3) טקסט לכל עלייה
           const paragraphs = [];
           for(let i = 0; i < refs.length; i++){
             const tref = refs[i];
@@ -620,7 +546,7 @@
     })();
 
     /* ============================
-       חלק 2: ווידג׳ט דיווחים קטן
+       ווידג׳ט דיווחים קטן
        ============================ */
     (function(){
       const els = {
@@ -695,7 +621,6 @@
       }
 
       applyReport(demoReports[0]);
-
       els.btnSimulate.addEventListener("click", nextReport);
       els.btnRefresh.addEventListener("click", () => applyReport(demoReports[idx]));
 
