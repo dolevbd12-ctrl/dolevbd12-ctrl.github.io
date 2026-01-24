@@ -4,38 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- השם למעלה בלשונית (לא משתנה) -->
   <title>דולב ורועי</title>
 
-  <!-- Favicon (האייקון ליד שם האתר בלשונית) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
   <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
-  <!-- פונט תנכ"י (חינמי מגוגל פונטס) -->
+  <!-- פונט תנכ"י -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
     html, body { height: 100%; margin: 0; }
-
     body{
       background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
       font-family: "Frank Ruhl Libre", "SBL Hebrew", David, "Times New Roman", serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
       color: #fff;
-      overflow: hidden; /* כדי שהאנימציה תראה חלק */
+      overflow-x: hidden;
     }
 
-    /* הלוגו למעלה */
+    /* לוגו בפינה */
     .logo{
       position: fixed;
       top: 18px;
-      left: 18px; /* אם תרצה בצד ימין: החלף ל right:18px; ומחק left */
+      left: 18px;            /* הלוגו נשאר משמאל כמו אצלך */
       width: 90px;
       height: 90px;
       object-fit: cover;
@@ -44,68 +37,137 @@
       border: 1px solid rgba(255,255,255,0.15);
       padding: 6px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-      z-index: 10;
+      z-index: 20;
     }
 
-    /* אזור "במה" כדי לאפשר ירידה מלמעלה למטה */
-    .stage{
-      position: relative;
-      width: min(920px, 94vw);
-      height: min(72vh, 560px);
-      display: block;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    /* פס עליון שמכיל טקסט רץ (ימין->שמאל) */
+    .topTicker{
+      position: fixed;
+      top: 18px;
+      left: 130px;          /* מתחיל אחרי הלוגו */
+      right: 18px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       overflow: hidden;
+      z-index: 15;
     }
 
-    /* הכרטיס שיורד */
-    .card{
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: -180px; /* מתחיל מחוץ למסך למעלה */
+    /* התוכן שרץ */
+    .marquee{
+      display: inline-block;
+      white-space: nowrap;
+      padding-right: 100%;   /* נותן “מרווח כניסה” */
+      animation: marqueeRTL 18s linear infinite;
+      font-family: Arial, sans-serif; /* טיקר יותר קריא */
+      font-size: 16px;
+      color: rgba(255,255,255,0.85);
+    }
 
-      width: min(860px, 88vw);
+    /* אנימציה: נכנס מימין ויוצא משמאל */
+    @keyframes marqueeRTL{
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* מרכז המסך */
+    .wrap{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 18px 40px; /* מקום ללוגו+טיקר */
+      box-sizing: border-box;
+    }
+
+    .card{
+      width: min(980px, 94vw);
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
-      padding: 22px 26px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
 
-      /* אנימציה נעימה */
-      animation: dropDown 14s ease-in-out infinite;
-      will-change: top, opacity;
+    /* אזור כותרת עם אנימציית “ירידה” עדינה */
+    .headerZone{
+      position: relative;
+      height: 140px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .headerDrop{
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -130px; /* מתחיל מעל */
+      width: min(900px, 90vw);
+      text-align: center;
+      padding: 18px 14px 10px;
+      animation: dropDown 10s ease-in-out infinite;
+    }
+
+    @keyframes dropDown{
+      0%   { top: -130px; opacity: 0; }
+      16%  { top: 16px; opacity: 1; }
+      65%  { top: 60px; opacity: 1; }
+      100% { top: -130px; opacity: 0; }
     }
 
     .label{
       font-size: 14px;
       color: rgba(255,255,255,0.70);
-      margin: 0 0 10px;
-      letter-spacing: 0.3px;
+      margin: 0 0 8px;
+      font-family: Arial, sans-serif;
     }
 
-    .parsha{
+    h1{
       margin: 0;
-      color: #1e90ff; /* כחול */
-      font-size: clamp(34px, 6vw, 80px);
+      color: #1e90ff;
+      font-size: clamp(28px, 5vw, 58px);
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.15;
       text-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
 
     .dateLine{
-      margin-top: 12px;
-      font-size: 16px;
+      margin-top: 8px;
+      font-size: 15px;
       color: rgba(255,255,255,0.75);
+      font-family: Arial, sans-serif;
     }
 
+    /* טקסט הפרשה */
+    .content{
+      padding: 18px 18px 22px;
+    }
+
+    .parshaTextBox{
+      margin-top: 10px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 16px;
+      max-height: min(58vh, 520px);
+      overflow: auto;
+      line-height: 1.9;
+      font-size: 18px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .parshaTextBox p{
+      margin: 0 0 14px;
+    }
+
+    /* הודעת שגיאה */
     .status{
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      right: 14px;
+      margin-top: 12px;
       padding: 10px 12px;
       border-radius: 12px;
       background: rgba(255, 80, 80, 0.12);
@@ -115,95 +177,74 @@
       display: none;
     }
 
-    /* ירידה מלמעלה למטה, ואז חזרה למעלה */
-    @keyframes dropDown{
-      0%   { top: -180px; opacity: 0; }
-      12%  { top: 26px;   opacity: 1; }
-      60%  { top: calc(100% - 210px); opacity: 1; }
-      78%  { top: calc(100% - 185px); opacity: 0.18; }
-      100% { top: -180px; opacity: 0; }
-    }
-
-    /* נגישות: אם המשתמש מבטל אנימציות במערכת */
+    /* נגישות */
     @media (prefers-reduced-motion: reduce){
-      .card{ animation: none; top: 26px; opacity: 1; }
+      .headerDrop{ animation: none; top: 18px; opacity: 1; }
+      .marquee{ animation: none; padding-right: 0; }
     }
   </style>
 </head>
 
 <body>
-  <!-- לוגו בפינה -->
   <img class="logo"
        src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
        alt="לוגו" />
 
-  <!-- במה לאנימציה -->
-  <main class="stage" aria-live="polite">
-    <div id="card" class="card">
-      <p class="label">פרשת השבוע</p>
+  <!-- שורת טיקר (רץ מימין לשמאל) -->
+  <div class="topTicker" aria-label="טקסט רץ">
+    <div id="marquee" class="marquee">טוען פרשת השבוע…</div>
+  </div>
 
-      <!-- כאן נטען שם הפרשה -->
-      <h1 id="parshaName" class="parsha">טוען…</h1>
+  <div class="wrap">
+    <div class="card" aria-live="polite">
+      <div class="headerZone">
+        <div id="headerDrop" class="headerDrop">
+          <p class="label">פרשת השבוע</p>
+          <h1 id="parshaName">טוען…</h1>
+          <div id="parshaDate" class="dateLine"></div>
+        </div>
+      </div>
 
-      <!-- תאריך (לועזי בעברית) -->
-      <div id="parshaDate" class="dateLine"></div>
+      <div class="content">
+        <div id="parshaText" class="parshaTextBox">טוען את טקסט הפרשה…</div>
+        <div id="status" class="status"></div>
+      </div>
     </div>
-
-    <!-- הודעת שגיאה (אם אין אינטרנט/בעיה ב-API) -->
-    <div id="status" class="status"></div>
-  </main>
+  </div>
 
   <script>
     /**
-     * פרשת השבוע אוטומטית לפי לוח שנה יהודי (Hebcal).
-     * - שולפים JSON מהשירות
-     * - מחפשים item עם category="parashat"
-     * - מציגים בעברית אם קיים שדה hebrew
+     * זרימה:
+     * 1) Hebcal -> מביא שם פרשה (עברית + אנגלית) + תאריך שבת
+     * 2) Sefaria "next-read" לפי שם הפרשה באנגלית -> מביא רפרנסים לעליות
+     * 3) Sefaria "texts" -> שולף טקסט עברי לכל רפרנס ומציג
      */
 
-    const parshaNameEl = document.getElementById("parshaName");
-    const parshaDateEl = document.getElementById("parshaDate");
-    const statusEl = document.getElementById("status");
-    const cardEl = document.getElementById("card");
+    const elName   = document.getElementById("parshaName");
+    const elDate   = document.getElementById("parshaDate");
+    const elText   = document.getElementById("parshaText");
+    const elStatus = document.getElementById("status");
+    const elMarq   = document.getElementById("marquee");
 
-    // מיקום ברירת מחדל: ירושלים (לא חובה, אבל תקין ל-API)
+    // ירושלים (לא חובה, אבל נח ל-Hebcal)
     const GEO = { geo: "geoname", geonameid: 281184 };
 
     function showError(msg){
-      statusEl.textContent = msg;
-      statusEl.style.display = "block";
+      elStatus.textContent = msg;
+      elStatus.style.display = "block";
     }
-
     function clearError(){
-      statusEl.textContent = "";
-      statusEl.style.display = "none";
+      elStatus.textContent = "";
+      elStatus.style.display = "none";
     }
 
-    // מאתחל את אנימציית הירידה מחדש (כדי שיהיה "רענון" נעים)
-    function restartAnimation(){
-      cardEl.style.animation = "none";
-      void cardEl.offsetHeight; // force reflow
-      cardEl.style.animation = "";
-    }
-
-    function buildUrl(){
+    function hebcalUrl(){
       const url = new URL("https://www.hebcal.com/shabbat/");
       url.searchParams.set("cfg", "json");
       url.searchParams.set("geo", GEO.geo);
       url.searchParams.set("geonameid", String(GEO.geonameid));
+      // leyning=on הוא ברירת מחדל, אבל נשאיר פשוט
       return url.toString();
-    }
-
-    function extractParsha(data){
-      const items = Array.isArray(data?.items) ? data.items : [];
-      const parshaItem = items.find(it => it?.category === "parashat");
-
-      const heb = parshaItem?.hebrew || null;
-      const title = parshaItem?.title || null; // לפעמים באנגלית
-      const name = heb || title || null;
-
-      const dateIso = parshaItem?.date || null;
-      return { name, dateIso };
     }
 
     function formatDateHe(dateIso){
@@ -215,35 +256,170 @@
       }).format(d);
     }
 
-    async function loadParsha(){
+    function extractParshaFromHebcal(data){
+      const items = Array.isArray(data?.items) ? data.items : [];
+      const it = items.find(x => x?.category === "parashat");
+      if(!it) return null;
+
+      return {
+        hebrewName: it.hebrew || null,    // שם בעברית (כמעט תמיד קיים)
+        title: it.title || null,          // "Parashat Noach" וכו'
+        dateIso: it.date || null
+      };
+    }
+
+    // מנקה "Parashat " משם אנגלי כדי להתאים לספריה
+    function cleanEnglishParasha(title){
+      if(!title) return null;
+      return String(title).replace(/^Parashat\s+/i, "").trim();
+    }
+
+    // Sefaria: next-read/{parasha} (לפי תיעוד)
+    function sefariaNextReadUrl(parashaEn){
+      // חשוב: encode בשביל רווחים/תווים
+      return "https://www.sefaria.org/api/calendars/next-read/" + encodeURIComponent(parashaEn);
+    }
+
+    // Sefaria: texts endpoint v1 (פשוט) עם context=0 כדי לקבל רק הקטע
+    function sefariaTextsUrl(tref){
+      const url = new URL("https://www.sefaria.org/api/texts/" + encodeURIComponent(tref));
+      url.searchParams.set("lang", "he");
+      url.searchParams.set("context", "0");
+      return url.toString();
+    }
+
+    // מנסה לחלץ רפרנסים לעליות ממבנה שיכול להשתנות
+    function getAliyotRefs(nextReadJson){
+      // הרבה פעמים זה יושב ב nextReadJson.readings.torah
+      const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
+      if(!torah) return [];
+
+      // torah יכול להיות מערך של אובייקטים עם ref, או אובייקט שמכיל aliyot
+      if(Array.isArray(torah)){
+        return torah.map(x => x?.ref).filter(Boolean);
+      }
+
+      if(Array.isArray(torah?.aliyot)){
+        return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
+      }
+
+      // fallback: חפש כל שדה שמכיל "ref"
+      const refs = [];
+      for(const k of Object.keys(torah)){
+        const v = torah[k];
+        if(Array.isArray(v)){
+          v.forEach(item => {
+            if(typeof item === "string") refs.push(item);
+            else if(item?.ref) refs.push(item.ref);
+          });
+        } else if(v?.ref){
+          refs.push(v.ref);
+        }
+      }
+      return refs.filter(Boolean);
+    }
+
+    // מקבל טקסט עברי מ-Sefaria ומחזיר כמחרוזת
+    function normalizeSefariaHebrewText(textJson){
+      // לרוב זה מערך של פסוקים ב textJson.he
+      const he = textJson?.he;
+      if(Array.isArray(he)){
+        // לפעמים זה מערך של פסוקים (strings)
+        return he.filter(Boolean).join(" ");
+      }
+      if(typeof he === "string"){
+        return he;
+      }
+      // fallback
+      const t = textJson?.text;
+      if(Array.isArray(t)) return t.join(" ");
+      if(typeof t === "string") return t;
+      return "";
+    }
+
+    async function loadParshaAndText(){
       clearError();
-      parshaNameEl.textContent = "טוען…";
-      parshaDateEl.textContent = "";
+      elName.textContent = "טוען…";
+      elDate.textContent = "";
+      elText.textContent = "טוען את טקסט הפרשה…";
+      elMarq.textContent = "טוען פרשת השבוע…";
 
       try{
-        const res = await fetch(buildUrl(), { cache: "no-store" });
-        if(!res.ok) throw new Error("HTTP " + res.status);
+        // 1) Hebcal
+        const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
+        if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
+        const hebJson = await hebRes.json();
 
-        const data = await res.json();
-        const { name, dateIso } = extractParsha(data);
+        const p = extractParshaFromHebcal(hebJson);
+        if(!p) throw new Error("No parasha in Hebcal response");
 
-        if(!name) throw new Error("No parsha found");
+        const parashaEn = cleanEnglishParasha(p.title);
+        const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
 
-        // אם title באנגלית בסגנון "Parashat Noach" — ננקה את המילה Parashat
-        parshaNameEl.textContent = String(name).replace(/^Parashat\s+/i, "");
+        elName.textContent = parashaHe;
+        elDate.textContent = formatDateHe(p.dateIso);
 
-        parshaDateEl.textContent = formatDateHe(dateIso);
+        // טקסט רץ למעלה (מימין לשמאל)
+        elMarq.textContent = "פרשת השבוע: " + parashaHe + "  •  " + (elDate.textContent || "");
 
-        restartAnimation();
-      }catch(e){
-        console.error(e);
-        showError("לא הצלחתי לטעון את פרשת השבוע. בדוק אינטרנט/נסה לרענן את הדף.");
+        if(!parashaEn){
+          elText.textContent = "לא נמצא שם פרשה באנגלית כדי להביא טקסט מלא.";
+          return;
+        }
+
+        // 2) Sefaria next-read
+        const nrRes = await fetch(sefariaNextReadUrl(parashaEn), { cache: "no-store" });
+        if(!nrRes.ok) throw new Error("Sefaria next-read HTTP " + nrRes.status);
+        const nrJson = await nrRes.json();
+
+        const refs = getAliyotRefs(nrJson);
+        if(!refs.length){
+          elText.textContent = "לא הצלחתי למצוא רפרנסים לעליות בספריה עבור הפרשה הזו.";
+          return;
+        }
+
+        // 3) משיכת טקסט לכל עלייה והצגה כפסקאות
+        const paragraphs = [];
+        for(let i = 0; i < refs.length; i++){
+          const tref = refs[i];
+          try{
+            const tRes = await fetch(sefariaTextsUrl(tref), { cache: "no-store" });
+            if(!tRes.ok) throw new Error("texts HTTP " + tRes.status);
+            const tJson = await tRes.json();
+
+            const hebText = normalizeSefariaHebrewText(tJson);
+            if(hebText){
+              paragraphs.push(`עלייה ${i+1}: ${hebText}`);
+            }
+          } catch(e){
+            // אם עלייה אחת נופלת – ממשיכים
+            paragraphs.push(`עלייה ${i+1}: (לא הצלחתי לטעון את הטקסט)`);
+          }
+        }
+
+        // מציגים יפה כ-p
+        elText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("");
+
+      } catch(err){
+        console.error(err);
+        showError("יש בעיה בטעינה (אינטרנט/חסימה/שרת). נסה לרענן את הדף.");
+        elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
       }
     }
 
-    // טוענים בהתחלה + רענון כל 6 שעות (כדי להתעדכן בלי ידני)
-    loadParsha();
-    setInterval(loadParsha, 6 * 60 * 60 * 1000);
+    // אבטחה בסיסית כדי שלא נזריק HTML בטעות
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    // טוען עכשיו + מרענן כל 6 שעות
+    loadParshaAndText();
+    setInterval(loadParshaAndText, 6 * 60 * 60 * 1000);
   </script>
 </body>
 </html>
