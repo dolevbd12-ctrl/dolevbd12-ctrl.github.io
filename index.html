@@ -3,57 +3,215 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ווידג'ט דיווחים</title>
 
-  <!-- Modern UI font -->
+  <title>דולב ורועי</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+  <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+
+  <!-- Fonts: Modern UI + Tanach -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg: rgba(10,12,16,.78);
-      --panel: rgba(255,255,255,.05);
-      --stroke: rgba(255,255,255,.12);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
-
-      /* deep red only for important alerts */
-      --red: #7a0f18;
-      --red2:#b51a26;
-
-      --ok: #2f9b68;
-      --warn:#c9a84a;
-
-      --shadow: 0 14px 38px rgba(0,0,0,.45);
-      --radius: 14px;
-
-      --font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-    }
-
-    html,body{height:100%; margin:0;}
+    html, body { height: 100%; margin: 0; }
     body{
-      background: radial-gradient(900px 600px at 70% 10%, rgba(122,15,24,.16), transparent 60%),
-                  radial-gradient(900px 600px at 15% 85%, rgba(255,255,255,.05), transparent 55%),
-                  #070a12;
-      font-family: var(--font);
-      color: var(--text);
+      background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
+      font-family: "Frank Ruhl Libre", "SBL Hebrew", David, "Times New Roman", serif;
+      color: #fff;
+      overflow-x: hidden;
     }
 
-    /* ===== Small top-left widget ===== */
+    /* לוגו בפינה */
+    .logo{
+      position: fixed;
+      top: 18px;
+      left: 18px;            /* הלוגו נשאר משמאל */
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 6px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      z-index: 30;
+    }
+
+    /* פס עליון עם טקסט רץ (ימין->שמאל) */
+    .topTicker{
+      position: fixed;
+      top: 18px;
+      left: 130px;          /* מתחיל אחרי הלוגו */
+      right: 18px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      overflow: hidden;
+      z-index: 25;
+    }
+
+    .marquee{
+      display: inline-block;
+      white-space: nowrap;
+      padding-right: 100%;
+      animation: marqueeRTL 18s linear infinite;
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 16px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    @keyframes marqueeRTL{
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* מרכז המסך */
+    .wrap{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 18px 40px;
+      box-sizing: border-box;
+    }
+
+    .card{
+      width: min(980px, 94vw);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    /* כותרת עם ירידה עדינה */
+    .headerZone{
+      position: relative;
+      height: 140px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .headerDrop{
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -130px;
+      width: min(900px, 90vw);
+      text-align: center;
+      padding: 18px 14px 10px;
+      animation: dropDown 10s ease-in-out infinite;
+    }
+
+    @keyframes dropDown{
+      0%   { top: -130px; opacity: 0; }
+      16%  { top: 16px; opacity: 1; }
+      65%  { top: 60px; opacity: 1; }
+      100% { top: -130px; opacity: 0; }
+    }
+
+    .label{
+      font-size: 14px;
+      color: rgba(255,255,255,0.70);
+      margin: 0 0 8px;
+      font-family: "Inter", Arial, sans-serif;
+    }
+
+    h1{
+      margin: 0;
+      color: #1e90ff;
+      font-size: clamp(28px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.15;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    .dateLine{
+      margin-top: 8px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      font-family: "Inter", Arial, sans-serif;
+    }
+
+    .content{
+      padding: 18px 18px 22px;
+    }
+
+    .parshaTextBox{
+      margin-top: 10px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 16px;
+      max-height: min(58vh, 520px);
+      overflow: auto;
+      line-height: 1.9;
+      font-size: 18px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .parshaTextBox p{ margin: 0 0 14px; }
+
+    .status{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 80, 80, 0.22);
+      color: rgba(255,255,255,0.90);
+      font-family: "Inter", Arial, sans-serif;
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .headerDrop{ animation: none; top: 18px; opacity: 1; }
+      .marquee{ animation: none; padding-right: 0; }
+    }
+
+    /* ==========================================================
+       ווידג׳ט קטן: "פינת דיווחים ביטחוניים" (פינה שמאלית עליונה)
+       - לא פולשני, צבעים כהים, אדום עדין להתרעות חשובות
+       ========================================================== */
+    :root{
+      --w-bg: rgba(10,12,16,.78);
+      --w-stroke: rgba(255,255,255,.12);
+      --w-text: rgba(255,255,255,.92);
+      --w-muted: rgba(255,255,255,.62);
+
+      --w-red: #7a0f18;
+      --w-red2:#b51a26;
+      --w-ok: #2f9b68;
+      --w-warn:#c9a84a;
+
+      --w-shadow: 0 14px 38px rgba(0,0,0,.45);
+      --w-radius: 14px;
+      --w-font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    }
+
     .secWidget{
       position: fixed;
-      top: 14px;
-      left: 14px;                 /* TOP-LEFT */
+      /* מתחת ללוגו כדי שלא יכסה אותו */
+      top: 120px;
+      left: 18px;
+
       width: 320px;
-      max-width: calc(100vw - 28px);
-      border-radius: var(--radius);
-      background: var(--bg);
-      border: 1px solid var(--stroke);
-      box-shadow: var(--shadow);
+      max-width: calc(100vw - 36px);
+      border-radius: var(--w-radius);
+      background: var(--w-bg);
+      border: 1px solid var(--w-stroke);
+      box-shadow: var(--w-shadow);
       backdrop-filter: blur(10px);
       overflow: hidden;
-      z-index: 9999;
+      z-index: 40; /* מעל הכל */
+      font-family: var(--w-font);
     }
 
     .secHeader{
@@ -72,12 +230,13 @@
       font-weight: 800;
       letter-spacing: .2px;
       line-height: 1.1;
+      color: var(--w-text);
     }
 
     .secMeta{
       margin-top: 4px;
       font-size: 11px;
-      color: var(--muted);
+      color: var(--w-muted);
       display:flex;
       gap: 8px;
       flex-wrap: wrap;
@@ -92,7 +251,7 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
-      color: var(--muted);
+      color: var(--w-muted);
       font-size: 11px;
       font-weight: 700;
       white-space: nowrap;
@@ -100,7 +259,7 @@
 
     .dot{
       width: 7px; height: 7px; border-radius: 50%;
-      background: var(--ok);
+      background: var(--w-ok);
     }
 
     .badge.alert{
@@ -108,8 +267,9 @@
       background: rgba(122,15,24,.18);
       color: rgba(255,255,255,.88);
     }
+
     .badge.alert .dot{
-      background: var(--red2);
+      background: var(--w-red2);
       animation: pulse 1.7s ease-in-out infinite;
     }
 
@@ -138,7 +298,7 @@
       flex: 0 0 auto;
       align-self: stretch;
     }
-    .sevBar.critical{ background: linear-gradient(180deg, var(--red2), var(--red)); }
+    .sevBar.critical{ background: linear-gradient(180deg, var(--w-red2), var(--w-red)); }
     .sevBar.warn{ background: linear-gradient(180deg, rgba(201,168,74,.95), rgba(201,168,74,.35)); }
     .sevBar.ok{ background: linear-gradient(180deg, rgba(47,155,104,.95), rgba(47,155,104,.35)); }
 
@@ -158,7 +318,7 @@
       margin: 6px 0 0;
       font-size: 11.5px;
       line-height: 1.45;
-      color: var(--muted);
+      color: var(--w-muted);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -190,7 +350,7 @@
     .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
     .miniBtn:active{ transform: translateY(0); opacity:.9; }
 
-    /* Update animation: subtle fade + highlight */
+    /* אנימציה מאופקת בעת עדכון */
     .updated{
       animation: fadeIn .28s ease, softGlow 1.2s ease;
     }
@@ -204,12 +364,10 @@
       100% { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
     }
 
-    /* Compact on very small screens */
     @media (max-width: 380px){
       .secWidget{ width: 290px; }
     }
 
-    /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce){
       .badge.alert .dot{ animation: none; }
       .updated{ animation: none; }
@@ -219,138 +377,332 @@
 </head>
 
 <body>
-  <!-- Widget -->
+  <!-- לוגו -->
+  <img class="logo"
+       src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
+       alt="לוגו" />
+
+  <!-- טיקר -->
+  <div class="topTicker" aria-label="טקסט רץ">
+    <div id="marquee" class="marquee">טוען פרשת השבוע…</div>
+  </div>
+
+  <!-- ווידג׳ט דיווחים -->
   <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
     <div class="secHeader">
       <div>
         <h2 class="secTitle">פינת דיווחים ביטחוניים</h2>
         <div class="secMeta">
-          <span class="badge" id="statusBadge">
-            <span class="dot" id="statusDot"></span>
-            <span id="statusText">אין התרעות</span>
+          <span class="badge" id="w_statusBadge">
+            <span class="dot" id="w_statusDot"></span>
+            <span id="w_statusText">אין התרעות</span>
           </span>
           <span class="badge">
-            עודכן: <span id="updatedAt">—</span>
+            עודכן: <span id="w_updatedAt">—</span>
           </span>
         </div>
       </div>
-      <button class="miniBtn" id="btnRefresh" type="button" title="רענון">רענן</button>
+      <button class="miniBtn" id="w_btnRefresh" type="button" title="רענון">רענן</button>
     </div>
 
     <div class="secBody">
-      <div class="report" id="reportCard">
-        <span class="sevBar ok" id="sevBar"></span>
+      <div class="report" id="w_reportCard">
+        <span class="sevBar ok" id="w_sevBar"></span>
 
         <div class="reportMain">
-          <p class="reportTitle" id="reportTitle">שגרה תקינה</p>
-          <p class="reportText" id="reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
+          <p class="reportTitle" id="w_reportTitle">שגרה תקינה</p>
+          <p class="reportText" id="w_reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
 
           <div class="reportFoot">
-            <span id="reportTime">—</span>
-            <button class="miniBtn" id="btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
+            <span id="w_reportTime">—</span>
+            <button class="miniBtn" id="w_btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
           </div>
         </div>
       </div>
     </div>
   </aside>
 
+  <!-- תוכן הפרשה -->
+  <div class="wrap">
+    <div class="card" aria-live="polite">
+      <div class="headerZone">
+        <div id="headerDrop" class="headerDrop">
+          <p class="label">פרשת השבוע</p>
+          <h1 id="parshaName">טוען…</h1>
+          <div id="parshaDate" class="dateLine"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div id="parshaText" class="parshaTextBox">טוען את טקסט הפרשה…</div>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    /**
-     * Widget behavior:
-     * - Keeps a small queue of demo "reports"
-     * - Subtle UI changes for: no alerts / warning / critical
-     * - On update: fade + soft highlight only (no loud effects)
-     */
+    /* ============================
+       חלק 1: פרשת השבוע + טקסט
+       ============================ */
+    (function(){
+      const elName   = document.getElementById("parshaName");
+      const elDate   = document.getElementById("parshaDate");
+      const elText   = document.getElementById("parshaText");
+      const elStatus = document.getElementById("status");
+      const elMarq   = document.getElementById("marquee");
 
-    const els = {
-      statusBadge: document.getElementById("statusBadge"),
-      statusDot: document.getElementById("statusDot"),
-      statusText: document.getElementById("statusText"),
-      updatedAt: document.getElementById("updatedAt"),
+      const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
 
-      reportCard: document.getElementById("reportCard"),
-      sevBar: document.getElementById("sevBar"),
-      reportTitle: document.getElementById("reportTitle"),
-      reportText: document.getElementById("reportText"),
-      reportTime: document.getElementById("reportTime"),
-
-      btnRefresh: document.getElementById("btnRefresh"),
-      btnSimulate: document.getElementById("btnSimulate"),
-    };
-
-    // Demo data (replace later with real feed/API if you want)
-    const demoReports = [
-      { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
-      { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
-      { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
-    ];
-
-    function heTime(){
-      return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
-    }
-
-    function setStatus(level){
-      const isAlert = (level === "critical");
-      els.statusBadge.classList.toggle("alert", isAlert);
-      els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
-
-      // dot color (ok / warn / critical)
-      if(level === "warn"){
-        els.statusDot.style.background = "var(--warn)";
-      } else if(level === "critical"){
-        els.statusDot.style.background = "var(--red2)";
-      } else {
-        els.statusDot.style.background = "var(--ok)";
+      function showError(msg){
+        elStatus.textContent = msg;
+        elStatus.style.display = "block";
       }
-    }
+      function clearError(){
+        elStatus.textContent = "";
+        elStatus.style.display = "none";
+      }
 
-    function setSeverityBar(level){
-      els.sevBar.classList.remove("ok","warn","critical");
-      els.sevBar.classList.add(level);
-    }
+      function hebcalUrl(){
+        const url = new URL("https://www.hebcal.com/shabbat/");
+        url.searchParams.set("cfg", "json");
+        url.searchParams.set("geo", GEO.geo);
+        url.searchParams.set("geonameid", String(GEO.geonameid));
+        return url.toString();
+      }
 
-    function animateUpdate(){
-      els.reportCard.classList.remove("updated");
-      // force reflow so animation restarts cleanly
-      void els.reportCard.offsetHeight;
-      els.reportCard.classList.add("updated");
-    }
+      function formatDateHe(dateIso){
+        if(!dateIso) return "";
+        const d = new Date(dateIso);
+        if(Number.isNaN(d.getTime())) return "";
+        return new Intl.DateTimeFormat("he-IL", {
+          weekday: "long", year: "numeric", month: "long", day: "numeric"
+        }).format(d);
+      }
 
-    function applyReport(report){
-      setSeverityBar(report.level);
-      setStatus(report.level);
+      function extractParshaFromHebcal(data){
+        const items = Array.isArray(data?.items) ? data.items : [];
+        const it = items.find(x => x?.category === "parashat");
+        if(!it) return null;
+        return {
+          hebrewName: it.hebrew || null,
+          title: it.title || null,   // "Parashat Noach" וכו'
+          dateIso: it.date || null
+        };
+      }
 
-      els.reportTitle.textContent = report.title;
-      els.reportText.textContent  = report.text;
+      function cleanEnglishParasha(title){
+        if(!title) return null;
+        return String(title).replace(/^Parashat\s+/i, "").trim();
+      }
 
-      const t = heTime();
-      els.reportTime.textContent  = t;
-      els.updatedAt.textContent   = t;
+      function sefariaNextReadUrl(parashaEn){
+        return "https://www.sefaria.org/api/calendars/next-read/" + encodeURIComponent(parashaEn);
+      }
 
-      animateUpdate();
-    }
+      function sefariaTextsUrl(tref){
+        const url = new URL("https://www.sefaria.org/api/texts/" + encodeURIComponent(tref));
+        url.searchParams.set("lang", "he");
+        url.searchParams.set("context", "0");
+        return url.toString();
+      }
 
-    // Rotate through demo reports
-    let idx = 0;
-    function nextReport(){
-      idx = (idx + 1) % demoReports.length;
-      applyReport(demoReports[idx]);
-    }
+      function getAliyotRefs(nextReadJson){
+        const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
+        if(!torah) return [];
 
-    // Initial state
-    applyReport(demoReports[0]);
+        if(Array.isArray(torah)){
+          return torah.map(x => x?.ref).filter(Boolean);
+        }
+        if(Array.isArray(torah?.aliyot)){
+          return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
+        }
 
-    // Buttons
-    els.btnSimulate.addEventListener("click", nextReport);
-    els.btnRefresh.addEventListener("click", () => {
-      // Refresh just re-applies current report with subtle highlight
-      applyReport(demoReports[idx]);
-    });
+        const refs = [];
+        for(const k of Object.keys(torah)){
+          const v = torah[k];
+          if(Array.isArray(v)){
+            v.forEach(item => {
+              if(typeof item === "string") refs.push(item);
+              else if(item?.ref) refs.push(item.ref);
+            });
+          } else if(v?.ref){
+            refs.push(v.ref);
+          }
+        }
+        return refs.filter(Boolean);
+      }
 
-    // Optional: auto "heartbeat" update time every 30s (quiet)
-    setInterval(() => {
-      els.updatedAt.textContent = heTime();
-    }, 30000);
+      function normalizeSefariaHebrewText(textJson){
+        const he = textJson?.he;
+        if(Array.isArray(he)) return he.filter(Boolean).join(" ");
+        if(typeof he === "string") return he;
+        const t = textJson?.text;
+        if(Array.isArray(t)) return t.join(" ");
+        if(typeof t === "string") return t;
+        return "";
+      }
+
+      function escapeHtml(str){
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      async function loadParshaAndText(){
+        clearError();
+        elName.textContent = "טוען…";
+        elDate.textContent = "";
+        elText.textContent = "טוען את טקסט הפרשה…";
+        elMarq.textContent = "טוען פרשת השבוע…";
+
+        try{
+          // 1) Hebcal
+          const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
+          if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
+          const hebJson = await hebRes.json();
+
+          const p = extractParshaFromHebcal(hebJson);
+          if(!p) throw new Error("No parasha in Hebcal response");
+
+          const parashaEn = cleanEnglishParasha(p.title);
+          const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
+
+          elName.textContent = parashaHe;
+          elDate.textContent = formatDateHe(p.dateIso);
+          elMarq.textContent = "פרשת השבוע: " + parashaHe + "  •  " + (elDate.textContent || "");
+
+          if(!parashaEn){
+            elText.textContent = "לא נמצא שם פרשה באנגלית כדי להביא טקסט מלא.";
+            return;
+          }
+
+          // 2) Sefaria next-read
+          const nrRes = await fetch(sefariaNextReadUrl(parashaEn), { cache: "no-store" });
+          if(!nrRes.ok) throw new Error("Sefaria next-read HTTP " + nrRes.status);
+          const nrJson = await nrRes.json();
+
+          const refs = getAliyotRefs(nrJson);
+          if(!refs.length){
+            elText.textContent = "לא הצלחתי למצוא רפרנסים לעליות בספריה עבור הפרשה הזו.";
+            return;
+          }
+
+          // 3) Texts for each aliyah
+          const paragraphs = [];
+          for(let i = 0; i < refs.length; i++){
+            const tref = refs[i];
+            try{
+              const tRes = await fetch(sefariaTextsUrl(tref), { cache: "no-store" });
+              if(!tRes.ok) throw new Error("texts HTTP " + tRes.status);
+              const tJson = await tRes.json();
+
+              const hebText = normalizeSefariaHebrewText(tJson);
+              paragraphs.push(hebText ? `עלייה ${i+1}: ${hebText}` : `עלייה ${i+1}: (אין טקסט)`);
+            } catch(e){
+              paragraphs.push(`עלייה ${i+1}: (לא הצלחתי לטעון את הטקסט)`);
+            }
+          }
+
+          elText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("");
+
+        } catch(err){
+          console.error(err);
+          showError("יש בעיה בטעינה (אינטרנט/חסימה/שרת). נסה לרענן את הדף.");
+          elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
+        }
+      }
+
+      loadParshaAndText();
+      setInterval(loadParshaAndText, 6 * 60 * 60 * 1000);
+    })();
+
+    /* ============================
+       חלק 2: ווידג׳ט דיווחים קטן
+       ============================ */
+    (function(){
+      const els = {
+        statusBadge: document.getElementById("w_statusBadge"),
+        statusDot: document.getElementById("w_statusDot"),
+        statusText: document.getElementById("w_statusText"),
+        updatedAt: document.getElementById("w_updatedAt"),
+
+        reportCard: document.getElementById("w_reportCard"),
+        sevBar: document.getElementById("w_sevBar"),
+        reportTitle: document.getElementById("w_reportTitle"),
+        reportText: document.getElementById("w_reportText"),
+        reportTime: document.getElementById("w_reportTime"),
+
+        btnRefresh: document.getElementById("w_btnRefresh"),
+        btnSimulate: document.getElementById("w_btnSimulate"),
+      };
+
+      const demoReports = [
+        { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
+        { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
+        { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
+      ];
+
+      function heTime(){
+        return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
+      }
+
+      function setStatus(level){
+        const isAlert = (level === "critical");
+        els.statusBadge.classList.toggle("alert", isAlert);
+        els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
+
+        if(level === "warn"){
+          els.statusDot.style.background = "var(--w-warn)";
+        } else if(level === "critical"){
+          els.statusDot.style.background = "var(--w-red2)";
+        } else {
+          els.statusDot.style.background = "var(--w-ok)";
+        }
+      }
+
+      function setSeverityBar(level){
+        els.sevBar.classList.remove("ok","warn","critical");
+        els.sevBar.classList.add(level);
+      }
+
+      function animateUpdate(){
+        els.reportCard.classList.remove("updated");
+        void els.reportCard.offsetHeight;
+        els.reportCard.classList.add("updated");
+      }
+
+      function applyReport(report){
+        setSeverityBar(report.level);
+        setStatus(report.level);
+
+        els.reportTitle.textContent = report.title;
+        els.reportText.textContent  = report.text;
+
+        const t = heTime();
+        els.reportTime.textContent  = t;
+        els.updatedAt.textContent   = t;
+
+        animateUpdate();
+      }
+
+      let idx = 0;
+      function nextReport(){
+        idx = (idx + 1) % demoReports.length;
+        applyReport(demoReports[idx]);
+      }
+
+      applyReport(demoReports[0]);
+
+      els.btnSimulate.addEventListener("click", nextReport);
+      els.btnRefresh.addEventListener("click", () => applyReport(demoReports[idx]));
+
+      setInterval(() => {
+        els.updatedAt.textContent = heTime();
+      }, 30000);
+    })();
   </script>
 </body>
 </html>
