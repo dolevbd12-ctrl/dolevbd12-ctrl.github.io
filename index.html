@@ -14,13 +14,13 @@
       --bg1:#18233f;
       --bg2:#070b18;
 
-      /* השורה האפורה */
       --bar:rgba(180,180,180,.16);
       --barBorder:rgba(255,255,255,.14);
 
-      /* טקסט הפרשה (שחור) */
       --parashaText:#000;
       --parashaBg:rgba(255,255,255,.88);
+
+      --marqueeSpeed: 18s; /* ⬅️ מהירות הריצה (קטן = מהר) */
     }
 
     html,body{margin:0;height:100%}
@@ -73,10 +73,10 @@
       display:flex;
       width:max-content;
       will-change:transform;
-      animation:none; /* נדלק אחרי טעינה */
+      animation:none;
     }
     .marquee-track.running{
-      animation:scroll 30s linear infinite; /* מהירות ריצה: 20 מהיר, 45 איטי */
+      animation:scroll var(--marqueeSpeed) linear infinite; /* ⬅️ מהירות */
     }
     .marquee-content{
       display:flex;
@@ -84,7 +84,7 @@
       gap:18px;
       white-space:nowrap;
     }
-    .marquee-gap{width:80px}
+    .marquee-gap{width:60px}
 
     .marquee-content img{
       width:110px;height:110px;
@@ -140,14 +140,14 @@
     <div class="headerRow">
       <span class="badge" id="greeting">טוען…</span>
 
+      <!-- ⬅️ פרשת השבוע לפני כל השעונים -->
+      <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
+
       <span class="badge clock" id="clock">--:--:--</span>
 
       <span class="badge muted" id="dates">טוען תאריך…</span>
 
-      <!-- טיימר מאז 07.10.2023 (בין התאריך לפרשה) -->
       <span class="badge clock" id="sinceOct7">מאז 07.10.2023: —</span>
-
-      <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
     </div>
   </div>
 
@@ -161,7 +161,7 @@
         <span class="marquee-gap"></span>
       </div>
 
-      <!-- עותק 2 (נבנה בלי IDs כדי לא לשבור את הדף) -->
+      <!-- עותק 2 (נבנה בלי IDs) -->
       <div class="marquee-content" id="marqueeClone"></div>
     </div>
   </div>
@@ -174,11 +174,8 @@
   </div>
 
   <script>
-    /* ============================
-       הגדרות
-       ============================ */
     const TZ = "Asia/Jerusalem";
-    const GEO = { geo:"geoname", geonameid:281184 }; // ירושלים (Hebcal)
+    const GEO = { geo:"geoname", geonameid:281184 };
 
     const el = {
       greeting: document.getElementById("greeting"),
@@ -192,9 +189,6 @@
       clone: document.getElementById("marqueeClone"),
     };
 
-    /* ============================
-       JSONP (לעקוף CORS מול Sefaria על GitHub Pages)
-       ============================ */
     function jsonp(url){
       return new Promise((resolve, reject) => {
         const cb = "cb_" + Math.random().toString(36).slice(2);
@@ -215,16 +209,11 @@
       });
     }
 
-    /* ============================
-       שעון + תאריך עברי/לועזי
-       ============================ */
     function tickClockAndDates(){
-      // שעה חיה (ירושלים)
       el.clock.textContent = new Intl.DateTimeFormat("he-IL", {
         timeZone: TZ, hour:"2-digit", minute:"2-digit", second:"2-digit"
       }).format(new Date());
 
-      // תאריך עברי (אם נתמך)
       let he = "";
       try{
         he = new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
@@ -232,7 +221,6 @@
         }).format(new Date());
       }catch(e){}
 
-      // תאריך לועזי
       const gr = new Intl.DateTimeFormat("he-IL", {
         timeZone: TZ, weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
       }).format(new Date());
@@ -240,9 +228,6 @@
       el.dates.textContent = he ? (he + " • " + gr) : gr;
     }
 
-    /* ============================
-       טיימר מאז 07.10.2023 (מתעדכן כל שניה)
-       ============================ */
     const startDate = new Date("2023-10-07T00:00:00+03:00");
     function updateSinceOct7(){
       const now = new Date();
@@ -258,20 +243,13 @@
       el.since.textContent = `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
     }
 
-    /* ============================
-       מרקיזה רציפה (בונה עותק 2 בלי IDs)
-       ============================ */
     function refreshSeamlessMarquee(){
       let html = el.content.innerHTML;
-      // מסירים id="..." כדי שלא יהיו IDs כפולים בעותק 2
       html = html.replace(/\sid="[^"]*"/g, "");
       el.clone.innerHTML = html;
       el.track.classList.add("running");
     }
 
-    /* ============================
-       Hebcal: פרשה + שבת שלום/שבוע טוב (לפי כניסת/יציאת שבת ירושלים)
-       ============================ */
     function hebcalUrl(){
       const u = new URL("https://www.hebcal.com/shabbat");
       u.searchParams.set("cfg","json");
@@ -291,27 +269,23 @@
         const candles = items.find(i => i.category === "candles");
         const havdalah = items.find(i => i.category === "havdalah");
 
-        // שם הפרשה
         el.parashaName.textContent = p?.hebrew
           ? String(p.hebrew).replace(/^פרשת\s*/,"").trim()
           : "—";
 
-        // שבת שלום אם עכשיו בתוך חלון שבת (ירושלים), אחרת שבוע טוב
         const now = new Date();
         const inShabbat = candles?.date && havdalah?.date
           ? (now >= new Date(candles.date) && now <= new Date(havdalah.date))
           : false;
         el.greeting.textContent = inShabbat ? "שבת שלום" : "שבוע טוב";
 
-        // טווח קריאה להבאת טקסט הפרשה
-        const ref = p?.leyning?.torah; // למשל "Exodus 1:1-6:1"
+        const ref = p?.leyning?.torah;
         if(!ref){
           el.parashaText.textContent = "טקסט הפרשה לא זמין כרגע.";
           refreshSeamlessMarquee();
           return;
         }
 
-        // Sefaria texts דרך JSONP
         const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(ref) + "?lang=he&context=0";
         const txt = await jsonp(sefUrl);
 
@@ -330,16 +304,13 @@
       }
     }
 
-    /* ============================
-       הפעלה
-       ============================ */
     tickClockAndDates();
     updateSinceOct7();
     setInterval(tickClockAndDates, 1000);
     setInterval(updateSinceOct7, 1000);
 
     loadParasha();
-    setInterval(loadParasha, 6 * 60 * 60 * 1000); // רענון כל 6 שעות
+    setInterval(loadParasha, 6 * 60 * 60 * 1000);
   </script>
 
 </body>
