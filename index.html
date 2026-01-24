@@ -9,8 +9,7 @@
 
 <style>
 :root{
-  --bg1:#18233f;
-  --bg2:#070b18;
+  --bg1:#18233f; --bg2:#070b18;
   --bar:rgba(180,180,180,.16);
   --barBorder:rgba(255,255,255,.14);
   --parashaText:#000;
@@ -39,6 +38,7 @@ body{
   justify-content:space-between;
   gap:10px;
   flex-wrap:wrap;
+  align-items:center;
 }
 .badge{
   padding:6px 10px;
@@ -55,10 +55,16 @@ body{
   align-items:center;
   overflow:hidden;
   padding-inline:16px;
+  box-sizing:border-box;
 }
 .marquee-track{
   display:flex;
   width:max-content;
+  will-change:transform;
+  /* האנימציה מופעלת רק כשיש תוכן */
+  animation:none;
+}
+.marquee-track.running{
   animation:scroll 30s linear infinite;
 }
 .marquee-content{
@@ -74,6 +80,8 @@ body{
   object-fit:cover;
   border-radius:12px;
   border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 12px 34px rgba(0,0,0,.45);
+  flex:0 0 auto;
 }
 
 .parasha-text{
@@ -83,6 +91,8 @@ body{
   background:var(--parashaBg);
   padding:10px 16px;
   border-radius:10px;
+  border:1px solid rgba(0,0,0,.12);
+  box-shadow:0 12px 34px rgba(0,0,0,.25);
 }
 
 @keyframes scroll{
@@ -100,6 +110,7 @@ body{
   padding:12px;
   border:1px solid rgba(255,255,255,.2);
   font-size:13px;
+  z-index:12;
 }
 </style>
 </head>
@@ -117,11 +128,14 @@ body{
 
 <div class="marquee-wrap">
   <div class="marquee-track" id="marqueeTrack">
+    <!-- עותק 1 (עם IDs) -->
     <div class="marquee-content" id="marqueeContent">
-      <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+      <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
       <div class="parasha-text" id="parashaText">טוען את טקסט הפרשה…</div>
       <span class="marquee-gap"></span>
     </div>
+
+    <!-- עותק 2 (נבנה בלי IDs כדי לא לשבור את הדף) -->
     <div class="marquee-content" id="marqueeClone"></div>
   </div>
 </div>
@@ -141,69 +155,115 @@ const el={
   clock:document.getElementById("clock"),
   dates:document.getElementById("dates"),
   parashaName:document.getElementById("parashaName"),
-  parashaText:document.getElementById("parashaText")
+  parashaText:document.getElementById("parashaText"),
+  track:document.getElementById("marqueeTrack"),
+  content:document.getElementById("marqueeContent"),
+  clone:document.getElementById("marqueeClone"),
 };
 
-/* JSONP */
+/* JSONP (לעקוף CORS מול Sefaria) */
 function jsonp(url){
-  return new Promise((res,rej)=>{
+  return new Promise((resolve,reject)=>{
     const cb="cb_"+Math.random().toString(36).slice(2);
     const s=document.createElement("script");
-    window[cb]=d=>{delete window[cb];s.remove();res(d)};
+    const t=setTimeout(()=>{cleanup();reject(new Error("timeout"))},12000);
+
+    function cleanup(){
+      clearTimeout(t);
+      try{ delete window[cb]; }catch(e){ window[cb]=undefined; }
+      s.remove();
+    }
+
+    window[cb]=(data)=>{cleanup();resolve(data);};
     s.src=url+(url.includes("?")?"&":"?")+"callback="+cb;
-    s.onerror=()=>rej();
+    s.onerror=()=>{cleanup();reject(new Error("load error"));};
     document.body.appendChild(s);
   });
 }
 
-/* CLOCK + DATES */
+/* שעון + תאריכים */
 function tick(){
-  el.clock.textContent=new Intl.DateTimeFormat("he-IL",{timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date());
-  const he=new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{timeZone:TZ,day:"numeric",month:"long",year:"numeric"}).format(new Date());
-  const gr=new Intl.DateTimeFormat("he-IL",{timeZone:TZ,weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"}).format(new Date());
-  el.dates.textContent=he+" • "+gr;
-}
-setInterval(tick,1000);tick();
+  el.clock.textContent=new Intl.DateTimeFormat("he-IL",{
+    timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"
+  }).format(new Date());
 
-/* HEB CAL */
+  let he="";
+  try{
+    he=new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
+      timeZone:TZ,day:"numeric",month:"long",year:"numeric"
+    }).format(new Date());
+  }catch(e){}
+
+  const gr=new Intl.DateTimeFormat("he-IL",{
+    timeZone:TZ,weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"
+  }).format(new Date());
+
+  el.dates.textContent=(he? (he+" • "+gr) : gr);
+}
+setInterval(tick,1000); tick();
+
+/* בונה עותק 2 בלי IDs ומדליק אנימציה */
+function refreshSeamlessMarquee(){
+  // מעתיקים HTML של עותק 1
+  let html = el.content.innerHTML;
+
+  // מורידים id="..." כדי שלא יהיו IDs כפולים
+  html = html.replace(/\sid="[^"]*"/g, "");
+
+  el.clone.innerHTML = html;
+
+  // מפעילים אנימציה רק כשיש גם עותק 2 מלא
+  el.track.classList.add("running");
+}
+
+/* Hebcal */
 async function loadParasha(){
   try{
     const u=new URL("https://www.hebcal.com/shabbat");
     u.searchParams.set("cfg","json");
     u.searchParams.set("geo",GEO.geo);
-    u.searchParams.set("geonameid",GEO.geonameid);
+    u.searchParams.set("geonameid",String(GEO.geonameid));
     u.searchParams.set("M","on");
     u.searchParams.set("hdp","1");
-    const data=await fetch(u).then(r=>r.json());
+
+    const data=await fetch(u.toString(),{cache:"no-store"}).then(r=>r.json());
     const items=data.items||[];
 
     const p=items.find(i=>i.category==="parashat");
     const candles=items.find(i=>i.category==="candles");
     const havdalah=items.find(i=>i.category==="havdalah");
 
-    el.parashaName.textContent=p?.hebrew?.replace("פרשת ","")||"—";
+    el.parashaName.textContent=p?.hebrew ? p.hebrew.replace(/^פרשת\s*/,"").trim() : "—";
 
     const now=new Date();
-    const shabbat=candles&&havdalah&&(now>=new Date(candles.date)&&now<=new Date(havdalah.date));
-    el.greeting.textContent=shabbat?"שבת שלום":"שבוע טוב";
+    const inShabbat = candles?.date && havdalah?.date
+      ? (now >= new Date(candles.date) && now <= new Date(havdalah.date))
+      : false;
+    el.greeting.textContent = inShabbat ? "שבת שלום" : "שבוע טוב";
 
     const ref=p?.leyning?.torah;
-    if(!ref)return;
+    if(!ref){
+      el.parashaText.textContent="טקסט הפרשה לא זמין כרגע.";
+      refreshSeamlessMarquee();
+      return;
+    }
 
     const txt=await jsonp("https://www.sefaria.org/api/texts/"+encodeURIComponent(ref)+"?lang=he&context=0");
-    const text=Array.isArray(txt.he)?txt.he.join(" "):txt.he;
-    el.parashaText.textContent=text||"לא זמין";
+    const text = Array.isArray(txt?.he) ? txt.he.filter(Boolean).join(" ") : (txt?.he || "");
 
-    /* שכפול לריצה רציפה */
-    document.getElementById("marqueeClone").innerHTML=
-      document.getElementById("marqueeContent").innerHTML;
+    el.parashaText.textContent = text || "הטקסט חזר ריק כרגע.";
+    refreshSeamlessMarquee();
 
   }catch(e){
-    el.parashaText.textContent="שגיאה בטעינה";
+    el.parashaName.textContent="—";
+    el.greeting.textContent="שבוע טוב";
+    el.parashaText.textContent="שגיאה בטעינה (אינטרנט/חסימה).";
+    refreshSeamlessMarquee();
   }
 }
+
 loadParasha();
-setInterval(loadParasha,6*60*60*1000);
+setInterval(loadParasha, 6*60*60*1000);
 </script>
 
 </body>
