@@ -24,7 +24,7 @@
       overflow-x: hidden;
     }
 
-    /* פס עליון עם טקסט רץ (ימין->שמאל) + תמונה שנוסעת עם הטקסט */
+    /* טיקר עליון: תמונה + טקסט רץ */
     .topTicker{
       position: fixed;
       top: 18px;
@@ -39,6 +39,7 @@
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       overflow: hidden;
       z-index: 50;
+      direction: rtl;
     }
 
     .marquee{
@@ -53,7 +54,6 @@
       color: rgba(255,255,255,0.88);
     }
 
-    /* האווטאר בתוך הטקסט הרץ (נוסע יחד איתו) */
     .marqueeAvatar{
       width: 26px;
       height: 26px;
@@ -76,7 +76,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 110px 18px 120px; /* למעלה הטיקר, למטה הווידג'ט */
+      padding: 110px 18px 120px;
       box-sizing: border-box;
     }
 
@@ -121,15 +121,12 @@
       .marquee{ animation: none; padding-right: 0; }
     }
 
-    /* ======================
-       ווידג׳ט דיווחים (שמאל למטה)
-       ====================== */
+    /* ווידג׳ט דיווחים */
     :root{
       --w-bg: rgba(10,12,16,.78);
       --w-stroke: rgba(255,255,255,.12);
       --w-text: rgba(255,255,255,.92);
       --w-muted: rgba(255,255,255,.62);
-      --w-red: #7a0f18;
       --w-red2:#b51a26;
       --w-ok: #2f9b68;
       --w-warn:#c9a84a;
@@ -152,6 +149,7 @@
       overflow: hidden;
       z-index: 60;
       font-family: var(--w-font);
+      direction: rtl;
     }
 
     .secHeader{
@@ -238,7 +236,7 @@
       flex: 0 0 auto;
       align-self: stretch;
     }
-    .sevBar.critical{ background: linear-gradient(180deg, var(--w-red2), var(--w-red)); }
+    .sevBar.critical{ background: linear-gradient(180deg, #b51a26, #7a0f18); }
     .sevBar.warn{ background: linear-gradient(180deg, rgba(201,168,74,.95), rgba(201,168,74,.35)); }
     .sevBar.ok{ background: linear-gradient(180deg, rgba(47,155,104,.95), rgba(47,155,104,.35)); }
 
@@ -302,21 +300,11 @@
       35%  { box-shadow: 0 0 0 8px rgba(255,255,255,.04); }
       100% { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
     }
-
-    @media (max-width: 380px){
-      .secWidget{ width: 290px; }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .badge.alert .dot{ animation: none; }
-      .updated{ animation: none; }
-      .miniBtn{ transition:none; }
-    }
   </style>
 </head>
 
 <body>
-  <!-- טיקר למעלה (כאן מופיעים: תמונה + פרשה + תאריך עברי) -->
+  <!-- טיקר -->
   <div class="topTicker" aria-label="טקסט רץ">
     <div id="marquee" class="marquee">
       <img class="marqueeAvatar" src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
@@ -324,7 +312,7 @@
     </div>
   </div>
 
-  <!-- ווידג׳ט דיווחים (שמאל למטה) -->
+  <!-- ווידג׳ט דיווחים -->
   <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
     <div class="secHeader">
       <div>
@@ -345,11 +333,9 @@
     <div class="secBody">
       <div class="report" id="w_reportCard">
         <span class="sevBar ok" id="w_sevBar"></span>
-
         <div class="reportMain">
           <p class="reportTitle" id="w_reportTitle">שגרה תקינה</p>
           <p class="reportText" id="w_reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
-
           <div class="reportFoot">
             <span id="w_reportTime">—</span>
             <button class="miniBtn" id="w_btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
@@ -359,7 +345,7 @@
     </div>
   </aside>
 
-  <!-- באמצע: רק טקסט הפרשה -->
+  <!-- טקסט הפרשה באמצע -->
   <div class="wrap">
     <div class="card" aria-live="polite">
       <div class="content">
@@ -371,15 +357,39 @@
 
   <script>
     /* ============================
-       פרשת השבוע: טיקר למעלה כולל:
-       - שם הפרשה
-       - תאריך עברי (לשבת של הפרשה)
-       - התמונה כבר חלק מהטיקר ולכן "נוסעת" איתו
+       JSONP helper (עוקף CORS מול Sefaria)
+       ============================ */
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const sep = url.includes("?") ? "&" : "?";
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("JSONP timeout"));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+          script.remove();
+        }
+
+        window[cb] = (data) => { cleanup(); resolve(data); };
+        script.src = url + sep + "callback=" + cb;
+        script.onerror = () => { cleanup(); reject(new Error("JSONP load error")); };
+
+        document.body.appendChild(script);
+      });
+    }
+
+    /* ============================
+       פרשת השבוע: Hebcal -> טווח קריאה -> טקסט מספראיה ב-JSONP
        ============================ */
     (function(){
-      const elText   = document.getElementById("parshaText");
-      const elStatus = document.getElementById("status");
-      const elMarqText = document.getElementById("marqueeText");
+      const elText       = document.getElementById("parshaText");
+      const elStatus     = document.getElementById("status");
+      const elMarqText   = document.getElementById("marqueeText");
 
       const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
 
@@ -392,45 +402,24 @@
         elStatus.style.display = "none";
       }
 
+      // Hebcal endpoint שמחזיר גם leyning.torah
       function hebcalUrl(){
-        const url = new URL("https://www.hebcal.com/shabbat/");
+        const url = new URL("https://www.hebcal.com/shabbat");
         url.searchParams.set("cfg", "json");
         url.searchParams.set("geo", GEO.geo);
         url.searchParams.set("geonameid", String(GEO.geonameid));
+        url.searchParams.set("M", "on");
+        url.searchParams.set("hdp", "1"); // תאריך עברי מפורק
         return url.toString();
       }
 
-      function extractParshaFromHebcal(data){
-        const items = Array.isArray(data?.items) ? data.items : [];
-        const it = items.find(x => x?.category === "parashat");
-        if(!it) return null;
-        return {
-          hebrewName: it.hebrew || null,
-          title: it.title || null,   // "Parashat Noach"
-          dateIso: it.date || null   // שבת של הפרשה (ISO)
-        };
-      }
-
-      function cleanEnglishParasha(title){
-        if(!title) return null;
-        return String(title).replace(/^Parashat\s+/i, "").trim();
-      }
-
-      // תאריך עברי מתוך תאריך לועזי באמצעות Intl Hebrew calendar (אם קיים)
-      function formatHebrewDateFromISO(dateIso){
-        if(!dateIso) return "";
-        const d = new Date(dateIso);
-        if(Number.isNaN(d.getTime())) return "";
-
-        try{
-          // he-IL with Hebrew calendar
-          const fmt = new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
-            day: "numeric", month: "long", year: "numeric"
-          });
-          return fmt.format(d);
-        } catch(e){
-          return ""; // דפדפן ישן -> פשוט לא נציג תאריך עברי
-        }
+      // תאריך עברי מהחלקים שמגיעים מ-Hebcal (כש-hdp=1)
+      function formatHebrewDateFromParts(parts){
+        if(!parts) return "";
+        const d = parts.d || "";
+        const m = parts.m || "";
+        const y = parts.y || "";
+        return [d,m,y].filter(Boolean).join(" ");
       }
 
       function formatDateHe(dateIso){
@@ -442,53 +431,6 @@
         }).format(d);
       }
 
-      function sefariaNextReadUrl(parashaEn){
-        return "https://www.sefaria.org/api/calendars/next-read/" + encodeURIComponent(parashaEn);
-      }
-
-      function sefariaTextsUrl(tref){
-        const url = new URL("https://www.sefaria.org/api/texts/" + encodeURIComponent(tref));
-        url.searchParams.set("lang", "he");
-        url.searchParams.set("context", "0");
-        return url.toString();
-      }
-
-      function getAliyotRefs(nextReadJson){
-        const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
-        if(!torah) return [];
-
-        if(Array.isArray(torah)){
-          return torah.map(x => x?.ref).filter(Boolean);
-        }
-        if(Array.isArray(torah?.aliyot)){
-          return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
-        }
-
-        const refs = [];
-        for(const k of Object.keys(torah)){
-          const v = torah[k];
-          if(Array.isArray(v)){
-            v.forEach(item => {
-              if(typeof item === "string") refs.push(item);
-              else if(item?.ref) refs.push(item.ref);
-            });
-          } else if(v?.ref){
-            refs.push(v.ref);
-          }
-        }
-        return refs.filter(Boolean);
-      }
-
-      function normalizeSefariaHebrewText(textJson){
-        const he = textJson?.he;
-        if(Array.isArray(he)) return he.filter(Boolean).join(" ");
-        if(typeof he === "string") return he;
-        const t = textJson?.text;
-        if(Array.isArray(t)) return t.join(" ");
-        if(typeof t === "string") return t;
-        return "";
-      }
-
       function escapeHtml(str){
         return String(str)
           .replaceAll("&", "&amp;")
@@ -498,72 +440,63 @@
           .replaceAll("'", "&#039;");
       }
 
+      function normalizeSefariaHebrewText(textJson){
+        const he = textJson?.he;
+        if(Array.isArray(he)) return he.filter(Boolean).join(" ");
+        if(typeof he === "string") return he;
+        return "";
+      }
+
       async function loadParshaAndText(){
         clearError();
         elText.textContent = "טוען את טקסט הפרשה…";
         elMarqText.textContent = "טוען פרשת השבוע…";
 
         try{
-          // 1) Hebcal => שם פרשה + תאריך שבת
           const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
           if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
           const hebJson = await hebRes.json();
 
-          const p = extractParshaFromHebcal(hebJson);
-          if(!p) throw new Error("No parasha in Hebcal response");
+          const items = Array.isArray(hebJson?.items) ? hebJson.items : [];
+          const parshaItem = items.find(x => x?.category === "parashat");
+          if(!parshaItem) throw new Error("No parasha in Hebcal response");
 
-          const parashaEn = cleanEnglishParasha(p.title);
-          const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
+          const parashaHe = (parshaItem.hebrew || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
+          const gregDate  = formatDateHe(parshaItem.date);
+          const hebDate   = formatHebrewDateFromParts(parshaItem?.heDateParts);
 
-          const hebrewDate = formatHebrewDateFromISO(p.dateIso);
-          const gregDate   = formatDateHe(p.dateIso);
+          const torahRef = parshaItem?.leyning?.torah; // לדוגמה: "Genesis 6:9-11:32"
 
-          // טיקר: פרשה + תאריך עברי + (אופציונלי) תאריך לועזי קטן
+          // טיקר
           const parts = [];
           parts.push("פרשת השבוע: " + parashaHe);
-          if(hebrewDate) parts.push("תאריך עברי: " + hebrewDate);
-          if(gregDate)   parts.push("שבת: " + gregDate);
+          if(hebDate) parts.push("תאריך עברי: " + hebDate);
+          if(gregDate) parts.push("שבת: " + gregDate);
           elMarqText.textContent = parts.join("  •  ");
 
-          // 2) נסיון להביא טקסט דרך Sefaria
-          if(!parashaEn){
-            elText.textContent = "טקסט הפרשה לא זמין כרגע.";
+          if(!torahRef){
+            elText.textContent = "טקסט הפרשה לא זמין כרגע (לא התקבל טווח קריאה).";
             return;
           }
 
-          const nrRes = await fetch(sefariaNextReadUrl(parashaEn), { cache: "no-store" });
-          if(!nrRes.ok) throw new Error("Sefaria next-read HTTP " + nrRes.status);
-          const nrJson = await nrRes.json();
+          // Sefaria דרך JSONP (עוקף CORS)
+          const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(torahRef)
+                       + "?lang=he&context=0";
 
-          const refs = getAliyotRefs(nrJson);
+          const textJson = await jsonp(sefUrl);
+          const hebText = normalizeSefariaHebrewText(textJson);
 
-          // אם אין רפרנסים — לא נציג את זה למשתמש, רק הודעה נקייה
-          if(!refs.length){
-            elText.textContent = "טקסט הפרשה לא זמין כרגע (מקור הקריאה לא החזיר טווחי פסוקים).";
+          if(!hebText){
+            elText.textContent = "הטקסט חזר ריק מספראיה כרגע.";
             return;
           }
 
-          const paragraphs = [];
-          for(let i = 0; i < refs.length; i++){
-            const tref = refs[i];
-            try{
-              const tRes = await fetch(sefariaTextsUrl(tref), { cache: "no-store" });
-              if(!tRes.ok) throw new Error("texts HTTP " + tRes.status);
-              const tJson = await tRes.json();
-
-              const hebText = normalizeSefariaHebrewText(tJson);
-              // אפשר להסיר "עלייה X" אם תרצה—תגיד.
-              paragraphs.push(hebText ? `עלייה ${i+1}: ${hebText}` : `עלייה ${i+1}: (אין טקסט)`);
-            } catch(e){
-              paragraphs.push(`עלייה ${i+1}: (לא הצלחתי לטעון את הטקסט)`);
-            }
-          }
-
-          elText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("");
+          // בלי "עלייה 1/2" – טקסט רציף נקי
+          elText.innerHTML = `<p>${escapeHtml(hebText)}</p>`;
 
         } catch(err){
           console.error(err);
-          showError("יש בעיה בטעינה (אינטרנט/חסימה/שרת). נסה לרענן את הדף.");
+          showError("יש בעיה בטעינה (אינטרנט/שרת). נסה לרענן את הדף.");
           elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
         }
       }
@@ -581,13 +514,11 @@
         statusDot: document.getElementById("w_statusDot"),
         statusText: document.getElementById("w_statusText"),
         updatedAt: document.getElementById("w_updatedAt"),
-
         reportCard: document.getElementById("w_reportCard"),
         sevBar: document.getElementById("w_sevBar"),
         reportTitle: document.getElementById("w_reportTitle"),
         reportText: document.getElementById("w_reportText"),
         reportTime: document.getElementById("w_reportTime"),
-
         btnRefresh: document.getElementById("w_btnRefresh"),
         btnSimulate: document.getElementById("w_btnSimulate"),
       };
