@@ -11,12 +11,11 @@
 body{
   margin:0;
   background: radial-gradient(circle at top,#18233f,#070b18);
-  color:#fff;
   font-family:"IBM Plex Sans Hebrew",sans-serif;
   overflow:hidden;
 }
 
-/* פרשה למעלה */
+/* כותרת עליונה */
 .header{
   position:fixed;
   top:0;
@@ -28,13 +27,15 @@ body{
   backdrop-filter:blur(10px);
   z-index:10;
 }
+
 .header h1{
   margin:0;
   font-size:20px;
   font-weight:600;
+  color:white;
 }
 
-/* אזור טקסט נע */
+/* אזור הטקסט הרץ */
 .marquee-wrap{
   position:absolute;
   top:90px;
@@ -59,12 +60,18 @@ body{
   border-radius:12px;
 }
 
+/* טקסט הפרשה */
 .parasha-text{
   font-family:"Frank Ruhl Libre",serif;
   font-size:22px;
   white-space:nowrap;
+  color:#000;
+  background:#ffffffcc;
+  padding:8px 16px;
+  border-radius:10px;
 }
 
+/* אנימציה */
 @keyframes scroll{
   from{transform:translateX(-100%);}
   to{transform:translateX(100%);}
@@ -80,38 +87,38 @@ body{
   padding:12px;
   border:1px solid rgba(255,255,255,.2);
   font-size:13px;
+  color:white;
 }
 
 .security h3{
   margin:0 0 6px;
   font-size:14px;
 }
-
-.security .status{
-  color:#9fef9f;
-}
 </style>
 </head>
 
 <body>
 
+<!-- כותרת -->
 <div class="header">
-  <h1 id="parashaTitle">פרשת השבוע • יום שבת כ״ד בשבט</h1>
+  <h1>פרשת השבוע</h1>
 </div>
 
+<!-- טקסט רץ -->
 <div class="marquee-wrap">
   <div class="marquee">
-    <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-    <div class="parasha-text" id="parashaText">
-      כאן יופיע טקסט הפרשה (טקסט לדוגמה עד חיבור API מלא)
+    <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
+    <div class="parasha-text">
+      וַיְדַבֵּר ה׳ אֶל־מֹשֶׁה לֵּאמֹר • זֹאת חֻקַּת הַתּוֹרָה אֲשֶׁר־צִוָּה ה׳ לֵאמֹר
     </div>
   </div>
 </div>
 
+<!-- פינת דיווחים -->
 <div class="security">
   <h3>פינת דיווחים ביטחוניים</h3>
   <div>ירושלים</div>
-  <div class="status">אין התרעות</div>
+  <div>אין התרעות</div>
 </div>
 
 </body>
