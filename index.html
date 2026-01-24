@@ -1,125 +1,366 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="utf-8">
-<title>פרשת השבוע</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>פרשת השבוע</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
-<style>
-body{
-  margin:0;
-  background: radial-gradient(circle at top,#18233f,#070b18);
-  font-family:"IBM Plex Sans Hebrew",sans-serif;
-  overflow:hidden;
-}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 
-/* כותרת עליונה */
-.header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  padding:14px;
-  text-align:center;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(10px);
-  z-index:10;
-}
+  <style>
+    :root{
+      --bg1:#18233f;
+      --bg2:#070b18;
+      --bar:rgba(180,180,180,.16);   /* "שורה אפורה" */
+      --barBorder:rgba(255,255,255,.14);
+      --text:#fff;
 
-.header h1{
-  margin:0;
-  font-size:20px;
-  font-weight:600;
-  color:white;
-}
+      /* טקסט הפרשה */
+      --parshaText:#000;
+      --parshaBg:rgba(255,255,255,.86);
+    }
 
-/* אזור הטקסט הרץ */
-.marquee-wrap{
-  position:absolute;
-  top:90px;
-  bottom:0;
-  left:0;
-  right:0;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  overflow:hidden;
-}
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(circle at top,var(--bg1),var(--bg2));
+      color:var(--text);
+      font-family:"IBM Plex Sans Hebrew",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      overflow:hidden;
+    }
 
-.marquee{
-  display:flex;
-  align-items:center;
-  gap:24px;
-  animation:scroll 40s linear infinite;
-}
+    /* שורה עליונה */
+    .header{
+      position:fixed; inset:0 0 auto 0;
+      padding:12px 14px;
+      background:var(--bar);
+      border-bottom:1px solid var(--barBorder);
+      backdrop-filter: blur(10px);
+      z-index:10;
+    }
+    .headerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .leftInfo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight:700;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.18);
+    }
+    .clock{
+      font-family:"Roboto Mono",monospace;
+      font-weight:700;
+      letter-spacing:.4px;
+    }
+    .meta{
+      opacity:.92;
+      font-weight:600;
+    }
 
-.marquee img{
-  width:120px;
-  border-radius:12px;
-}
+    /* אזור ריצה */
+    .marquee-wrap{
+      position:absolute;
+      top:76px; /* מתחת לכותרת */
+      left:0; right:0; bottom:0;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      overflow:hidden;
+      padding-inline:16px;
+      box-sizing:border-box;
+    }
 
-/* טקסט הפרשה */
-.parasha-text{
-  font-family:"Frank Ruhl Libre",serif;
-  font-size:22px;
-  white-space:nowrap;
-  color:#000;
-  background:#ffffffcc;
-  padding:8px 16px;
-  border-radius:10px;
-}
+    .marquee{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      white-space:nowrap;
+      animation: scroll 45s linear infinite;
+    }
 
-/* אנימציה */
-@keyframes scroll{
-  from{transform:translateX(-100%);}
-  to{transform:translateX(100%);}
-}
+    .marquee img{
+      width:110px;
+      height:110px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 12px 34px rgba(0,0,0,.45);
+      flex:0 0 auto;
+    }
 
-/* פינת דיווחים */
-.security{
-  position:fixed;
-  bottom:16px;
-  left:16px;
-  width:260px;
-  background:rgba(120,0,0,.85);
-  padding:12px;
-  border:1px solid rgba(255,255,255,.2);
-  font-size:13px;
-  color:white;
-}
+    .parasha-text{
+      font-family:"Frank Ruhl Libre","Times New Roman",serif;
+      font-size:22px;
+      line-height:1.4;
+      color:var(--parshaText);
+      background:var(--parshaBg);
+      padding:10px 16px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.12);
+      box-shadow:0 12px 34px rgba(0,0,0,.25);
+    }
 
-.security h3{
-  margin:0 0 6px;
-  font-size:14px;
-}
-</style>
+    @keyframes scroll{
+      from{transform:translateX(-110%);}
+      to{transform:translateX(110%);}
+    }
+
+    /* פינת דיווחים (נשארת פשוטה אצלך כרגע) */
+    .security{
+      position:fixed;
+      bottom:16px;
+      left:16px;
+      width:260px;
+      background:rgba(120,0,0,.85);
+      padding:12px;
+      border:1px solid rgba(255,255,255,.2);
+      color:#fff;
+      font-size:13px;
+      z-index:12;
+    }
+    .security h3{margin:0 0 6px;font-size:14px}
+
+    /* מצב צמצום תנועה */
+    @media (prefers-reduced-motion: reduce){
+      .marquee{animation:none}
+      body{overflow:auto}
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- כותרת -->
-<div class="header">
-  <h1>פרשת השבוע</h1>
-</div>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="headerRow">
+      <div class="leftInfo">
+        <span class="badge" id="greeting">טוען…</span>
+        <span class="badge clock" id="clock">--:--:--</span>
+        <span class="badge meta" id="dates">טוען תאריך…</span>
+      </div>
 
-<!-- טקסט רץ -->
-<div class="marquee-wrap">
-  <div class="marquee">
-    <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
-    <div class="parasha-text">
-      וַיְדַבֵּר ה׳ אֶל־מֹשֶׁה לֵּאמֹר • זֹאת חֻקַּת הַתּוֹרָה אֲשֶׁר־צִוָּה ה׳ לֵאמֹר
+      <div class="badge meta">
+        פרשת השבוע: <span id="parashaName">טוען…</span>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- פינת דיווחים -->
-<div class="security">
-  <h3>פינת דיווחים ביטחוניים</h3>
-  <div>ירושלים</div>
-  <div>אין התרעות</div>
-</div>
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee" id="marquee">
+      <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
+      <div class="parasha-text" id="parashaText">טוען את טקסט הפרשה…</div>
+    </div>
+  </div>
 
+  <!-- Security corner (דמו) -->
+  <div class="security">
+    <h3>פינת דיווחים ביטחוניים</h3>
+    <div>ירושלים</div>
+    <div>אין התרעות</div>
+  </div>
+
+  <script>
+    /* ============================
+       הגדרות
+       ============================ */
+    const TZ = "Asia/Jerusalem";
+    const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
+
+    const els = {
+      greeting: document.getElementById("greeting"),
+      clock: document.getElementById("clock"),
+      dates: document.getElementById("dates"),
+      parashaName: document.getElementById("parashaName"),
+      parashaText: document.getElementById("parashaText"),
+    };
+
+    /* ============================
+       JSONP (לעקוף CORS מול Sefaria ב-GitHub Pages)
+       ============================ */
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const sep = url.includes("?") ? "&" : "?";
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("JSONP timeout"));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+          script.remove();
+        }
+
+        window[cb] = (data) => { cleanup(); resolve(data); };
+        script.src = url + sep + "callback=" + cb;
+        script.onerror = () => { cleanup(); reject(new Error("JSONP load error")); };
+
+        document.body.appendChild(script);
+      });
+    }
+
+    /* ============================
+       פורמטים זמן/תאריך
+       ============================ */
+    function nowJerusalemDate() {
+      // "תאריך" לפי ירושלים (מבטיח תצוגה נכונה גם אם המשתמש לא בישראל)
+      // נשתמש ב-Intl כדי להציג, ואת ה-logic נבסס על זמני שבת שמגיעים מ-Hebcal.
+      return new Date();
+    }
+
+    function formatClock() {
+      return new Intl.DateTimeFormat("he-IL", {
+        timeZone: TZ,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(new Date());
+    }
+
+    function formatGregorianToday() {
+      return new Intl.DateTimeFormat("he-IL", {
+        timeZone: TZ,
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    }
+
+    function formatHebrewToday() {
+      try{
+        return new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+          timeZone: TZ,
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        }).format(new Date());
+      } catch(e){
+        return ""; // דפדפן נדיר שלא תומך
+      }
+    }
+
+    function setDatesLine(){
+      const he = formatHebrewToday();
+      const gr = formatGregorianToday();
+      els.dates.textContent = (he ? `${he} • ${gr}` : gr);
+    }
+
+    /* ============================
+       Hebcal: פרשה + כניסת שבת/הבדלה בירושלים
+       ============================ */
+    function hebcalShabbatUrl(){
+      const url = new URL("https://www.hebcal.com/shabbat");
+      url.searchParams.set("cfg", "json");
+      url.searchParams.set("geo", GEO.geo);
+      url.searchParams.set("geonameid", String(GEO.geonameid));
+      url.searchParams.set("M", "on");
+      url.searchParams.set("b", "18");
+      url.searchParams.set("hdp", "1");
+      return url.toString();
+    }
+
+    function parseIso(d){
+      const x = new Date(d);
+      return Number.isNaN(x.getTime()) ? null : x;
+    }
+
+    function extractHebcal(items, category){
+      return (items || []).find(it => it && it.category === category) || null;
+    }
+
+    async function loadParashaAndGreeting(){
+      try{
+        const res = await fetch(hebcalShabbatUrl(), { cache: "no-store" });
+        if(!res.ok) throw new Error("Hebcal HTTP " + res.status);
+        const data = await res.json();
+        const items = Array.isArray(data?.items) ? data.items : [];
+
+        const parshaItem = extractHebcal(items, "parashat");
+        const candlesItem = extractHebcal(items, "candles");
+        const havdalahItem = extractHebcal(items, "havdalah");
+
+        // שם הפרשה
+        const parashaHe = parshaItem?.hebrew
+          ? String(parshaItem.hebrew).replace(/^פרשת\s*/i,"").trim()
+          : "—";
+        els.parashaName.textContent = parashaHe;
+
+        // שבת שלום / שבוע טוב לפי טווח [candles, havdalah] בירושלים
+        const now = new Date();
+        const candles = candlesItem?.date ? parseIso(candlesItem.date) : null;
+        const havdalah = havdalahItem?.date ? parseIso(havdalahItem.date) : null;
+
+        const inShabbat = candles && havdalah ? (now >= candles && now <= havdalah) : false;
+        els.greeting.textContent = inShabbat ? "שבת שלום" : "שבוע טוב";
+
+        // טווח קריאה להבאת טקסט הפרשה
+        const torahRef = parshaItem?.leyning?.torah; // למשל "Exodus 1:1-6:1"
+        if(!torahRef){
+          els.parashaText.textContent = "טקסט הפרשה לא זמין כרגע.";
+          return;
+        }
+
+        // Sefaria texts דרך JSONP
+        const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(torahRef) + "?lang=he&context=0";
+        const textJson = await jsonp(sefUrl);
+
+        const he = textJson?.he;
+        let text = "";
+        if(Array.isArray(he)) text = he.filter(Boolean).join(" ");
+        else if(typeof he === "string") text = he;
+
+        if(!text){
+          els.parashaText.textContent = "הטקסט חזר ריק כרגע. נסי לרענן.";
+          return;
+        }
+
+        // ניקוי בסיסי (שומר עברית)
+        els.parashaText.textContent = text;
+
+      } catch(e){
+        console.error(e);
+        els.parashaName.textContent = "—";
+        els.greeting.textContent = "שבוע טוב";
+        els.parashaText.textContent = "לא הצלחתי לטעון את הפרשה כרגע (אינטרנט/חסימה).";
+      }
+    }
+
+    /* ============================
+       שעון חי + תאריכים
+       ============================ */
+    function tickUI(){
+      els.clock.textContent = formatClock();
+      setDatesLine();
+    }
+
+    // Start
+    tickUI();
+    setInterval(tickUI, 1000);
+
+    loadParashaAndGreeting();
+    // רענון פרשה/שבת אחת ל-6 שעות (או אם נשאר פתוח הרבה זמן)
+    setInterval(loadParashaAndGreeting, 6 * 60 * 60 * 1000);
+  </script>
 </body>
 </html>
