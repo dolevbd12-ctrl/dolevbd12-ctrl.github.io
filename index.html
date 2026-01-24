@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>פרשת השבוע</title>
 
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -20,7 +22,8 @@
       --parashaText:#000;
       --parashaBg:rgba(255,255,255,.88);
 
-      --marqueeSpeed: 18s; /* ⬅️ מהירות הריצה (קטן = מהר) */
+      /* מהירות ריצה "כמו בהתחלה" (לא מהר) */
+      --marqueeSpeed: 34s; /* קטן=מהיר, גדול=איטי */
     }
 
     html,body{margin:0;height:100%}
@@ -38,7 +41,7 @@
       background:var(--bar);
       border-bottom:1px solid var(--barBorder);
       backdrop-filter:blur(10px);
-      z-index:10;
+      z-index:30;
     }
     .headerRow{
       display:flex;
@@ -59,7 +62,7 @@
     .clock{font-family:"Roboto Mono",monospace}
     .muted{opacity:.92}
 
-    /* MARQUEE (רציף בלי "זמן ריק") */
+    /* MARQUEE (רציף בלי זמן ריק) */
     .marquee-wrap{
       position:absolute;
       top:78px; left:0; right:0; bottom:0;
@@ -68,15 +71,16 @@
       overflow:hidden;
       padding-inline:16px;
       box-sizing:border-box;
+      z-index:10;
     }
     .marquee-track{
       display:flex;
       width:max-content;
       will-change:transform;
-      animation:none;
+      animation:none; /* נדלק אחרי שיש תוכן */
     }
     .marquee-track.running{
-      animation:scroll var(--marqueeSpeed) linear infinite; /* ⬅️ מהירות */
+      animation:scroll var(--marqueeSpeed) linear infinite;
     }
     .marquee-content{
       display:flex;
@@ -84,7 +88,7 @@
       gap:18px;
       white-space:nowrap;
     }
-    .marquee-gap{width:60px}
+    .marquee-gap{width:80px}
 
     .marquee-content img{
       width:110px;height:110px;
@@ -105,6 +109,9 @@
       border-radius:10px;
       border:1px solid rgba(0,0,0,.12);
       box-shadow:0 12px 34px rgba(0,0,0,.25);
+      max-width: min(1200px, 92vw);
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     @keyframes scroll{
@@ -122,12 +129,72 @@
       padding:12px;
       border:1px solid rgba(255,255,255,.2);
       font-size:13px;
-      z-index:12;
+      z-index:25;
     }
     .security strong{display:block;margin-bottom:6px}
 
+    /* כפתור ענק באמצע */
+    .doom-wrap{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:20; /* מתחת ל-Header, מעל הריצה */
+      pointer-events:none;
+    }
+    .doom-btn{
+      pointer-events:auto;
+      font-family:"IBM Plex Sans Hebrew",sans-serif;
+      font-size:clamp(28px,6vw,72px);
+      font-weight:900;
+      padding:26px 44px;
+      color:#fff;
+      background:radial-gradient(circle at center,#b00000,#4a0000);
+      border:4px solid #ff2a2a;
+      box-shadow:
+        0 0 0 6px rgba(255,0,0,.12),
+        0 0 70px rgba(255,0,0,.65),
+        inset 0 0 30px rgba(0,0,0,.65);
+      cursor:pointer;
+      letter-spacing:2px;
+      border-radius:14px;
+      animation:pulse 1.6s infinite;
+      user-select:none;
+    }
+    @keyframes pulse{
+      0%{ transform:scale(1); }
+      50%{ transform:scale(1.06); }
+      100%{ transform:scale(1); }
+    }
+
+    .doom-btn.triggered{
+      animation:shake .14s infinite;
+      background:#000;
+      border-color:#fff;
+      box-shadow:0 0 120px rgba(255,0,0,.9), inset 0 0 40px rgba(255,255,255,.08);
+    }
+    @keyframes shake{
+      0%{transform:translate(0,0)}
+      25%{transform:translate(-6px,4px)}
+      50%{transform:translate(6px,-4px)}
+      75%{transform:translate(-4px,-6px)}
+      100%{transform:translate(0,0)}
+    }
+
+    /* פלאש אדום על כל המסך בלחיצה */
+    .flash{
+      position:fixed;
+      inset:0;
+      background:rgba(180,0,0,.0);
+      z-index:40;
+      pointer-events:none;
+      transition:background .08s linear;
+    }
+
     @media (prefers-reduced-motion: reduce){
       .marquee-track.running{animation:none}
+      .doom-btn{animation:none}
       body{overflow:auto}
     }
   </style>
@@ -135,12 +202,14 @@
 
 <body>
 
+  <!-- פלאש -->
+  <div class="flash" id="flash"></div>
+
   <!-- HEADER -->
   <div class="header">
     <div class="headerRow">
       <span class="badge" id="greeting">טוען…</span>
 
-      <!-- ⬅️ פרשת השבוע לפני כל השעונים -->
       <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
 
       <span class="badge clock" id="clock">--:--:--</span>
@@ -149,6 +218,11 @@
 
       <span class="badge clock" id="sinceOct7">מאז 07.10.2023: —</span>
     </div>
+  </div>
+
+  <!-- כפתור ענק באמצע -->
+  <div class="doom-wrap">
+    <button class="doom-btn" id="doomBtn">❌ לא ללחוץ ❌</button>
   </div>
 
   <!-- MARQUEE -->
@@ -166,7 +240,7 @@
     </div>
   </div>
 
-  <!-- פינת דיווחים (כרגע דמו) -->
+  <!-- פינת דיווחים (דמו) -->
   <div class="security">
     <strong>פינת דיווחים ביטחוניים</strong>
     ירושלים<br>
@@ -187,8 +261,11 @@
       track: document.getElementById("marqueeTrack"),
       content: document.getElementById("marqueeContent"),
       clone: document.getElementById("marqueeClone"),
+      doomBtn: document.getElementById("doomBtn"),
+      flash: document.getElementById("flash"),
     };
 
+    /* JSONP (לעקוף CORS מול Sefaria ב-GitHub Pages) */
     function jsonp(url){
       return new Promise((resolve, reject) => {
         const cb = "cb_" + Math.random().toString(36).slice(2);
@@ -209,6 +286,7 @@
       });
     }
 
+    /* שעון + תאריך עברי/לועזי */
     function tickClockAndDates(){
       el.clock.textContent = new Intl.DateTimeFormat("he-IL", {
         timeZone: TZ, hour:"2-digit", minute:"2-digit", second:"2-digit"
@@ -228,6 +306,7 @@
       el.dates.textContent = he ? (he + " • " + gr) : gr;
     }
 
+    /* טיימר מאז 07.10.2023 */
     const startDate = new Date("2023-10-07T00:00:00+03:00");
     function updateSinceOct7(){
       const now = new Date();
@@ -243,13 +322,15 @@
       el.since.textContent = `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
     }
 
+    /* ריצה רציפה בלי IDs כפולים */
     function refreshSeamlessMarquee(){
       let html = el.content.innerHTML;
-      html = html.replace(/\sid="[^"]*"/g, "");
+      html = html.replace(/\sid="[^"]*"/g, ""); // להימנע מ-IDs כפולים
       el.clone.innerHTML = html;
       el.track.classList.add("running");
     }
 
+    /* Hebcal: פרשה + שבת שלום/שבוע טוב */
     function hebcalUrl(){
       const u = new URL("https://www.hebcal.com/shabbat");
       u.searchParams.set("cfg","json");
@@ -304,6 +385,24 @@
       }
     }
 
+    /* כפתור "לא ללחוץ" → אנימציה ואז מעבר לרשות המיסים */
+    el.doomBtn.addEventListener("click", () => {
+      el.doomBtn.classList.add("triggered");
+      el.doomBtn.textContent = "טעית.";
+
+      let flashes = 0;
+      const iv = setInterval(() => {
+        el.flash.style.background = (flashes % 2 === 0) ? "rgba(180,0,0,.55)" : "rgba(0,0,0,.0)";
+        flashes++;
+        if (flashes > 10) {
+          clearInterval(iv);
+          // מעבר לרשות המיסים (gov.il)
+          window.location.href = "https://www.gov.il/he/departments/taxes";
+        }
+      }, 90);
+    });
+
+    /* הפעלה */
     tickClockAndDates();
     updateSinceOct7();
     setInterval(tickClockAndDates, 1000);
