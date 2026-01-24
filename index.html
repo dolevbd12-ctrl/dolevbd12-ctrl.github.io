@@ -11,25 +11,31 @@
   <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
   <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
+  <!-- פונט תנכ"י (חינמי מגוגל פונטס) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
     html, body { height: 100%; margin: 0; }
 
     body{
       background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
-      font-family: Arial, sans-serif;
+      font-family: "Frank Ruhl Libre", "SBL Hebrew", David, "Times New Roman", serif;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 24px;
       color: #fff;
+      overflow: hidden; /* כדי שהאנימציה תראה חלק */
     }
 
     /* הלוגו למעלה */
     .logo{
       position: fixed;
       top: 18px;
-      left: 18px; /* אם תרצי בצד ימין: החליפי ל right:18px; ומחקי left */
+      left: 18px; /* אם תרצה בצד ימין: החלף ל right:18px; ומחק left */
       width: 90px;
       height: 90px;
       object-fit: cover;
@@ -38,24 +44,89 @@
       border: 1px solid rgba(255,255,255,0.15);
       padding: 6px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      z-index: 10;
     }
 
+    /* אזור "במה" כדי לאפשר ירידה מלמעלה למטה */
+    .stage{
+      position: relative;
+      width: min(920px, 94vw);
+      height: min(72vh, 560px);
+      display: block;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    /* הכרטיס שיורד */
     .card{
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -180px; /* מתחיל מחוץ למסך למעלה */
+
+      width: min(860px, 88vw);
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
       padding: 22px 26px;
-      max-width: 900px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+
+      /* אנימציה נעימה */
+      animation: dropDown 14s ease-in-out infinite;
+      will-change: top, opacity;
     }
 
-    h1{
+    .label{
+      font-size: 14px;
+      color: rgba(255,255,255,0.70);
+      margin: 0 0 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .parsha{
       margin: 0;
       color: #1e90ff; /* כחול */
       font-size: clamp(34px, 6vw, 80px);
       font-weight: 900;
       line-height: 1.2;
       text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    .dateLine{
+      margin-top: 12px;
+      font-size: 16px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .status{
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      right: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 80, 80, 0.22);
+      color: rgba(255,255,255,0.90);
+      font-family: Arial, sans-serif;
+      display: none;
+    }
+
+    /* ירידה מלמעלה למטה, ואז חזרה למעלה */
+    @keyframes dropDown{
+      0%   { top: -180px; opacity: 0; }
+      12%  { top: 26px;   opacity: 1; }
+      60%  { top: calc(100% - 210px); opacity: 1; }
+      78%  { top: calc(100% - 185px); opacity: 0.18; }
+      100% { top: -180px; opacity: 0; }
+    }
+
+    /* נגישות: אם המשתמש מבטל אנימציות במערכת */
+    @media (prefers-reduced-motion: reduce){
+      .card{ animation: none; top: 26px; opacity: 1; }
     }
   </style>
 </head>
@@ -66,9 +137,113 @@
        src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
        alt="לוגו" />
 
-  <!-- הכיתוב בדף נחיתה -->
-  <div class="card">
-    <h1>בקרוב...😈</h1>
-  </div>
+  <!-- במה לאנימציה -->
+  <main class="stage" aria-live="polite">
+    <div id="card" class="card">
+      <p class="label">פרשת השבוע</p>
+
+      <!-- כאן נטען שם הפרשה -->
+      <h1 id="parshaName" class="parsha">טוען…</h1>
+
+      <!-- תאריך (לועזי בעברית) -->
+      <div id="parshaDate" class="dateLine"></div>
+    </div>
+
+    <!-- הודעת שגיאה (אם אין אינטרנט/בעיה ב-API) -->
+    <div id="status" class="status"></div>
+  </main>
+
+  <script>
+    /**
+     * פרשת השבוע אוטומטית לפי לוח שנה יהודי (Hebcal).
+     * - שולפים JSON מהשירות
+     * - מחפשים item עם category="parashat"
+     * - מציגים בעברית אם קיים שדה hebrew
+     */
+
+    const parshaNameEl = document.getElementById("parshaName");
+    const parshaDateEl = document.getElementById("parshaDate");
+    const statusEl = document.getElementById("status");
+    const cardEl = document.getElementById("card");
+
+    // מיקום ברירת מחדל: ירושלים (לא חובה, אבל תקין ל-API)
+    const GEO = { geo: "geoname", geonameid: 281184 };
+
+    function showError(msg){
+      statusEl.textContent = msg;
+      statusEl.style.display = "block";
+    }
+
+    function clearError(){
+      statusEl.textContent = "";
+      statusEl.style.display = "none";
+    }
+
+    // מאתחל את אנימציית הירידה מחדש (כדי שיהיה "רענון" נעים)
+    function restartAnimation(){
+      cardEl.style.animation = "none";
+      void cardEl.offsetHeight; // force reflow
+      cardEl.style.animation = "";
+    }
+
+    function buildUrl(){
+      const url = new URL("https://www.hebcal.com/shabbat/");
+      url.searchParams.set("cfg", "json");
+      url.searchParams.set("geo", GEO.geo);
+      url.searchParams.set("geonameid", String(GEO.geonameid));
+      return url.toString();
+    }
+
+    function extractParsha(data){
+      const items = Array.isArray(data?.items) ? data.items : [];
+      const parshaItem = items.find(it => it?.category === "parashat");
+
+      const heb = parshaItem?.hebrew || null;
+      const title = parshaItem?.title || null; // לפעמים באנגלית
+      const name = heb || title || null;
+
+      const dateIso = parshaItem?.date || null;
+      return { name, dateIso };
+    }
+
+    function formatDateHe(dateIso){
+      if(!dateIso) return "";
+      const d = new Date(dateIso);
+      if(Number.isNaN(d.getTime())) return "";
+      return new Intl.DateTimeFormat("he-IL", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      }).format(d);
+    }
+
+    async function loadParsha(){
+      clearError();
+      parshaNameEl.textContent = "טוען…";
+      parshaDateEl.textContent = "";
+
+      try{
+        const res = await fetch(buildUrl(), { cache: "no-store" });
+        if(!res.ok) throw new Error("HTTP " + res.status);
+
+        const data = await res.json();
+        const { name, dateIso } = extractParsha(data);
+
+        if(!name) throw new Error("No parsha found");
+
+        // אם title באנגלית בסגנון "Parashat Noach" — ננקה את המילה Parashat
+        parshaNameEl.textContent = String(name).replace(/^Parashat\s+/i, "");
+
+        parshaDateEl.textContent = formatDateHe(dateIso);
+
+        restartAnimation();
+      }catch(e){
+        console.error(e);
+        showError("לא הצלחתי לטעון את פרשת השבוע. בדוק אינטרנט/נסה לרענן את הדף.");
+      }
+    }
+
+    // טוענים בהתחלה + רענון כל 6 שעות (כדי להתעדכן בלי ידני)
+    loadParsha();
+    setInterval(loadParsha, 6 * 60 * 60 * 1000);
+  </script>
 </body>
 </html>
