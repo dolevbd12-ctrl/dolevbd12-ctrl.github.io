@@ -3,812 +3,354 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>מערכת מבצעית | לוח בקרה</title>
+  <title>ווידג'ט דיווחים</title>
 
-  <!-- Fonts: Modern UI + Tanach-like for kodesh text -->
+  <!-- Modern UI font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Security palette */
-      --bg0:#05070b;
-      --bg1:#070a12;
-      --panel:#0c111b;
-      --panel2:#0b0f18;
-      --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
+      --bg: rgba(10,12,16,.78);
+      --panel: rgba(255,255,255,.05);
+      --stroke: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
 
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.62);
+      /* deep red only for important alerts */
+      --red: #7a0f18;
+      --red2:#b51a26;
 
-      /* deep red accents ONLY for important */
-      --red:#7a0f18;       /* deep red */
-      --red2:#b51a26;      /* brighter red for tiny highlights */
-      --ok:#3aa76d;        /* used subtly */
-      --warn:#d4b34a;      /* subtle amber */
+      --ok: #2f9b68;
+      --warn:#c9a84a;
 
-      --shadow: 0 18px 55px rgba(0,0,0,.45);
-      --shadow2: 0 10px 28px rgba(0,0,0,.40);
-      --radius: 18px;
+      --shadow: 0 14px 38px rgba(0,0,0,.45);
+      --radius: 14px;
 
-      --ui-font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      --kodesh-font: "Frank Ruhl Libre","SBL Hebrew",David,"Times New Roman",serif;
+      --font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{height:100%; margin:0;}
     body{
-      margin:0;
-      font-family: var(--ui-font);
+      background: radial-gradient(900px 600px at 70% 10%, rgba(122,15,24,.16), transparent 60%),
+                  radial-gradient(900px 600px at 15% 85%, rgba(255,255,255,.05), transparent 55%),
+                  #070a12;
+      font-family: var(--font);
       color: var(--text);
-      background:
-        radial-gradient(1200px 800px at 70% 10%, rgba(122,15,24,.22), transparent 60%),
-        radial-gradient(900px 600px at 20% 85%, rgba(255,255,255,.06), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg0));
-      overflow-x:hidden;
     }
 
-    /* Layout */
-    .wrap{
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 18px 16px 40px;
-    }
-
-    /* Top bar */
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding: 14px 14px;
-      border: 1px solid var(--stroke);
+    /* ===== Small top-left widget ===== */
+    .secWidget{
+      position: fixed;
+      top: 14px;
+      left: 14px;                 /* TOP-LEFT */
+      width: 320px;
+      max-width: calc(100vw - 28px);
       border-radius: var(--radius);
-      background: rgba(12,17,27,.68);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow2);
-      position: sticky;
-      top: 12px;
-      z-index: 10;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 0;
-    }
-
-    .sigil{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      border: 1px solid var(--stroke2);
-      display:grid;
-      place-items:center;
-      box-shadow: 0 10px 22px rgba(0,0,0,.35);
-    }
-
-    .sigil svg{opacity:.9}
-
-    .brand h1{
-      font-size: 15px;
-      margin:0;
-      font-weight: 700;
-      letter-spacing: .2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .subline{
-      margin: 2px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .right{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.05);
+      background: var(--bg);
       border: 1px solid var(--stroke);
-      color: var(--muted);
-      font-size: 12px;
-      user-select:none;
-    }
-
-    .dot{
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--ok);
-      box-shadow: 0 0 0 0 rgba(58,167,109,.0);
-    }
-
-    /* Action buttons */
-    .btn{
-      appearance:none;
-      border: 1px solid var(--stroke2);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 12px;
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
-    .btn:active{ transform: translateY(0px); opacity: .9; }
-    .btn-red{
-      border-color: rgba(181,26,38,.45);
-      background: rgba(122,15,24,.22);
-    }
-    .btn-red:hover{ background: rgba(122,15,24,.30); }
-
-    /* Grid */
-    .grid{
-      margin-top: 16px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 14px;
-    }
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
-      .topbar{ position: static; }
-    }
-
-    /* Cards */
-    .card{
-      border-radius: var(--radius);
-      border: 1px solid var(--stroke);
-      background: rgba(12,17,27,.55);
-      backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
-      overflow:hidden;
-      transform: translateY(6px);
-      opacity: 0;
-      animation: fadeUp .35s ease forwards;
-    }
-    .card:nth-child(2){ animation-delay: .06s; }
-    .card:nth-child(3){ animation-delay: .12s; }
-    .card:nth-child(4){ animation-delay: .18s; }
-
-    @keyframes fadeUp{
-      to { transform: translateY(0); opacity: 1; }
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      z-index: 9999;
     }
 
-    .cardHeader{
-      padding: 14px 14px 10px;
+    .secHeader{
+      padding: 10px 12px;
       display:flex;
       align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
     }
-    .cardTitle{
+
+    .secTitle{
       margin:0;
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-    .cardMeta{
-      margin: 4px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .cardBody{ padding: 14px; }
-
-    /* Status panel (No alert vs Active alert) */
-    .statusBoard{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-
-    .statusHero{
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding: 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      overflow:hidden;
-      position: relative;
-    }
-
-    .statusHero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(600px 220px at 10% 30%, rgba(255,255,255,.06), transparent 65%);
-      pointer-events:none;
-      opacity:.9;
-    }
-
-    .statusLeft{
-      position: relative;
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .bigState{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size: 15px;
       font-weight: 800;
       letter-spacing: .2px;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
+      line-height: 1.1;
+    }
+
+    .secMeta{
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
     }
 
     .badge{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding: 6px 10px;
+      gap: 6px;
+      padding: 4px 8px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      background: rgba(255,255,255,.04);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       white-space: nowrap;
     }
 
-    .badge .miniDot{
-      width: 8px; height: 8px; border-radius: 50%;
+    .dot{
+      width: 7px; height: 7px; border-radius: 50%;
       background: var(--ok);
-      box-shadow: 0 0 0 0 rgba(58,167,109,.0);
     }
 
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,.65);
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 10px;
-      padding: 6px 8px;
-      white-space: nowrap;
-    }
-
-    .statusInfo{
-      position: relative;
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-      align-items:center;
-    }
-
-    /* Active alert visual mode */
-    .active .badge{
+    .badge.alert{
       border-color: rgba(181,26,38,.35);
-      background: rgba(122,15,24,.22);
+      background: rgba(122,15,24,.18);
       color: rgba(255,255,255,.88);
     }
-    .active .badge .miniDot{
+    .badge.alert .dot{
       background: var(--red2);
-      box-shadow: 0 0 0 0 rgba(181,26,38,.0);
       animation: pulse 1.7s ease-in-out infinite;
-    }
-    .active .statusHero{
-      border-color: rgba(181,26,38,.22);
-      background: linear-gradient(180deg, rgba(122,15,24,.22), rgba(0,0,0,.18));
-    }
-    .active .statusHero::before{
-      background: radial-gradient(650px 240px at 15% 35%, rgba(181,26,38,.20), transparent 65%);
     }
 
     @keyframes pulse{
       0%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
-      55%{ box-shadow: 0 0 0 9px rgba(181,26,38,.14); }
+      55%{ box-shadow: 0 0 0 9px rgba(181,26,38,.12); }
       100%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
     }
 
-    /* Lists */
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-    .row{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.09);
+    .secBody{ padding: 10px 12px 12px; }
+
+    .report{
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
-    }
-    .rowLeft{
-      min-width: 0;
-    }
-    .rowTitle{
-      margin:0;
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(255,255,255,.90);
-    }
-    .rowSub{
-      margin: 6px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-    .tag{
-      flex: 0 0 auto;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .2px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.78);
-      white-space: nowrap;
-    }
-    .tag.red{
-      border-color: rgba(181,26,38,.35);
-      background: rgba(122,15,24,.22);
-      color: rgba(255,255,255,.92);
-    }
-
-    /* Kodesh text card */
-    .kodesh{
-      font-family: var(--kodesh-font);
-      font-size: 18px;
-      line-height: 1.9;
-      color: rgba(255,255,255,.92);
-    }
-    .kodeshSmall{
-      font-family: var(--ui-font);
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 10px;
-    }
-
-    /* Footer */
-    .footer{
-      margin-top: 14px;
+      padding: 10px 10px;
       display:flex;
-      justify-content:space-between;
       gap: 10px;
-      flex-wrap: wrap;
-      color: rgba(255,255,255,.55);
-      font-size: 12px;
-      padding: 0 2px;
+      align-items:flex-start;
     }
 
-    /* Subtle animation respect */
+    .sevBar{
+      width: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+      flex: 0 0 auto;
+      align-self: stretch;
+    }
+    .sevBar.critical{ background: linear-gradient(180deg, var(--red2), var(--red)); }
+    .sevBar.warn{ background: linear-gradient(180deg, rgba(201,168,74,.95), rgba(201,168,74,.35)); }
+    .sevBar.ok{ background: linear-gradient(180deg, rgba(47,155,104,.95), rgba(47,155,104,.35)); }
+
+    .reportMain{ min-width: 0; }
+    .reportTitle{
+      margin:0;
+      font-size: 12.5px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: rgba(255,255,255,.92);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .reportText{
+      margin: 6px 0 0;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .reportFoot{
+      margin-top: 8px;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,.55);
+    }
+
+    .miniBtn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.86);
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, opacity .12s ease;
+    }
+    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+    .miniBtn:active{ transform: translateY(0); opacity:.9; }
+
+    /* Update animation: subtle fade + highlight */
+    .updated{
+      animation: fadeIn .28s ease, softGlow 1.2s ease;
+    }
+    @keyframes fadeIn{
+      from{ opacity: .65; transform: translateY(2px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    @keyframes softGlow{
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
+      35%  { box-shadow: 0 0 0 8px rgba(255,255,255,.04); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
+    }
+
+    /* Compact on very small screens */
+    @media (max-width: 380px){
+      .secWidget{ width: 290px; }
+    }
+
+    /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce){
-      .card{ animation:none; opacity:1; transform:none; }
-      .active .badge .miniDot{ animation:none; }
-      .btn{ transition:none; }
+      .badge.alert .dot{ animation: none; }
+      .updated{ animation: none; }
+      .miniBtn{ transition:none; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="brand">
-        <div class="sigil" aria-hidden="true">
-          <!-- minimal shield icon -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z"
-              stroke="rgba(255,255,255,.75)" stroke-width="1.6" />
-          </svg>
-        </div>
-        <div style="min-width:0">
-          <h1>לוח בקרה מבצעי</h1>
-          <div class="subline" id="subline">סטטוס מערכת • ניטור התרעות • תיעוד עדכונים</div>
+  <!-- Widget -->
+  <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
+    <div class="secHeader">
+      <div>
+        <h2 class="secTitle">פינת דיווחים ביטחוניים</h2>
+        <div class="secMeta">
+          <span class="badge" id="statusBadge">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusText">אין התרעות</span>
+          </span>
+          <span class="badge">
+            עודכן: <span id="updatedAt">—</span>
+          </span>
         </div>
       </div>
+      <button class="miniBtn" id="btnRefresh" type="button" title="רענון">רענן</button>
+    </div>
 
-      <div class="right">
-        <div class="pill" title="מצב קישוריות">
-          <span class="dot" id="netDot"></span>
-          <span id="netLabel">מקוון</span>
+    <div class="secBody">
+      <div class="report" id="reportCard">
+        <span class="sevBar ok" id="sevBar"></span>
+
+        <div class="reportMain">
+          <p class="reportTitle" id="reportTitle">שגרה תקינה</p>
+          <p class="reportText" id="reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
+
+          <div class="reportFoot">
+            <span id="reportTime">—</span>
+            <button class="miniBtn" id="btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
+          </div>
         </div>
-
-        <div class="pill" title="עדכון אחרון">
-          <span>עודכן:</span>
-          <span id="lastUpdated">—</span>
-        </div>
-
-        <button class="btn" id="btnRefresh" type="button">רענון</button>
-        <button class="btn btn-red" id="btnToggle" type="button">הדמיית התרעה</button>
       </div>
     </div>
-
-    <!-- GRID -->
-    <div class="grid">
-      <!-- LEFT COLUMN -->
-      <section class="card" id="cardStatus">
-        <div class="cardHeader">
-          <div>
-            <p class="cardTitle">סטטוס תפעולי</p>
-            <p class="cardMeta">תצוגה תמציתית עם הדגשה רק בעת חריגה</p>
-          </div>
-          <div class="kbd">CTRL • OPS</div>
-        </div>
-
-        <div class="cardBody">
-          <div class="statusBoard" id="statusBoard">
-            <!-- HERO -->
-            <div class="statusHero" id="statusHero">
-              <div class="statusLeft">
-                <div class="bigState" id="stateTitle">
-                  <span class="badge" id="stateBadge">
-                    <span class="miniDot" id="stateDot"></span>
-                    <span id="stateText">אין התרעות</span>
-                  </span>
-                  <span id="stateHeadline">שגרה מבצעית תקינה</span>
-                </div>
-                <div class="cardMeta" id="stateDetail">
-                  ניטור פעיל. לא נדרשת פעולה.
-                </div>
-              </div>
-
-              <div class="statusInfo">
-                <div class="kbd" id="statusClock">—</div>
-                <div class="kbd" id="statusZone">Asia/Jerusalem</div>
-              </div>
-            </div>
-
-            <!-- Quick indicators -->
-            <div class="list">
-              <div class="row">
-                <div class="rowLeft">
-                  <p class="rowTitle">רמת כוננות</p>
-                  <p class="rowSub" id="readinessText">נמוכה • מעקב שגרתי</p>
-                </div>
-                <span class="tag" id="readinessTag">GREEN</span>
-              </div>
-
-              <div class="row">
-                <div class="rowLeft">
-                  <p class="rowTitle">אימות מקורות</p>
-                  <p class="rowSub" id="sourcesText">כל הערוצים תקינים • ללא חריגות</p>
-                </div>
-                <span class="tag" id="sourcesTag">OK</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="footer">
-            <span>זמן מערכת מוצג מקומית</span>
-            <span id="footHint">אנימציות מאופקות • ניגודיות גבוהה</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT COLUMN -->
-      <section class="card">
-        <div class="cardHeader">
-          <div>
-            <p class="cardTitle">התרעות אחרונות</p>
-            <p class="cardMeta">רשימת אירועים • תיוג ברור • ללא עומס חזותי</p>
-          </div>
-          <div class="kbd">LOG</div>
-        </div>
-
-        <div class="cardBody">
-          <div class="list" id="alertsList"></div>
-          <div class="footer">
-            <span id="alertsFoot">אין אירועים חריגים להצגה</span>
-            <span>תיעוד מקומי</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- LEFT COLUMN, SECOND ROW -->
-      <section class="card">
-        <div class="cardHeader">
-          <div>
-            <p class="cardTitle">תוכן קודש</p>
-            <p class="cardMeta">פונט תנכ״י • קריאות גבוהה • תצוגה נקייה</p>
-          </div>
-          <div class="kbd">TEXT</div>
-        </div>
-
-        <div class="cardBody">
-          <div class="kodesh" id="kodeshBlock">
-            <strong>פרשת השבוע:</strong> <span id="parshaName">—</span><br/>
-            <span id="parshaLine">טוען נתונים…</span>
-          </div>
-          <div class="kodeshSmall">
-            ניתן לחבר כאן את המודול שכבר בנית לפרשת השבוע / טקסטים.
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT COLUMN, SECOND ROW -->
-      <section class="card">
-        <div class="cardHeader">
-          <div>
-            <p class="cardTitle">בריאות מערכת</p>
-            <p class="cardMeta">שירותים • זמינות • מדדים בסיסיים</p>
-          </div>
-          <div class="kbd">HEALTH</div>
-        </div>
-
-        <div class="cardBody">
-          <div class="list" id="healthList"></div>
-          <div class="footer">
-            <span>עדכון אוטומטי כל 60 שנ׳</span>
-            <span id="healthStamp">—</span>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+  </aside>
 
   <script>
     /**
-     * Single-file operational UI demo.
-     * - Two balanced states: NO ALERTS vs ACTIVE ALERT
-     * - Subtle animations only (CSS fadeUp + optional dot pulse)
-     * - Clear timestamps + status
-     * - Optional fetch: Parashat Hashavua from Hebcal (name/date)
+     * Widget behavior:
+     * - Keeps a small queue of demo "reports"
+     * - Subtle UI changes for: no alerts / warning / critical
+     * - On update: fade + soft highlight only (no loud effects)
      */
 
     const els = {
-      lastUpdated: document.getElementById("lastUpdated"),
-      netDot: document.getElementById("netDot"),
-      netLabel: document.getElementById("netLabel"),
+      statusBadge: document.getElementById("statusBadge"),
+      statusDot: document.getElementById("statusDot"),
+      statusText: document.getElementById("statusText"),
+      updatedAt: document.getElementById("updatedAt"),
+
+      reportCard: document.getElementById("reportCard"),
+      sevBar: document.getElementById("sevBar"),
+      reportTitle: document.getElementById("reportTitle"),
+      reportText: document.getElementById("reportText"),
+      reportTime: document.getElementById("reportTime"),
+
       btnRefresh: document.getElementById("btnRefresh"),
-      btnToggle: document.getElementById("btnToggle"),
-
-      statusHero: document.getElementById("statusHero"),
-      statusClock: document.getElementById("statusClock"),
-
-      stateText: document.getElementById("stateText"),
-      stateHeadline: document.getElementById("stateHeadline"),
-      stateDetail: document.getElementById("stateDetail"),
-
-      readinessText: document.getElementById("readinessText"),
-      readinessTag: document.getElementById("readinessTag"),
-      sourcesText: document.getElementById("sourcesText"),
-      sourcesTag: document.getElementById("sourcesTag"),
-
-      alertsList: document.getElementById("alertsList"),
-      alertsFoot: document.getElementById("alertsFoot"),
-
-      healthList: document.getElementById("healthList"),
-      healthStamp: document.getElementById("healthStamp"),
-
-      parshaName: document.getElementById("parshaName"),
-      parshaLine: document.getElementById("parshaLine"),
+      btnSimulate: document.getElementById("btnSimulate"),
     };
 
-    let alertActive = false;
+    // Demo data (replace later with real feed/API if you want)
+    const demoReports = [
+      { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
+      { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
+      { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
+    ];
 
-    // --- Time helpers
-    function nowHe(){
-      return new Intl.DateTimeFormat("he-IL", {
-        weekday:"short", year:"numeric", month:"2-digit", day:"2-digit",
-        hour:"2-digit", minute:"2-digit", second:"2-digit"
-      }).format(new Date());
-    }
-    function shortTime(){
-      return new Intl.DateTimeFormat("he-IL", {
-        hour:"2-digit", minute:"2-digit", second:"2-digit"
-      }).format(new Date());
-    }
-    function stampUpdate(){
-      const t = nowHe();
-      els.lastUpdated.textContent = t;
-      els.statusClock.textContent = shortTime();
-      els.healthStamp.textContent = t;
+    function heTime(){
+      return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
     }
 
-    // --- Connectivity indicator
-    function setOnlineState(){
-      const online = navigator.onLine !== false;
-      els.netLabel.textContent = online ? "מקוון" : "לא מקוון";
-      els.netDot.style.background = online ? "var(--ok)" : "var(--warn)";
-    }
-    window.addEventListener("online", setOnlineState);
-    window.addEventListener("offline", setOnlineState);
+    function setStatus(level){
+      const isAlert = (level === "critical");
+      els.statusBadge.classList.toggle("alert", isAlert);
+      els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
 
-    // --- Render: alerts list
-    function renderAlerts(){
-      els.alertsList.innerHTML = "";
-
-      if(!alertActive){
-        els.alertsFoot.textContent = "אין אירועים חריגים להצגה";
-        // show 2 calm rows (informational)
-        addAlertRow("בדיקת ניטור תקינה", "כל המודולים פעילים. אין חריגות.", "INFO");
-        addAlertRow("אימות מקורות", "ערוצים זמינים. אין נפילות תקשורת.", "OK");
-        return;
-      }
-
-      els.alertsFoot.textContent = "אירוע פעיל דורש תשומת לב";
-      addAlertRow("התרעה פעילה: חריגה מזוהה", "זוהתה אינדיקציה חריגה. מומלץ לבצע אימות נקודתי.", "CRITICAL", true);
-      addAlertRow("סטטוס טיפול", "הודעה נשלחה לערוץ תפעולי. בהמתנה לאישור.", "ACTION", true);
-      addAlertRow("תיעוד", "נוצר רישום אירוע מקומי לצורך מעקב ובקרה.", "LOG");
-    }
-
-    function addAlertRow(title, sub, tag, isRed=false){
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `
-        <div class="rowLeft">
-          <p class="rowTitle">${escapeHtml(title)}</p>
-          <p class="rowSub">${escapeHtml(sub)}</p>
-        </div>
-        <span class="tag ${isRed ? "red": ""}">${escapeHtml(tag)}</span>
-      `;
-      els.alertsList.appendChild(row);
-    }
-
-    // --- Render: health list
-    function renderHealth(){
-      els.healthList.innerHTML = "";
-      const items = alertActive ? [
-        {name:"Gateway", sub:"Latency עלה קלות • ניטור", tag:"DEGRADED", red:true},
-        {name:"Collector", sub:"פעיל • דגימה תקינה", tag:"OK"},
-        {name:"Storage", sub:"תקין • כתיבה רציפה", tag:"OK"},
-      ] : [
-        {name:"Gateway", sub:"תקין • זמינות מלאה", tag:"OK"},
-        {name:"Collector", sub:"פעיל • דגימה תקינה", tag:"OK"},
-        {name:"Storage", sub:"תקין • כתיבה רציפה", tag:"OK"},
-      ];
-
-      items.forEach(it=>{
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `
-          <div class="rowLeft">
-            <p class="rowTitle">${escapeHtml(it.name)}</p>
-            <p class="rowSub">${escapeHtml(it.sub)}</p>
-          </div>
-          <span class="tag ${it.red ? "red": ""}">${escapeHtml(it.tag)}</span>
-        `;
-        els.healthList.appendChild(row);
-      });
-    }
-
-    // --- Render: operational state (no alerts vs active)
-    function applyState(){
-      // Toggle class (drives red mode/pulse)
-      document.getElementById("cardStatus").classList.toggle("active", alertActive);
-      els.statusHero.parentElement.classList.toggle("active", alertActive);
-
-      if(!alertActive){
-        els.stateText.textContent = "אין התרעות";
-        els.stateHeadline.textContent = "שגרה מבצעית תקינה";
-        els.stateDetail.textContent = "ניטור פעיל. לא נדרשת פעולה.";
-
-        els.readinessText.textContent = "נמוכה • מעקב שגרתי";
-        els.readinessTag.textContent = "GREEN";
-        els.readinessTag.classList.remove("red");
-
-        els.sourcesText.textContent = "כל הערוצים תקינים • ללא חריגות";
-        els.sourcesTag.textContent = "OK";
-        els.sourcesTag.classList.remove("red");
-
-        els.btnToggle.textContent = "הדמיית התרעה";
+      // dot color (ok / warn / critical)
+      if(level === "warn"){
+        els.statusDot.style.background = "var(--warn)";
+      } else if(level === "critical"){
+        els.statusDot.style.background = "var(--red2)";
       } else {
-        els.stateText.textContent = "התרעה פעילה";
-        els.stateHeadline.textContent = "נדרש אימות מבצעי";
-        els.stateDetail.textContent = "יש לבצע בדיקה נקודתית לפי נוהל. תיעוד נוצר.";
-
-        els.readinessText.textContent = "בינונית-גבוהה • היערכות ממוקדת";
-        els.readinessTag.textContent = "AMBER";
-        els.readinessTag.classList.add("red");
-
-        els.sourcesText.textContent = "זוהתה חריגה בערוץ אחד • נדרש אימות";
-        els.sourcesTag.textContent = "CHECK";
-        els.sourcesTag.classList.add("red");
-
-        els.btnToggle.textContent = "סגור התרעה";
-      }
-
-      renderAlerts();
-      renderHealth();
-      stampUpdate();
-    }
-
-    // --- Optional: Parasha name/date from Hebcal (no manual updates)
-    // Note: requires internet; if blocked, we show a calm fallback line.
-    async function loadParasha(){
-      try{
-        const url = new URL("https://www.hebcal.com/shabbat/");
-        url.searchParams.set("cfg","json");
-        url.searchParams.set("geo","geoname");
-        url.searchParams.set("geonameid","281184"); // Jerusalem
-
-        const res = await fetch(url.toString(), {cache:"no-store"});
-        if(!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-
-        const item = (data.items || []).find(x => x && x.category === "parashat");
-        const nameHe = item?.hebrew || item?.title || "—";
-        const dateIso = item?.date || null;
-
-        els.parshaName.textContent = String(nameHe).replace(/^פרשת\s*/,"").trim();
-        if(dateIso){
-          const d = new Date(dateIso);
-          const line = new Intl.DateTimeFormat("he-IL", {weekday:"long", year:"numeric", month:"long", day:"numeric"}).format(d);
-          els.parshaLine.textContent = "שבת הקרובה: " + line;
-        } else {
-          els.parshaLine.textContent = "תאריך שבת לא זמין כרגע.";
-        }
-      }catch(e){
-        els.parshaName.textContent = "—";
-        els.parshaLine.textContent = "לא ניתן לטעון כעת (חיבור/חסימה).";
+        els.statusDot.style.background = "var(--ok)";
       }
     }
 
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    function setSeverityBar(level){
+      els.sevBar.classList.remove("ok","warn","critical");
+      els.sevBar.classList.add(level);
     }
 
-    // --- Buttons
-    els.btnToggle.addEventListener("click", ()=>{
-      alertActive = !alertActive;
-      applyState();
+    function animateUpdate(){
+      els.reportCard.classList.remove("updated");
+      // force reflow so animation restarts cleanly
+      void els.reportCard.offsetHeight;
+      els.reportCard.classList.add("updated");
+    }
+
+    function applyReport(report){
+      setSeverityBar(report.level);
+      setStatus(report.level);
+
+      els.reportTitle.textContent = report.title;
+      els.reportText.textContent  = report.text;
+
+      const t = heTime();
+      els.reportTime.textContent  = t;
+      els.updatedAt.textContent   = t;
+
+      animateUpdate();
+    }
+
+    // Rotate through demo reports
+    let idx = 0;
+    function nextReport(){
+      idx = (idx + 1) % demoReports.length;
+      applyReport(demoReports[idx]);
+    }
+
+    // Initial state
+    applyReport(demoReports[0]);
+
+    // Buttons
+    els.btnSimulate.addEventListener("click", nextReport);
+    els.btnRefresh.addEventListener("click", () => {
+      // Refresh just re-applies current report with subtle highlight
+      applyReport(demoReports[idx]);
     });
 
-    els.btnRefresh.addEventListener("click", ()=>{
-      setOnlineState();
-      stampUpdate();
-      renderHealth();
-      renderAlerts();
-      loadParasha();
-    });
-
-    // --- Boot
-    setOnlineState();
-    stampUpdate();
-    applyState();
-    loadParasha();
-
-    // auto refresh timestamps + health stamp (quiet)
-    setInterval(()=>{
-      stampUpdate();
-    }, 1000);
-
-    setInterval(()=>{
-      renderHealth();
-      els.healthStamp.textContent = nowHe();
-    }, 60000);
+    // Optional: auto "heartbeat" update time every 30s (quiet)
+    setInterval(() => {
+      els.updatedAt.textContent = heTime();
+    }, 30000);
   </script>
 </body>
 </html>
