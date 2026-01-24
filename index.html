@@ -10,7 +10,7 @@
   <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
   <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
-  <!-- Fonts: Modern UI + Tanach -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
@@ -24,29 +24,13 @@
       overflow-x: hidden;
     }
 
-    /* לוגו בפינה */
-    .logo{
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      width: 90px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 6px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-      z-index: 30;
-    }
-
-    /* פס עליון עם טקסט רץ (ימין->שמאל) */
+    /* פס עליון עם טקסט רץ (ימין->שמאל) + תמונה שנוסעת עם הטקסט */
     .topTicker{
       position: fixed;
       top: 18px;
-      left: 130px;
+      left: 18px;
       right: 18px;
-      height: 44px;
+      height: 46px;
       display: flex;
       align-items: center;
       border-radius: 14px;
@@ -54,17 +38,31 @@
       border: 1px solid rgba(255,255,255,0.12);
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       overflow: hidden;
-      z-index: 25;
+      z-index: 50;
     }
 
     .marquee{
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       white-space: nowrap;
       padding-right: 100%;
       animation: marqueeRTL 18s linear infinite;
       font-family: "Inter", Arial, sans-serif;
-      font-size: 16px;
-      color: rgba(255,255,255,0.85);
+      font-size: 15px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* האווטאר בתוך הטקסט הרץ (נוסע יחד איתו) */
+    .marqueeAvatar{
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+      flex: 0 0 auto;
     }
 
     @keyframes marqueeRTL{
@@ -78,7 +76,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 150px 18px 40px;
+      padding: 110px 18px 120px; /* למעלה הטיקר, למטה הווידג'ט */
       box-sizing: border-box;
     }
 
@@ -96,18 +94,16 @@
     }
 
     .parshaTextBox{
-      margin-top: 0;
       background: rgba(0,0,0,0.18);
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 14px;
       padding: 16px;
-      max-height: min(68vh, 640px);
+      max-height: min(70vh, 680px);
       overflow: auto;
       line-height: 1.9;
       font-size: 18px;
       color: rgba(255,255,255,0.92);
     }
-
     .parshaTextBox p{ margin: 0 0 14px; }
 
     .status{
@@ -126,7 +122,7 @@
     }
 
     /* ======================
-       ווידג׳ט דיווחים (שמאל עליון)
+       ווידג׳ט דיווחים (שמאל למטה)
        ====================== */
     :root{
       --w-bg: rgba(10,12,16,.78);
@@ -144,7 +140,7 @@
 
     .secWidget{
       position: fixed;
-      top: 120px;     /* מתחת ללוגו */
+      bottom: 18px;
       left: 18px;
       width: 320px;
       max-width: calc(100vw - 36px);
@@ -154,7 +150,7 @@
       box-shadow: var(--w-shadow);
       backdrop-filter: blur(10px);
       overflow: hidden;
-      z-index: 40;
+      z-index: 60;
       font-family: var(--w-font);
     }
 
@@ -320,17 +316,15 @@
 </head>
 
 <body>
-  <!-- לוגו -->
-  <img class="logo"
-       src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
-       alt="לוגו" />
-
-  <!-- טיקר (כאן בלבד מופיע שם הפרשה) -->
+  <!-- טיקר למעלה (כאן מופיעים: תמונה + פרשה + תאריך עברי) -->
   <div class="topTicker" aria-label="טקסט רץ">
-    <div id="marquee" class="marquee">טוען פרשת השבוע…</div>
+    <div id="marquee" class="marquee">
+      <img class="marqueeAvatar" src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
+      <span id="marqueeText">טוען פרשת השבוע…</span>
+    </div>
   </div>
 
-  <!-- ווידג׳ט דיווחים -->
+  <!-- ווידג׳ט דיווחים (שמאל למטה) -->
   <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
     <div class="secHeader">
       <div>
@@ -365,7 +359,7 @@
     </div>
   </aside>
 
-  <!-- באמצע: רק טקסט הפרשה (בלי כותרת גדולה) -->
+  <!-- באמצע: רק טקסט הפרשה -->
   <div class="wrap">
     <div class="card" aria-live="polite">
       <div class="content">
@@ -377,12 +371,15 @@
 
   <script>
     /* ============================
-       פרשת השבוע: רק לטיקר למעלה + טקסט באמצע
+       פרשת השבוע: טיקר למעלה כולל:
+       - שם הפרשה
+       - תאריך עברי (לשבת של הפרשה)
+       - התמונה כבר חלק מהטיקר ולכן "נוסעת" איתו
        ============================ */
     (function(){
       const elText   = document.getElementById("parshaText");
       const elStatus = document.getElementById("status");
-      const elMarq   = document.getElementById("marquee");
+      const elMarqText = document.getElementById("marqueeText");
 
       const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
 
@@ -403,15 +400,6 @@
         return url.toString();
       }
 
-      function formatDateHe(dateIso){
-        if(!dateIso) return "";
-        const d = new Date(dateIso);
-        if(Number.isNaN(d.getTime())) return "";
-        return new Intl.DateTimeFormat("he-IL", {
-          weekday: "long", year: "numeric", month: "long", day: "numeric"
-        }).format(d);
-      }
-
       function extractParshaFromHebcal(data){
         const items = Array.isArray(data?.items) ? data.items : [];
         const it = items.find(x => x?.category === "parashat");
@@ -419,13 +407,39 @@
         return {
           hebrewName: it.hebrew || null,
           title: it.title || null,   // "Parashat Noach"
-          dateIso: it.date || null
+          dateIso: it.date || null   // שבת של הפרשה (ISO)
         };
       }
 
       function cleanEnglishParasha(title){
         if(!title) return null;
         return String(title).replace(/^Parashat\s+/i, "").trim();
+      }
+
+      // תאריך עברי מתוך תאריך לועזי באמצעות Intl Hebrew calendar (אם קיים)
+      function formatHebrewDateFromISO(dateIso){
+        if(!dateIso) return "";
+        const d = new Date(dateIso);
+        if(Number.isNaN(d.getTime())) return "";
+
+        try{
+          // he-IL with Hebrew calendar
+          const fmt = new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+            day: "numeric", month: "long", year: "numeric"
+          });
+          return fmt.format(d);
+        } catch(e){
+          return ""; // דפדפן ישן -> פשוט לא נציג תאריך עברי
+        }
+      }
+
+      function formatDateHe(dateIso){
+        if(!dateIso) return "";
+        const d = new Date(dateIso);
+        if(Number.isNaN(d.getTime())) return "";
+        return new Intl.DateTimeFormat("he-IL", {
+          weekday: "long", year: "numeric", month: "long", day: "numeric"
+        }).format(d);
       }
 
       function sefariaNextReadUrl(parashaEn){
@@ -442,8 +456,13 @@
       function getAliyotRefs(nextReadJson){
         const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
         if(!torah) return [];
-        if(Array.isArray(torah)) return torah.map(x => x?.ref).filter(Boolean);
-        if(Array.isArray(torah?.aliyot)) return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
+
+        if(Array.isArray(torah)){
+          return torah.map(x => x?.ref).filter(Boolean);
+        }
+        if(Array.isArray(torah?.aliyot)){
+          return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
+        }
 
         const refs = [];
         for(const k of Object.keys(torah)){
@@ -482,10 +501,10 @@
       async function loadParshaAndText(){
         clearError();
         elText.textContent = "טוען את טקסט הפרשה…";
-        elMarq.textContent = "טוען פרשת השבוע…";
+        elMarqText.textContent = "טוען פרשת השבוע…";
 
         try{
-          // 1) Hebcal => שם פרשה + תאריך (לטיקר בלבד)
+          // 1) Hebcal => שם פרשה + תאריך שבת
           const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
           if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
           const hebJson = await hebRes.json();
@@ -495,28 +514,35 @@
 
           const parashaEn = cleanEnglishParasha(p.title);
           const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
-          const dateHe = formatDateHe(p.dateIso);
 
-          // רק למעלה בטיקר:
-          elMarq.textContent = "פרשת השבוע: " + parashaHe + (dateHe ? " • " + dateHe : "");
+          const hebrewDate = formatHebrewDateFromISO(p.dateIso);
+          const gregDate   = formatDateHe(p.dateIso);
 
+          // טיקר: פרשה + תאריך עברי + (אופציונלי) תאריך לועזי קטן
+          const parts = [];
+          parts.push("פרשת השבוע: " + parashaHe);
+          if(hebrewDate) parts.push("תאריך עברי: " + hebrewDate);
+          if(gregDate)   parts.push("שבת: " + gregDate);
+          elMarqText.textContent = parts.join("  •  ");
+
+          // 2) נסיון להביא טקסט דרך Sefaria
           if(!parashaEn){
-            elText.textContent = "לא נמצא שם פרשה באנגלית כדי להביא טקסט מלא.";
+            elText.textContent = "טקסט הפרשה לא זמין כרגע.";
             return;
           }
 
-          // 2) Sefaria next-read
           const nrRes = await fetch(sefariaNextReadUrl(parashaEn), { cache: "no-store" });
           if(!nrRes.ok) throw new Error("Sefaria next-read HTTP " + nrRes.status);
           const nrJson = await nrRes.json();
 
           const refs = getAliyotRefs(nrJson);
+
+          // אם אין רפרנסים — לא נציג את זה למשתמש, רק הודעה נקייה
           if(!refs.length){
-            elText.textContent = "לא הצלחתי למצוא רפרנסים לעליות בספריה עבור הפרשה הזו.";
+            elText.textContent = "טקסט הפרשה לא זמין כרגע (מקור הקריאה לא החזיר טווחי פסוקים).";
             return;
           }
 
-          // 3) טקסט לכל עלייה
           const paragraphs = [];
           for(let i = 0; i < refs.length; i++){
             const tref = refs[i];
@@ -526,6 +552,7 @@
               const tJson = await tRes.json();
 
               const hebText = normalizeSefariaHebrewText(tJson);
+              // אפשר להסיר "עלייה X" אם תרצה—תגיד.
               paragraphs.push(hebText ? `עלייה ${i+1}: ${hebText}` : `עלייה ${i+1}: (אין טקסט)`);
             } catch(e){
               paragraphs.push(`עלייה ${i+1}: (לא הצלחתי לטעון את הטקסט)`);
