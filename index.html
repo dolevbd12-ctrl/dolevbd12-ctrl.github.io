@@ -1,591 +1,118 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<title>פרשת השבוע</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>דולב ורועי</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-  <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+<style>
+body{
+  margin:0;
+  background: radial-gradient(circle at top,#18233f,#070b18);
+  color:#fff;
+  font-family:"IBM Plex Sans Hebrew",sans-serif;
+  overflow:hidden;
+}
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+/* פרשה למעלה */
+.header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  padding:14px;
+  text-align:center;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(10px);
+  z-index:10;
+}
+.header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:600;
+}
 
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body{
-      background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
-      font-family: "Frank Ruhl Libre", "SBL Hebrew", David, "Times New Roman", serif;
-      color: #fff;
-      overflow-x: hidden;
-    }
+/* אזור טקסט נע */
+.marquee-wrap{
+  position:absolute;
+  top:90px;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  overflow:hidden;
+}
 
-    /* טיקר עליון: תמונה + טקסט רץ */
-    .topTicker{
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      right: 18px;
-      height: 46px;
-      display: flex;
-      align-items: center;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      overflow: hidden;
-      z-index: 50;
-      direction: rtl;
-    }
+.marquee{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  animation:scroll 40s linear infinite;
+}
 
-    .marquee{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      white-space: nowrap;
-      padding-right: 100%;
-      animation: marqueeRTL 18s linear infinite;
-      font-family: "Inter", Arial, sans-serif;
-      font-size: 15px;
-      color: rgba(255,255,255,0.88);
-    }
+.marquee img{
+  width:120px;
+  border-radius:12px;
+}
 
-    .marqueeAvatar{
-      width: 26px;
-      height: 26px;
-      border-radius: 9px;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 8px 22px rgba(0,0,0,.25);
-      flex: 0 0 auto;
-    }
+.parasha-text{
+  font-family:"Frank Ruhl Libre",serif;
+  font-size:22px;
+  white-space:nowrap;
+}
 
-    @keyframes marqueeRTL{
-      0%   { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
+@keyframes scroll{
+  from{transform:translateX(-100%);}
+  to{transform:translateX(100%);}
+}
 
-    /* מרכז המסך */
-    .wrap{
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 110px 18px 120px;
-      box-sizing: border-box;
-    }
+/* פינת דיווחים */
+.security{
+  position:fixed;
+  bottom:16px;
+  left:16px;
+  width:260px;
+  background:rgba(120,0,0,.85);
+  padding:12px;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:13px;
+}
 
-    .card{
-      width: min(980px, 94vw);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 18px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-      overflow: hidden;
-    }
+.security h3{
+  margin:0 0 6px;
+  font-size:14px;
+}
 
-    .content{
-      padding: 18px 18px 22px;
-    }
-
-    .parshaTextBox{
-      background: rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 14px;
-      padding: 16px;
-      max-height: min(70vh, 680px);
-      overflow: auto;
-      line-height: 1.9;
-      font-size: 18px;
-      color: rgba(255,255,255,0.92);
-    }
-    .parshaTextBox p{ margin: 0 0 14px; }
-
-    .status{
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255, 80, 80, 0.12);
-      border: 1px solid rgba(255, 80, 80, 0.22);
-      color: rgba(255,255,255,0.90);
-      font-family: "Inter", Arial, sans-serif;
-      display: none;
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .marquee{ animation: none; padding-right: 0; }
-    }
-
-    /* ווידג׳ט דיווחים */
-    :root{
-      --w-bg: rgba(10,12,16,.78);
-      --w-stroke: rgba(255,255,255,.12);
-      --w-text: rgba(255,255,255,.92);
-      --w-muted: rgba(255,255,255,.62);
-      --w-red2:#b51a26;
-      --w-ok: #2f9b68;
-      --w-warn:#c9a84a;
-      --w-shadow: 0 14px 38px rgba(0,0,0,.45);
-      --w-radius: 14px;
-      --w-font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-    }
-
-    .secWidget{
-      position: fixed;
-      bottom: 18px;
-      left: 18px;
-      width: 320px;
-      max-width: calc(100vw - 36px);
-      border-radius: var(--w-radius);
-      background: var(--w-bg);
-      border: 1px solid var(--w-stroke);
-      box-shadow: var(--w-shadow);
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-      z-index: 60;
-      font-family: var(--w-font);
-      direction: rtl;
-    }
-
-    .secHeader{
-      padding: 10px 12px;
-      display:flex;
-      align-items:flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
-    }
-
-    .secTitle{
-      margin:0;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: .2px;
-      line-height: 1.1;
-      color: var(--w-text);
-    }
-
-    .secMeta{
-      margin-top: 4px;
-      font-size: 11px;
-      color: var(--w-muted);
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: var(--w-muted);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .dot{
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--w-ok);
-    }
-
-    .badge.alert{
-      border-color: rgba(181,26,38,.35);
-      background: rgba(122,15,24,.18);
-      color: rgba(255,255,255,.88);
-    }
-
-    .badge.alert .dot{
-      background: var(--w-red2);
-      animation: pulse 1.7s ease-in-out infinite;
-    }
-
-    @keyframes pulse{
-      0%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
-      55%{ box-shadow: 0 0 0 9px rgba(181,26,38,.12); }
-      100%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
-    }
-
-    .secBody{ padding: 10px 12px 12px; }
-
-    .report{
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 10px 10px;
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-    }
-
-    .sevBar{
-      width: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.15);
-      flex: 0 0 auto;
-      align-self: stretch;
-    }
-    .sevBar.critical{ background: linear-gradient(180deg, #b51a26, #7a0f18); }
-    .sevBar.warn{ background: linear-gradient(180deg, rgba(201,168,74,.95), rgba(201,168,74,.35)); }
-    .sevBar.ok{ background: linear-gradient(180deg, rgba(47,155,104,.95), rgba(47,155,104,.35)); }
-
-    .reportMain{ min-width: 0; }
-    .reportTitle{
-      margin:0;
-      font-size: 12.5px;
-      font-weight: 800;
-      line-height: 1.2;
-      color: rgba(255,255,255,.92);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .reportText{
-      margin: 6px 0 0;
-      font-size: 11.5px;
-      line-height: 1.45;
-      color: var(--w-muted);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .reportFoot{
-      margin-top: 8px;
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-      gap: 8px;
-      font-size: 11px;
-      color: rgba(255,255,255,.55);
-    }
-
-    .miniBtn{
-      appearance:none;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.86);
-      padding: 6px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease, opacity .12s ease;
-    }
-    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
-    .miniBtn:active{ transform: translateY(0); opacity:.9; }
-
-    .updated{
-      animation: fadeIn .28s ease, softGlow 1.2s ease;
-    }
-    @keyframes fadeIn{
-      from{ opacity: .65; transform: translateY(2px); }
-      to{ opacity: 1; transform: translateY(0); }
-    }
-    @keyframes softGlow{
-      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
-      35%  { box-shadow: 0 0 0 8px rgba(255,255,255,.04); }
-      100% { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
-    }
-  </style>
+.security .status{
+  color:#9fef9f;
+}
+</style>
 </head>
 
 <body>
-  <!-- טיקר -->
-  <div class="topTicker" aria-label="טקסט רץ">
-    <div id="marquee" class="marquee">
-      <img class="marqueeAvatar" src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
-      <span id="marqueeText">טוען פרשת השבוע…</span>
+
+<div class="header">
+  <h1 id="parashaTitle">פרשת השבוע • יום שבת כ״ד בשבט</h1>
+</div>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+    <div class="parasha-text" id="parashaText">
+      כאן יופיע טקסט הפרשה (טקסט לדוגמה עד חיבור API מלא)
     </div>
   </div>
+</div>
 
-  <!-- ווידג׳ט דיווחים -->
-  <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
-    <div class="secHeader">
-      <div>
-        <h2 class="secTitle">פינת דיווחים ביטחוניים</h2>
-        <div class="secMeta">
-          <span class="badge" id="w_statusBadge">
-            <span class="dot" id="w_statusDot"></span>
-            <span id="w_statusText">אין התרעות</span>
-          </span>
-          <span class="badge">
-            עודכן: <span id="w_updatedAt">—</span>
-          </span>
-        </div>
-      </div>
-      <button class="miniBtn" id="w_btnRefresh" type="button" title="רענון">רענן</button>
-    </div>
+<div class="security">
+  <h3>פינת דיווחים ביטחוניים</h3>
+  <div>ירושלים</div>
+  <div class="status">אין התרעות</div>
+</div>
 
-    <div class="secBody">
-      <div class="report" id="w_reportCard">
-        <span class="sevBar ok" id="w_sevBar"></span>
-        <div class="reportMain">
-          <p class="reportTitle" id="w_reportTitle">שגרה תקינה</p>
-          <p class="reportText" id="w_reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
-          <div class="reportFoot">
-            <span id="w_reportTime">—</span>
-            <button class="miniBtn" id="w_btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- טקסט הפרשה באמצע -->
-  <div class="wrap">
-    <div class="card" aria-live="polite">
-      <div class="content">
-        <div id="parshaText" class="parshaTextBox">טוען את טקסט הפרשה…</div>
-        <div id="status" class="status"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    /* ============================
-       JSONP helper (עוקף CORS מול Sefaria)
-       ============================ */
-    function jsonp(url) {
-      return new Promise((resolve, reject) => {
-        const cb = "cb_" + Math.random().toString(36).slice(2);
-        const sep = url.includes("?") ? "&" : "?";
-        const script = document.createElement("script");
-        const timeout = setTimeout(() => {
-          cleanup();
-          reject(new Error("JSONP timeout"));
-        }, 12000);
-
-        function cleanup() {
-          clearTimeout(timeout);
-          try { delete window[cb]; } catch(e) { window[cb] = undefined; }
-          script.remove();
-        }
-
-        window[cb] = (data) => { cleanup(); resolve(data); };
-        script.src = url + sep + "callback=" + cb;
-        script.onerror = () => { cleanup(); reject(new Error("JSONP load error")); };
-
-        document.body.appendChild(script);
-      });
-    }
-
-    /* ============================
-       פרשת השבוע: Hebcal -> טווח קריאה -> טקסט מספראיה ב-JSONP
-       ============================ */
-    (function(){
-      const elText       = document.getElementById("parshaText");
-      const elStatus     = document.getElementById("status");
-      const elMarqText   = document.getElementById("marqueeText");
-
-      const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
-
-      function showError(msg){
-        elStatus.textContent = msg;
-        elStatus.style.display = "block";
-      }
-      function clearError(){
-        elStatus.textContent = "";
-        elStatus.style.display = "none";
-      }
-
-      // Hebcal endpoint שמחזיר גם leyning.torah
-      function hebcalUrl(){
-        const url = new URL("https://www.hebcal.com/shabbat");
-        url.searchParams.set("cfg", "json");
-        url.searchParams.set("geo", GEO.geo);
-        url.searchParams.set("geonameid", String(GEO.geonameid));
-        url.searchParams.set("M", "on");
-        url.searchParams.set("hdp", "1"); // תאריך עברי מפורק
-        return url.toString();
-      }
-
-      // תאריך עברי מהחלקים שמגיעים מ-Hebcal (כש-hdp=1)
-      function formatHebrewDateFromParts(parts){
-        if(!parts) return "";
-        const d = parts.d || "";
-        const m = parts.m || "";
-        const y = parts.y || "";
-        return [d,m,y].filter(Boolean).join(" ");
-      }
-
-      function formatDateHe(dateIso){
-        if(!dateIso) return "";
-        const d = new Date(dateIso);
-        if(Number.isNaN(d.getTime())) return "";
-        return new Intl.DateTimeFormat("he-IL", {
-          weekday: "long", year: "numeric", month: "long", day: "numeric"
-        }).format(d);
-      }
-
-      function escapeHtml(str){
-        return String(str)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-
-      function normalizeSefariaHebrewText(textJson){
-        const he = textJson?.he;
-        if(Array.isArray(he)) return he.filter(Boolean).join(" ");
-        if(typeof he === "string") return he;
-        return "";
-      }
-
-      async function loadParshaAndText(){
-        clearError();
-        elText.textContent = "טוען את טקסט הפרשה…";
-        elMarqText.textContent = "טוען פרשת השבוע…";
-
-        try{
-          const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
-          if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
-          const hebJson = await hebRes.json();
-
-          const items = Array.isArray(hebJson?.items) ? hebJson.items : [];
-          const parshaItem = items.find(x => x?.category === "parashat");
-          if(!parshaItem) throw new Error("No parasha in Hebcal response");
-
-          const parashaHe = (parshaItem.hebrew || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
-          const gregDate  = formatDateHe(parshaItem.date);
-          const hebDate   = formatHebrewDateFromParts(parshaItem?.heDateParts);
-
-          const torahRef = parshaItem?.leyning?.torah; // לדוגמה: "Genesis 6:9-11:32"
-
-          // טיקר
-          const parts = [];
-          parts.push("פרשת השבוע: " + parashaHe);
-          if(hebDate) parts.push("תאריך עברי: " + hebDate);
-          if(gregDate) parts.push("שבת: " + gregDate);
-          elMarqText.textContent = parts.join("  •  ");
-
-          if(!torahRef){
-            elText.textContent = "טקסט הפרשה לא זמין כרגע (לא התקבל טווח קריאה).";
-            return;
-          }
-
-          // Sefaria דרך JSONP (עוקף CORS)
-          const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(torahRef)
-                       + "?lang=he&context=0";
-
-          const textJson = await jsonp(sefUrl);
-          const hebText = normalizeSefariaHebrewText(textJson);
-
-          if(!hebText){
-            elText.textContent = "הטקסט חזר ריק מספראיה כרגע.";
-            return;
-          }
-
-          // בלי "עלייה 1/2" – טקסט רציף נקי
-          elText.innerHTML = `<p>${escapeHtml(hebText)}</p>`;
-
-        } catch(err){
-          console.error(err);
-          showError("יש בעיה בטעינה (אינטרנט/שרת). נסה לרענן את הדף.");
-          elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
-        }
-      }
-
-      loadParshaAndText();
-      setInterval(loadParshaAndText, 6 * 60 * 60 * 1000);
-    })();
-
-    /* ============================
-       ווידג׳ט דיווחים קטן
-       ============================ */
-    (function(){
-      const els = {
-        statusBadge: document.getElementById("w_statusBadge"),
-        statusDot: document.getElementById("w_statusDot"),
-        statusText: document.getElementById("w_statusText"),
-        updatedAt: document.getElementById("w_updatedAt"),
-        reportCard: document.getElementById("w_reportCard"),
-        sevBar: document.getElementById("w_sevBar"),
-        reportTitle: document.getElementById("w_reportTitle"),
-        reportText: document.getElementById("w_reportText"),
-        reportTime: document.getElementById("w_reportTime"),
-        btnRefresh: document.getElementById("w_btnRefresh"),
-        btnSimulate: document.getElementById("w_btnSimulate"),
-      };
-
-      const demoReports = [
-        { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
-        { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
-        { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
-      ];
-
-      function heTime(){
-        return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
-      }
-
-      function setStatus(level){
-        const isAlert = (level === "critical");
-        els.statusBadge.classList.toggle("alert", isAlert);
-        els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
-
-        if(level === "warn"){
-          els.statusDot.style.background = "var(--w-warn)";
-        } else if(level === "critical"){
-          els.statusDot.style.background = "var(--w-red2)";
-        } else {
-          els.statusDot.style.background = "var(--w-ok)";
-        }
-      }
-
-      function setSeverityBar(level){
-        els.sevBar.classList.remove("ok","warn","critical");
-        els.sevBar.classList.add(level);
-      }
-
-      function animateUpdate(){
-        els.reportCard.classList.remove("updated");
-        void els.reportCard.offsetHeight;
-        els.reportCard.classList.add("updated");
-      }
-
-      function applyReport(report){
-        setSeverityBar(report.level);
-        setStatus(report.level);
-
-        els.reportTitle.textContent = report.title;
-        els.reportText.textContent  = report.text;
-
-        const t = heTime();
-        els.reportTime.textContent  = t;
-        els.updatedAt.textContent   = t;
-
-        animateUpdate();
-      }
-
-      let idx = 0;
-      function nextReport(){
-        idx = (idx + 1) % demoReports.length;
-        applyReport(demoReports[idx]);
-      }
-
-      applyReport(demoReports[0]);
-      els.btnSimulate.addEventListener("click", nextReport);
-      els.btnRefresh.addEventListener("click", () => applyReport(demoReports[idx]));
-
-      setInterval(() => {
-        els.updatedAt.textContent = heTime();
-      }, 30000);
-    })();
-  </script>
 </body>
 </html>
