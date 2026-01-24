@@ -1,244 +1,660 @@
-<script>
-  /* ============================
-     JSONP helper (עוקף CORS מול Sefaria)
-     ============================ */
-  function jsonp(url) {
-    return new Promise((resolve, reject) => {
-      const cb = "cb_" + Math.random().toString(36).slice(2);
-      const sep = url.includes("?") ? "&" : "?";
-      const script = document.createElement("script");
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error("JSONP timeout"));
-      }, 12000);
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[cb];
-        script.remove();
+  <title>דולב ורועי</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+  <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: radial-gradient(circle at top, #1b2a4a 0%, #0b1020 60%, #060814 100%);
+      font-family: "Frank Ruhl Libre", "SBL Hebrew", David, "Times New Roman", serif;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* פס עליון עם טקסט רץ (ימין->שמאל) + תמונה שנוסעת עם הטקסט */
+    .topTicker{
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      overflow: hidden;
+      z-index: 50;
+    }
+
+    .marquee{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      padding-right: 100%;
+      animation: marqueeRTL 18s linear infinite;
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 15px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* האווטאר בתוך הטקסט הרץ (נוסע יחד איתו) */
+    .marqueeAvatar{
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 8px 22px rgba(0,0,0,.25);
+      flex: 0 0 auto;
+    }
+
+    @keyframes marqueeRTL{
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* מרכז המסך */
+    .wrap{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 110px 18px 120px; /* למעלה הטיקר, למטה הווידג'ט */
+      box-sizing: border-box;
+    }
+
+    .card{
+      width: min(980px, 94vw);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    .content{
+      padding: 18px 18px 22px;
+    }
+
+    .parshaTextBox{
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 16px;
+      max-height: min(70vh, 680px);
+      overflow: auto;
+      line-height: 1.9;
+      font-size: 18px;
+      color: rgba(255,255,255,0.92);
+    }
+    .parshaTextBox p{ margin: 0 0 14px; }
+
+    .status{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 80, 80, 0.22);
+      color: rgba(255,255,255,0.90);
+      font-family: "Inter", Arial, sans-serif;
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .marquee{ animation: none; padding-right: 0; }
+    }
+
+    /* ======================
+       ווידג׳ט דיווחים (שמאל למטה)
+       ====================== */
+    :root{
+      --w-bg: rgba(10,12,16,.78);
+      --w-stroke: rgba(255,255,255,.12);
+      --w-text: rgba(255,255,255,.92);
+      --w-muted: rgba(255,255,255,.62);
+      --w-red: #7a0f18;
+      --w-red2:#b51a26;
+      --w-ok: #2f9b68;
+      --w-warn:#c9a84a;
+      --w-shadow: 0 14px 38px rgba(0,0,0,.45);
+      --w-radius: 14px;
+      --w-font: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    }
+
+    .secWidget{
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      width: 320px;
+      max-width: calc(100vw - 36px);
+      border-radius: var(--w-radius);
+      background: var(--w-bg);
+      border: 1px solid var(--w-stroke);
+      box-shadow: var(--w-shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      z-index: 60;
+      font-family: var(--w-font);
+    }
+
+    .secHeader{
+      padding: 10px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
+    }
+
+    .secTitle{
+      margin:0;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      line-height: 1.1;
+      color: var(--w-text);
+    }
+
+    .secMeta{
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--w-muted);
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--w-muted);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .dot{
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--w-ok);
+    }
+
+    .badge.alert{
+      border-color: rgba(181,26,38,.35);
+      background: rgba(122,15,24,.18);
+      color: rgba(255,255,255,.88);
+    }
+
+    .badge.alert .dot{
+      background: var(--w-red2);
+      animation: pulse 1.7s ease-in-out infinite;
+    }
+
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
+      55%{ box-shadow: 0 0 0 9px rgba(181,26,38,.12); }
+      100%{ box-shadow: 0 0 0 0 rgba(181,26,38,.0); }
+    }
+
+    .secBody{ padding: 10px 12px 12px; }
+
+    .report{
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 10px 10px;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+    }
+
+    .sevBar{
+      width: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+      flex: 0 0 auto;
+      align-self: stretch;
+    }
+    .sevBar.critical{ background: linear-gradient(180deg, var(--w-red2), var(--w-red)); }
+    .sevBar.warn{ background: linear-gradient(180deg, rgba(201,168,74,.95), rgba(201,168,74,.35)); }
+    .sevBar.ok{ background: linear-gradient(180deg, rgba(47,155,104,.95), rgba(47,155,104,.35)); }
+
+    .reportMain{ min-width: 0; }
+    .reportTitle{
+      margin:0;
+      font-size: 12.5px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: rgba(255,255,255,.92);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .reportText{
+      margin: 6px 0 0;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: var(--w-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .reportFoot{
+      margin-top: 8px;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,.55);
+    }
+
+    .miniBtn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.86);
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, opacity .12s ease;
+    }
+    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+    .miniBtn:active{ transform: translateY(0); opacity:.9; }
+
+    .updated{
+      animation: fadeIn .28s ease, softGlow 1.2s ease;
+    }
+    @keyframes fadeIn{
+      from{ opacity: .65; transform: translateY(2px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    @keyframes softGlow{
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
+      35%  { box-shadow: 0 0 0 8px rgba(255,255,255,.04); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,.0); }
+    }
+
+    @media (max-width: 380px){
+      .secWidget{ width: 290px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .badge.alert .dot{ animation: none; }
+      .updated{ animation: none; }
+      .miniBtn{ transition:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- טיקר למעלה (כאן מופיעים: תמונה + פרשה + תאריך עברי) -->
+  <div class="topTicker" aria-label="טקסט רץ">
+    <div id="marquee" class="marquee">
+      <img class="marqueeAvatar" src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
+      <span id="marqueeText">טוען פרשת השבוע…</span>
+    </div>
+  </div>
+
+  <!-- ווידג׳ט דיווחים (שמאל למטה) -->
+  <aside class="secWidget" aria-live="polite" aria-label="פינת דיווחים ביטחוניים">
+    <div class="secHeader">
+      <div>
+        <h2 class="secTitle">פינת דיווחים ביטחוניים</h2>
+        <div class="secMeta">
+          <span class="badge" id="w_statusBadge">
+            <span class="dot" id="w_statusDot"></span>
+            <span id="w_statusText">אין התרעות</span>
+          </span>
+          <span class="badge">
+            עודכן: <span id="w_updatedAt">—</span>
+          </span>
+        </div>
+      </div>
+      <button class="miniBtn" id="w_btnRefresh" type="button" title="רענון">רענן</button>
+    </div>
+
+    <div class="secBody">
+      <div class="report" id="w_reportCard">
+        <span class="sevBar ok" id="w_sevBar"></span>
+
+        <div class="reportMain">
+          <p class="reportTitle" id="w_reportTitle">שגרה תקינה</p>
+          <p class="reportText" id="w_reportText">אין דיווחים חריגים כרגע. ניטור פעיל ברקע.</p>
+
+          <div class="reportFoot">
+            <span id="w_reportTime">—</span>
+            <button class="miniBtn" id="w_btnSimulate" type="button" title="הדמיית דיווח">דיווח חדש</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- באמצע: רק טקסט הפרשה -->
+  <div class="wrap">
+    <div class="card" aria-live="polite">
+      <div class="content">
+        <div id="parshaText" class="parshaTextBox">טוען את טקסט הפרשה…</div>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================
+       פרשת השבוע: טיקר למעלה כולל:
+       - שם הפרשה
+       - תאריך עברי (לשבת של הפרשה)
+       - התמונה כבר חלק מהטיקר ולכן "נוסעת" איתו
+       ============================ */
+    (function(){
+      const elText   = document.getElementById("parshaText");
+      const elStatus = document.getElementById("status");
+      const elMarqText = document.getElementById("marqueeText");
+
+      const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
+
+      function showError(msg){
+        elStatus.textContent = msg;
+        elStatus.style.display = "block";
+      }
+      function clearError(){
+        elStatus.textContent = "";
+        elStatus.style.display = "none";
       }
 
-      window[cb] = (data) => {
-        cleanup();
-        resolve(data);
-      };
+      function hebcalUrl(){
+        const url = new URL("https://www.hebcal.com/shabbat/");
+        url.searchParams.set("cfg", "json");
+        url.searchParams.set("geo", GEO.geo);
+        url.searchParams.set("geonameid", String(GEO.geonameid));
+        return url.toString();
+      }
 
-      script.src = url + sep + "callback=" + cb;
-      script.onerror = () => {
-        cleanup();
-        reject(new Error("JSONP load error"));
-      };
+      function extractParshaFromHebcal(data){
+        const items = Array.isArray(data?.items) ? data.items : [];
+        const it = items.find(x => x?.category === "parashat");
+        if(!it) return null;
+        return {
+          hebrewName: it.hebrew || null,
+          title: it.title || null,   // "Parashat Noach"
+          dateIso: it.date || null   // שבת של הפרשה (ISO)
+        };
+      }
 
-      document.body.appendChild(script);
-    });
-  }
+      function cleanEnglishParasha(title){
+        if(!title) return null;
+        return String(title).replace(/^Parashat\s+/i, "").trim();
+      }
 
-  /* ============================
-     פרשת השבוע: Hebcal -> טווח קריאה -> טקסט מספראיה ב-JSONP
-     ============================ */
-  (function(){
-    const elText     = document.getElementById("parshaText");
-    const elStatus   = document.getElementById("status");
-    const elMarqText = document.getElementById("marqueeText");
+      // תאריך עברי מתוך תאריך לועזי באמצעות Intl Hebrew calendar (אם קיים)
+      function formatHebrewDateFromISO(dateIso){
+        if(!dateIso) return "";
+        const d = new Date(dateIso);
+        if(Number.isNaN(d.getTime())) return "";
 
-    const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
+        try{
+          // he-IL with Hebrew calendar
+          const fmt = new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+            day: "numeric", month: "long", year: "numeric"
+          });
+          return fmt.format(d);
+        } catch(e){
+          return ""; // דפדפן ישן -> פשוט לא נציג תאריך עברי
+        }
+      }
 
-    function showError(msg){
-      elStatus.textContent = msg;
-      elStatus.style.display = "block";
-    }
-    function clearError(){
-      elStatus.textContent = "";
-      elStatus.style.display = "none";
-    }
+      function formatDateHe(dateIso){
+        if(!dateIso) return "";
+        const d = new Date(dateIso);
+        if(Number.isNaN(d.getTime())) return "";
+        return new Intl.DateTimeFormat("he-IL", {
+          weekday: "long", year: "numeric", month: "long", day: "numeric"
+        }).format(d);
+      }
 
-    function hebcalUrl(){
-      // שימי לב: זה endpoint של "shabbat" שמחזיר גם leyning.torah
-      const url = new URL("https://www.hebcal.com/shabbat");
-      url.searchParams.set("cfg", "json");
-      url.searchParams.set("geo", GEO.geo);
-      url.searchParams.set("geonameid", String(GEO.geonameid));
-      url.searchParams.set("M", "on");
-      url.searchParams.set("hdp", "1"); // חלקי תאריך עברי נוחים
-      return url.toString();
-    }
+      function sefariaNextReadUrl(parashaEn){
+        return "https://www.sefaria.org/api/calendars/next-read/" + encodeURIComponent(parashaEn);
+      }
 
-    function formatHebrewDateFromParts(heDateParts){
-      // heDateParts מגיע מ-Hebcal כש-hdp=1
-      if(!heDateParts) return "";
-      const d = heDateParts.d || "";
-      const m = heDateParts.m || "";
-      const y = heDateParts.y || "";
-      const parts = [d, m, y].filter(Boolean);
-      return parts.join(" ");
-    }
+      function sefariaTextsUrl(tref){
+        const url = new URL("https://www.sefaria.org/api/texts/" + encodeURIComponent(tref));
+        url.searchParams.set("lang", "he");
+        url.searchParams.set("context", "0");
+        return url.toString();
+      }
 
-    function formatDateHe(dateIso){
-      if(!dateIso) return "";
-      const d = new Date(dateIso);
-      if(Number.isNaN(d.getTime())) return "";
-      return new Intl.DateTimeFormat("he-IL", {
-        weekday: "long", year: "numeric", month: "long", day: "numeric"
-      }).format(d);
-    }
+      function getAliyotRefs(nextReadJson){
+        const torah = nextReadJson?.readings?.torah || nextReadJson?.torah || null;
+        if(!torah) return [];
 
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function normalizeSefariaHebrewText(textJson){
-      // v1 texts api מחזיר he כמערך פסוקים/פסקאות
-      const he = textJson?.he;
-      if(Array.isArray(he)) return he.filter(Boolean).join(" ");
-      if(typeof he === "string") return he;
-      return "";
-    }
-
-    async function loadParshaAndText(){
-      clearError();
-      elText.textContent = "טוען את טקסט הפרשה…";
-      elMarqText.textContent = "טוען פרשת השבוע…";
-
-      try{
-        // 1) Hebcal Shabbat => פרשה + תאריך עברי + leyning.torah
-        const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
-        if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
-        const hebJson = await hebRes.json();
-
-        const items = Array.isArray(hebJson?.items) ? hebJson.items : [];
-        const parshaItem = items.find(x => x?.category === "parashat");
-        if(!parshaItem) throw new Error("No parasha in Hebcal response");
-
-        const parashaHe = (parshaItem.hebrew || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
-        const gregDate  = formatDateHe(parshaItem.date);
-        const hebDate   = formatHebrewDateFromParts(parshaItem?.heDateParts);
-
-        // זה ה"טווח" שממנו נביא טקסט
-        const torahRef = parshaItem?.leyning?.torah; // לדוגמה: "Genesis 6:9-11:32"
-
-        // טיקר למעלה
-        const parts = [];
-        parts.push("פרשת השבוע: " + parashaHe);
-        if(hebDate) parts.push("תאריך עברי: " + hebDate);
-        if(gregDate) parts.push("שבת: " + gregDate);
-        elMarqText.textContent = parts.join("  •  ");
-
-        if(!torahRef){
-          elText.textContent = "טקסט הפרשה לא זמין כרגע (Hebcal לא החזיר טווח קריאה).";
-          return;
+        if(Array.isArray(torah)){
+          return torah.map(x => x?.ref).filter(Boolean);
+        }
+        if(Array.isArray(torah?.aliyot)){
+          return torah.aliyot.map(x => x?.ref || x).filter(Boolean);
         }
 
-        // 2) Sefaria texts (v1) דרך JSONP כדי לא להיחסם ב-CORS
-        // שימי לב: זה מביא את כל הטווח (הפרשה) בבת אחת
-        const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(torahRef)
-                     + "?lang=he&context=0";
-
-        const textJson = await jsonp(sefUrl);
-        const hebText = normalizeSefariaHebrewText(textJson);
-
-        if(!hebText){
-          elText.textContent = "הטקסט חזר ריק מספראיה כרגע.";
-          return;
+        const refs = [];
+        for(const k of Object.keys(torah)){
+          const v = torah[k];
+          if(Array.isArray(v)){
+            v.forEach(item => {
+              if(typeof item === "string") refs.push(item);
+              else if(item?.ref) refs.push(item.ref);
+            });
+          } else if(v?.ref){
+            refs.push(v.ref);
+          }
         }
-
-        // הצגה יפה בפסקאות (בלי "עלייה 1/2/3")
-        elText.innerHTML = `<p>${escapeHtml(hebText)}</p>`;
-
-      } catch(err){
-        console.error(err);
-        showError("יש בעיה בטעינה (אינטרנט/חסימה/שרת). נסה לרענן את הדף.");
-        elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
+        return refs.filter(Boolean);
       }
-    }
 
-    loadParshaAndText();
-    setInterval(loadParshaAndText, 6 * 60 * 60 * 1000);
-  })();
-
-  /* ============================
-     ווידג׳ט דיווחים (כמו שהיה)
-     ============================ */
-  (function(){
-    const els = {
-      statusBadge: document.getElementById("w_statusBadge"),
-      statusDot: document.getElementById("w_statusDot"),
-      statusText: document.getElementById("w_statusText"),
-      updatedAt: document.getElementById("w_updatedAt"),
-      reportCard: document.getElementById("w_reportCard"),
-      sevBar: document.getElementById("w_sevBar"),
-      reportTitle: document.getElementById("w_reportTitle"),
-      reportText: document.getElementById("w_reportText"),
-      reportTime: document.getElementById("w_reportTime"),
-      btnRefresh: document.getElementById("w_btnRefresh"),
-      btnSimulate: document.getElementById("w_btnSimulate"),
-    };
-
-    const demoReports = [
-      { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
-      { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
-      { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
-    ];
-
-    function heTime(){
-      return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
-    }
-
-    function setStatus(level){
-      const isAlert = (level === "critical");
-      els.statusBadge.classList.toggle("alert", isAlert);
-      els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
-
-      if(level === "warn"){
-        els.statusDot.style.background = "var(--w-warn)";
-      } else if(level === "critical"){
-        els.statusDot.style.background = "var(--w-red2)";
-      } else {
-        els.statusDot.style.background = "var(--w-ok)";
+      function normalizeSefariaHebrewText(textJson){
+        const he = textJson?.he;
+        if(Array.isArray(he)) return he.filter(Boolean).join(" ");
+        if(typeof he === "string") return he;
+        const t = textJson?.text;
+        if(Array.isArray(t)) return t.join(" ");
+        if(typeof t === "string") return t;
+        return "";
       }
-    }
 
-    function setSeverityBar(level){
-      els.sevBar.classList.remove("ok","warn","critical");
-      els.sevBar.classList.add(level);
-    }
+      function escapeHtml(str){
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
 
-    function animateUpdate(){
-      els.reportCard.classList.remove("updated");
-      void els.reportCard.offsetHeight;
-      els.reportCard.classList.add("updated");
-    }
+      async function loadParshaAndText(){
+        clearError();
+        elText.textContent = "טוען את טקסט הפרשה…";
+        elMarqText.textContent = "טוען פרשת השבוע…";
 
-    function applyReport(report){
-      setSeverityBar(report.level);
-      setStatus(report.level);
+        try{
+          // 1) Hebcal => שם פרשה + תאריך שבת
+          const hebRes = await fetch(hebcalUrl(), { cache: "no-store" });
+          if(!hebRes.ok) throw new Error("Hebcal HTTP " + hebRes.status);
+          const hebJson = await hebRes.json();
 
-      els.reportTitle.textContent = report.title;
-      els.reportText.textContent  = report.text;
+          const p = extractParshaFromHebcal(hebJson);
+          if(!p) throw new Error("No parasha in Hebcal response");
 
-      const t = heTime();
-      els.reportTime.textContent  = t;
-      els.updatedAt.textContent   = t;
+          const parashaEn = cleanEnglishParasha(p.title);
+          const parashaHe = (p.hebrewName || "").replace(/^פרשת\s*/i, "").trim() || "פרשת השבוע";
 
-      animateUpdate();
-    }
+          const hebrewDate = formatHebrewDateFromISO(p.dateIso);
+          const gregDate   = formatDateHe(p.dateIso);
 
-    let idx = 0;
-    function nextReport(){
-      idx = (idx + 1) % demoReports.length;
-      applyReport(demoReports[idx]);
-    }
+          // טיקר: פרשה + תאריך עברי + (אופציונלי) תאריך לועזי קטן
+          const parts = [];
+          parts.push("פרשת השבוע: " + parashaHe);
+          if(hebrewDate) parts.push("תאריך עברי: " + hebrewDate);
+          if(gregDate)   parts.push("שבת: " + gregDate);
+          elMarqText.textContent = parts.join("  •  ");
 
-    applyReport(demoReports[0]);
-    els.btnSimulate.addEventListener("click", nextReport);
-    els.btnRefresh.addEventListener("click", () => applyReport(demoReports[idx]));
+          // 2) נסיון להביא טקסט דרך Sefaria
+          if(!parashaEn){
+            elText.textContent = "טקסט הפרשה לא זמין כרגע.";
+            return;
+          }
 
-    setInterval(() => {
-      els.updatedAt.textContent = heTime();
-    }, 30000);
-  })();
-</script>
+          const nrRes = await fetch(sefariaNextReadUrl(parashaEn), { cache: "no-store" });
+          if(!nrRes.ok) throw new Error("Sefaria next-read HTTP " + nrRes.status);
+          const nrJson = await nrRes.json();
+
+          const refs = getAliyotRefs(nrJson);
+
+          // אם אין רפרנסים — לא נציג את זה למשתמש, רק הודעה נקייה
+          if(!refs.length){
+            elText.textContent = "טקסט הפרשה לא זמין כרגע (מקור הקריאה לא החזיר טווחי פסוקים).";
+            return;
+          }
+
+          const paragraphs = [];
+          for(let i = 0; i < refs.length; i++){
+            const tref = refs[i];
+            try{
+              const tRes = await fetch(sefariaTextsUrl(tref), { cache: "no-store" });
+              if(!tRes.ok) throw new Error("texts HTTP " + tRes.status);
+              const tJson = await tRes.json();
+
+              const hebText = normalizeSefariaHebrewText(tJson);
+              // אפשר להסיר "עלייה X" אם תרצה—תגיד.
+              paragraphs.push(hebText ? `עלייה ${i+1}: ${hebText}` : `עלייה ${i+1}: (אין טקסט)`);
+            } catch(e){
+              paragraphs.push(`עלייה ${i+1}: (לא הצלחתי לטעון את הטקסט)`);
+            }
+          }
+
+          elText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("");
+
+        } catch(err){
+          console.error(err);
+          showError("יש בעיה בטעינה (אינטרנט/חסימה/שרת). נסה לרענן את הדף.");
+          elText.textContent = "לא הצלחתי לטעון את טקסט הפרשה כרגע.";
+        }
+      }
+
+      loadParshaAndText();
+      setInterval(loadParshaAndText, 6 * 60 * 60 * 1000);
+    })();
+
+    /* ============================
+       ווידג׳ט דיווחים קטן
+       ============================ */
+    (function(){
+      const els = {
+        statusBadge: document.getElementById("w_statusBadge"),
+        statusDot: document.getElementById("w_statusDot"),
+        statusText: document.getElementById("w_statusText"),
+        updatedAt: document.getElementById("w_updatedAt"),
+
+        reportCard: document.getElementById("w_reportCard"),
+        sevBar: document.getElementById("w_sevBar"),
+        reportTitle: document.getElementById("w_reportTitle"),
+        reportText: document.getElementById("w_reportText"),
+        reportTime: document.getElementById("w_reportTime"),
+
+        btnRefresh: document.getElementById("w_btnRefresh"),
+        btnSimulate: document.getElementById("w_btnSimulate"),
+      };
+
+      const demoReports = [
+        { level: "ok",       title: "שגרה תקינה",        text: "אין דיווחים חריגים כרגע. ניטור פעיל ברקע." },
+        { level: "warn",     title: "תשומת לב נקודתית",  text: "זוהתה אינדיקציה שדורשת אימות ממוקד. אין שינוי נרחב." },
+        { level: "critical", title: "התרעה חשובה",       text: "נדרשת בדיקה מיידית של פרטי הדיווח. פעל לפי נהלים." }
+      ];
+
+      function heTime(){
+        return new Intl.DateTimeFormat("he-IL", { hour:"2-digit", minute:"2-digit", second:"2-digit" }).format(new Date());
+      }
+
+      function setStatus(level){
+        const isAlert = (level === "critical");
+        els.statusBadge.classList.toggle("alert", isAlert);
+        els.statusText.textContent = isAlert ? "התרעה פעילה" : "אין התרעות";
+
+        if(level === "warn"){
+          els.statusDot.style.background = "var(--w-warn)";
+        } else if(level === "critical"){
+          els.statusDot.style.background = "var(--w-red2)";
+        } else {
+          els.statusDot.style.background = "var(--w-ok)";
+        }
+      }
+
+      function setSeverityBar(level){
+        els.sevBar.classList.remove("ok","warn","critical");
+        els.sevBar.classList.add(level);
+      }
+
+      function animateUpdate(){
+        els.reportCard.classList.remove("updated");
+        void els.reportCard.offsetHeight;
+        els.reportCard.classList.add("updated");
+      }
+
+      function applyReport(report){
+        setSeverityBar(report.level);
+        setStatus(report.level);
+
+        els.reportTitle.textContent = report.title;
+        els.reportText.textContent  = report.text;
+
+        const t = heTime();
+        els.reportTime.textContent  = t;
+        els.updatedAt.textContent   = t;
+
+        animateUpdate();
+      }
+
+      let idx = 0;
+      function nextReport(){
+        idx = (idx + 1) % demoReports.length;
+        applyReport(demoReports[idx]);
+      }
+
+      applyReport(demoReports[0]);
+      els.btnSimulate.addEventListener("click", nextReport);
+      els.btnRefresh.addEventListener("click", () => applyReport(demoReports[idx]));
+
+      setInterval(() => {
+        els.updatedAt.textContent = heTime();
+      }, 30000);
+    })();
+  </script>
+</body>
+</html>
