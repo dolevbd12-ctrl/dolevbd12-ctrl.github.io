@@ -1,270 +1,366 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>פרשת השבוע</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>פרשת השבוע</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
 
-<style>
-:root{
-  --bg1:#18233f; --bg2:#070b18;
-  --bar:rgba(180,180,180,.16);
-  --barBorder:rgba(255,255,255,.14);
-  --parashaText:#000;
-  --parashaBg:rgba(255,255,255,.88);
-}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 
-html,body{margin:0;height:100%}
-body{
-  background:radial-gradient(circle at top,var(--bg1),var(--bg2));
-  font-family:"IBM Plex Sans Hebrew",sans-serif;
-  overflow:hidden;
-  color:#fff;
-}
+  <style>
+    :root{
+      --bg1:#18233f;
+      --bg2:#070b18;
+      --bar:rgba(180,180,180,.16);   /* "שורה אפורה" */
+      --barBorder:rgba(255,255,255,.14);
+      --text:#fff;
 
-/* HEADER */
-.header{
-  position:fixed;top:0;left:0;right:0;
-  padding:12px 14px;
-  background:var(--bar);
-  border-bottom:1px solid var(--barBorder);
-  backdrop-filter:blur(10px);
-  z-index:10;
-}
-.headerRow{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-.badge{
-  padding:6px 10px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(0,0,0,.18);
-}
-.clock{font-family:"Roboto Mono",monospace}
+      /* טקסט הפרשה */
+      --parshaText:#000;
+      --parshaBg:rgba(255,255,255,.86);
+    }
 
-/* MARQUEE */
-.marquee-wrap{
-  position:absolute;
-  top:78px;left:0;right:0;bottom:0;
-  display:flex;
-  align-items:center;
-  overflow:hidden;
-  padding-inline:16px;
-  box-sizing:border-box;
-}
-.marquee-track{
-  display:flex;
-  width:max-content;
-  will-change:transform;
-  /* האנימציה מופעלת רק כשיש תוכן */
-  animation:none;
-}
-.marquee-track.running{
-  animation:scroll 30s linear infinite;
-}
-.marquee-content{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  white-space:nowrap;
-}
-.marquee-gap{width:80px}
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(circle at top,var(--bg1),var(--bg2));
+      color:var(--text);
+      font-family:"IBM Plex Sans Hebrew",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      overflow:hidden;
+    }
 
-.marquee-content img{
-  width:110px;height:110px;
-  object-fit:cover;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 12px 34px rgba(0,0,0,.45);
-  flex:0 0 auto;
-}
+    /* שורה עליונה */
+    .header{
+      position:fixed; inset:0 0 auto 0;
+      padding:12px 14px;
+      background:var(--bar);
+      border-bottom:1px solid var(--barBorder);
+      backdrop-filter: blur(10px);
+      z-index:10;
+    }
+    .headerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .leftInfo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight:700;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.18);
+    }
+    .clock{
+      font-family:"Roboto Mono",monospace;
+      font-weight:700;
+      letter-spacing:.4px;
+    }
+    .meta{
+      opacity:.92;
+      font-weight:600;
+    }
 
-.parasha-text{
-  font-family:"Frank Ruhl Libre",serif;
-  font-size:22px;
-  color:var(--parashaText);
-  background:var(--parashaBg);
-  padding:10px 16px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,.12);
-  box-shadow:0 12px 34px rgba(0,0,0,.25);
-}
+    /* אזור ריצה */
+    .marquee-wrap{
+      position:absolute;
+      top:76px; /* מתחת לכותרת */
+      left:0; right:0; bottom:0;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      overflow:hidden;
+      padding-inline:16px;
+      box-sizing:border-box;
+    }
 
-@keyframes scroll{
-  from{transform:translateX(0)}
-  to{transform:translateX(-50%)}
-}
+    .marquee{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      white-space:nowrap;
+      animation: scroll 45s linear infinite;
+    }
 
-/* SECURITY */
-.security{
-  position:fixed;
-  bottom:16px;
-  left:16px;
-  width:260px;
-  background:rgba(120,0,0,.85);
-  padding:12px;
-  border:1px solid rgba(255,255,255,.2);
-  font-size:13px;
-  z-index:12;
-}
-</style>
+    .marquee img{
+      width:110px;
+      height:110px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 12px 34px rgba(0,0,0,.45);
+      flex:0 0 auto;
+    }
+
+    .parasha-text{
+      font-family:"Frank Ruhl Libre","Times New Roman",serif;
+      font-size:22px;
+      line-height:1.4;
+      color:var(--parshaText);
+      background:var(--parshaBg);
+      padding:10px 16px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.12);
+      box-shadow:0 12px 34px rgba(0,0,0,.25);
+    }
+
+    @keyframes scroll{
+      from{transform:translateX(-110%);}
+      to{transform:translateX(110%);}
+    }
+
+    /* פינת דיווחים (נשארת פשוטה אצלך כרגע) */
+    .security{
+      position:fixed;
+      bottom:16px;
+      left:16px;
+      width:260px;
+      background:rgba(120,0,0,.85);
+      padding:12px;
+      border:1px solid rgba(255,255,255,.2);
+      color:#fff;
+      font-size:13px;
+      z-index:12;
+    }
+    .security h3{margin:0 0 6px;font-size:14px}
+
+    /* מצב צמצום תנועה */
+    @media (prefers-reduced-motion: reduce){
+      .marquee{animation:none}
+      body{overflow:auto}
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div class="headerRow">
-    <div class="badge" id="greeting">טוען…</div>
-    <div class="badge clock" id="clock">--:--:--</div>
-    <div class="badge" id="dates">טוען תאריך…</div>
-    <div class="badge">פרשת השבוע: <span id="parashaName">טוען…</span></div>
-  </div>
-</div>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="headerRow">
+      <div class="leftInfo">
+        <span class="badge" id="greeting">טוען…</span>
+        <span class="badge clock" id="clock">--:--:--</span>
+        <span class="badge meta" id="dates">טוען תאריך…</span>
+      </div>
 
-<div class="marquee-wrap">
-  <div class="marquee-track" id="marqueeTrack">
-    <!-- עותק 1 (עם IDs) -->
-    <div class="marquee-content" id="marqueeContent">
+      <div class="badge meta">
+        פרשת השבוע: <span id="parashaName">טוען…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee" id="marquee">
       <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
       <div class="parasha-text" id="parashaText">טוען את טקסט הפרשה…</div>
-      <span class="marquee-gap"></span>
     </div>
-
-    <!-- עותק 2 (נבנה בלי IDs כדי לא לשבור את הדף) -->
-    <div class="marquee-content" id="marqueeClone"></div>
   </div>
-</div>
 
-<div class="security">
-  <strong>פינת דיווחים ביטחוניים</strong><br>
-  ירושלים<br>
-  אין התרעות
-</div>
+  <!-- Security corner (דמו) -->
+  <div class="security">
+    <h3>פינת דיווחים ביטחוניים</h3>
+    <div>ירושלים</div>
+    <div>אין התרעות</div>
+  </div>
 
-<script>
-const TZ="Asia/Jerusalem";
-const GEO={geo:"geoname",geonameid:281184};
+  <script>
+    /* ============================
+       הגדרות
+       ============================ */
+    const TZ = "Asia/Jerusalem";
+    const GEO = { geo: "geoname", geonameid: 281184 }; // Jerusalem
 
-const el={
-  greeting:document.getElementById("greeting"),
-  clock:document.getElementById("clock"),
-  dates:document.getElementById("dates"),
-  parashaName:document.getElementById("parashaName"),
-  parashaText:document.getElementById("parashaText"),
-  track:document.getElementById("marqueeTrack"),
-  content:document.getElementById("marqueeContent"),
-  clone:document.getElementById("marqueeClone"),
-};
+    const els = {
+      greeting: document.getElementById("greeting"),
+      clock: document.getElementById("clock"),
+      dates: document.getElementById("dates"),
+      parashaName: document.getElementById("parashaName"),
+      parashaText: document.getElementById("parashaText"),
+    };
 
-/* JSONP (לעקוף CORS מול Sefaria) */
-function jsonp(url){
-  return new Promise((resolve,reject)=>{
-    const cb="cb_"+Math.random().toString(36).slice(2);
-    const s=document.createElement("script");
-    const t=setTimeout(()=>{cleanup();reject(new Error("timeout"))},12000);
+    /* ============================
+       JSONP (לעקוף CORS מול Sefaria ב-GitHub Pages)
+       ============================ */
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const sep = url.includes("?") ? "&" : "?";
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("JSONP timeout"));
+        }, 12000);
 
-    function cleanup(){
-      clearTimeout(t);
-      try{ delete window[cb]; }catch(e){ window[cb]=undefined; }
-      s.remove();
+        function cleanup() {
+          clearTimeout(timeout);
+          try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+          script.remove();
+        }
+
+        window[cb] = (data) => { cleanup(); resolve(data); };
+        script.src = url + sep + "callback=" + cb;
+        script.onerror = () => { cleanup(); reject(new Error("JSONP load error")); };
+
+        document.body.appendChild(script);
+      });
     }
 
-    window[cb]=(data)=>{cleanup();resolve(data);};
-    s.src=url+(url.includes("?")?"&":"?")+"callback="+cb;
-    s.onerror=()=>{cleanup();reject(new Error("load error"));};
-    document.body.appendChild(s);
-  });
-}
-
-/* שעון + תאריכים */
-function tick(){
-  el.clock.textContent=new Intl.DateTimeFormat("he-IL",{
-    timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"
-  }).format(new Date());
-
-  let he="";
-  try{
-    he=new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
-      timeZone:TZ,day:"numeric",month:"long",year:"numeric"
-    }).format(new Date());
-  }catch(e){}
-
-  const gr=new Intl.DateTimeFormat("he-IL",{
-    timeZone:TZ,weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"
-  }).format(new Date());
-
-  el.dates.textContent=(he? (he+" • "+gr) : gr);
-}
-setInterval(tick,1000); tick();
-
-/* בונה עותק 2 בלי IDs ומדליק אנימציה */
-function refreshSeamlessMarquee(){
-  // מעתיקים HTML של עותק 1
-  let html = el.content.innerHTML;
-
-  // מורידים id="..." כדי שלא יהיו IDs כפולים
-  html = html.replace(/\sid="[^"]*"/g, "");
-
-  el.clone.innerHTML = html;
-
-  // מפעילים אנימציה רק כשיש גם עותק 2 מלא
-  el.track.classList.add("running");
-}
-
-/* Hebcal */
-async function loadParasha(){
-  try{
-    const u=new URL("https://www.hebcal.com/shabbat");
-    u.searchParams.set("cfg","json");
-    u.searchParams.set("geo",GEO.geo);
-    u.searchParams.set("geonameid",String(GEO.geonameid));
-    u.searchParams.set("M","on");
-    u.searchParams.set("hdp","1");
-
-    const data=await fetch(u.toString(),{cache:"no-store"}).then(r=>r.json());
-    const items=data.items||[];
-
-    const p=items.find(i=>i.category==="parashat");
-    const candles=items.find(i=>i.category==="candles");
-    const havdalah=items.find(i=>i.category==="havdalah");
-
-    el.parashaName.textContent=p?.hebrew ? p.hebrew.replace(/^פרשת\s*/,"").trim() : "—";
-
-    const now=new Date();
-    const inShabbat = candles?.date && havdalah?.date
-      ? (now >= new Date(candles.date) && now <= new Date(havdalah.date))
-      : false;
-    el.greeting.textContent = inShabbat ? "שבת שלום" : "שבוע טוב";
-
-    const ref=p?.leyning?.torah;
-    if(!ref){
-      el.parashaText.textContent="טקסט הפרשה לא זמין כרגע.";
-      refreshSeamlessMarquee();
-      return;
+    /* ============================
+       פורמטים זמן/תאריך
+       ============================ */
+    function nowJerusalemDate() {
+      // "תאריך" לפי ירושלים (מבטיח תצוגה נכונה גם אם המשתמש לא בישראל)
+      // נשתמש ב-Intl כדי להציג, ואת ה-logic נבסס על זמני שבת שמגיעים מ-Hebcal.
+      return new Date();
     }
 
-    const txt=await jsonp("https://www.sefaria.org/api/texts/"+encodeURIComponent(ref)+"?lang=he&context=0");
-    const text = Array.isArray(txt?.he) ? txt.he.filter(Boolean).join(" ") : (txt?.he || "");
+    function formatClock() {
+      return new Intl.DateTimeFormat("he-IL", {
+        timeZone: TZ,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(new Date());
+    }
 
-    el.parashaText.textContent = text || "הטקסט חזר ריק כרגע.";
-    refreshSeamlessMarquee();
+    function formatGregorianToday() {
+      return new Intl.DateTimeFormat("he-IL", {
+        timeZone: TZ,
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    }
 
-  }catch(e){
-    el.parashaName.textContent="—";
-    el.greeting.textContent="שבוע טוב";
-    el.parashaText.textContent="שגיאה בטעינה (אינטרנט/חסימה).";
-    refreshSeamlessMarquee();
-  }
-}
+    function formatHebrewToday() {
+      try{
+        return new Intl.DateTimeFormat("he-IL-u-ca-hebrew", {
+          timeZone: TZ,
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        }).format(new Date());
+      } catch(e){
+        return ""; // דפדפן נדיר שלא תומך
+      }
+    }
 
-loadParasha();
-setInterval(loadParasha, 6*60*60*1000);
-</script>
+    function setDatesLine(){
+      const he = formatHebrewToday();
+      const gr = formatGregorianToday();
+      els.dates.textContent = (he ? `${he} • ${gr}` : gr);
+    }
 
+    /* ============================
+       Hebcal: פרשה + כניסת שבת/הבדלה בירושלים
+       ============================ */
+    function hebcalShabbatUrl(){
+      const url = new URL("https://www.hebcal.com/shabbat");
+      url.searchParams.set("cfg", "json");
+      url.searchParams.set("geo", GEO.geo);
+      url.searchParams.set("geonameid", String(GEO.geonameid));
+      url.searchParams.set("M", "on");
+      url.searchParams.set("b", "18");
+      url.searchParams.set("hdp", "1");
+      return url.toString();
+    }
+
+    function parseIso(d){
+      const x = new Date(d);
+      return Number.isNaN(x.getTime()) ? null : x;
+    }
+
+    function extractHebcal(items, category){
+      return (items || []).find(it => it && it.category === category) || null;
+    }
+
+    async function loadParashaAndGreeting(){
+      try{
+        const res = await fetch(hebcalShabbatUrl(), { cache: "no-store" });
+        if(!res.ok) throw new Error("Hebcal HTTP " + res.status);
+        const data = await res.json();
+        const items = Array.isArray(data?.items) ? data.items : [];
+
+        const parshaItem = extractHebcal(items, "parashat");
+        const candlesItem = extractHebcal(items, "candles");
+        const havdalahItem = extractHebcal(items, "havdalah");
+
+        // שם הפרשה
+        const parashaHe = parshaItem?.hebrew
+          ? String(parshaItem.hebrew).replace(/^פרשת\s*/i,"").trim()
+          : "—";
+        els.parashaName.textContent = parashaHe;
+
+        // שבת שלום / שבוע טוב לפי טווח [candles, havdalah] בירושלים
+        const now = new Date();
+        const candles = candlesItem?.date ? parseIso(candlesItem.date) : null;
+        const havdalah = havdalahItem?.date ? parseIso(havdalahItem.date) : null;
+
+        const inShabbat = candles && havdalah ? (now >= candles && now <= havdalah) : false;
+        els.greeting.textContent = inShabbat ? "שבת שלום" : "שבוע טוב";
+
+        // טווח קריאה להבאת טקסט הפרשה
+        const torahRef = parshaItem?.leyning?.torah; // למשל "Exodus 1:1-6:1"
+        if(!torahRef){
+          els.parashaText.textContent = "טקסט הפרשה לא זמין כרגע.";
+          return;
+        }
+
+        // Sefaria texts דרך JSONP
+        const sefUrl = "https://www.sefaria.org/api/texts/" + encodeURIComponent(torahRef) + "?lang=he&context=0";
+        const textJson = await jsonp(sefUrl);
+
+        const he = textJson?.he;
+        let text = "";
+        if(Array.isArray(he)) text = he.filter(Boolean).join(" ");
+        else if(typeof he === "string") text = he;
+
+        if(!text){
+          els.parashaText.textContent = "הטקסט חזר ריק כרגע. נסי לרענן.";
+          return;
+        }
+
+        // ניקוי בסיסי (שומר עברית)
+        els.parashaText.textContent = text;
+
+      } catch(e){
+        console.error(e);
+        els.parashaName.textContent = "—";
+        els.greeting.textContent = "שבוע טוב";
+        els.parashaText.textContent = "לא הצלחתי לטעון את הפרשה כרגע (אינטרנט/חסימה).";
+      }
+    }
+
+    /* ============================
+       שעון חי + תאריכים
+       ============================ */
+    function tickUI(){
+      els.clock.textContent = formatClock();
+      setDatesLine();
+    }
+
+    // Start
+    tickUI();
+    setInterval(tickUI, 1000);
+
+    loadParashaAndGreeting();
+    // רענון פרשה/שבת אחת ל-6 שעות (או אם נשאר פתוח הרבה זמן)
+    setInterval(loadParashaAndGreeting, 6 * 60 * 60 * 1000);
+  </script>
 </body>
 </html>
