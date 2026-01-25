@@ -566,35 +566,55 @@
       track.style.animationDuration = seconds + "s";
     }
 
-    async function fetchParashaAndHebDate(){
-      try{
-        const r = await fetch(HEBCAL_URL, { cache:"no-store" });
-        if(!r.ok) throw new Error("Hebcal failed");
-        const j = await r.json();
+async function fetchParashaAndHebDate(){
+  try{
+    const r = await fetch(HEBCAL_URL, { cache:"no-store" });
+    if(!r.ok) throw new Error("Hebcal failed");
+    const j = await r.json();
 
-        const heb = safeText(j.hebrew || "");
-        if(heb) document.getElementById("dateHeb").textContent = heb;
+    // תאריך עברי
+    const heb = safeText(j.hebrew || "");
+    if(heb) document.getElementById("dateHeb").textContent = heb;
 
-        const items = Array.isArray(j.items) ? j.items : [];
-        let p = items.find(x => x && x.category === "parashat");
-        if(!p) p = items.find(x => safeText(x?.title).includes("פרשת"));
-        let parashaTitle = safeText(p?.title) || safeText(j.parasha) || "";
+    // פרשה
+    const items = Array.isArray(j.items) ? j.items : [];
+    let p = items.find(x => x && x.category === "parashat");
+    if(!p) p = items.find(x => safeText(x?.title).includes("פרשת"));
+    let parashaTitle = safeText(p?.title) || safeText(j.parasha) || "פרשת השבוע";
+    parashaTitle = parashaTitle.replace(/^Parashat\s+/i,"").trim();
 
-        parashaTitle = parashaTitle.replace(/^Parashat\s+/i,"").trim();
-        if(!parashaTitle) parashaTitle = "פרשת השבוע";
+    document.getElementById("parashaName").textContent = parashaTitle;
 
-        document.getElementById("parashaName").textContent = parashaTitle;
+    // בונוס: מוסיף עוד מידע שיש ב-Hebcal (אם קיים)
+    const cand = items
+      .filter(x => x && (x.category === "parashat" || x.category === "holiday"))
+      .slice(0, 4)
+      .map(x => safeText(x.title))
+      .filter(Boolean);
 
-        const marqueeText =
-          `• פרשת השבוע: ${parashaTitle} • עדכון אוטומטי • פרשת השבוע: ${parashaTitle} • עדכון אוטומטי •`;
-
-        startMarquee(marqueeText);
-      }catch(e){
-        document.getElementById("parashaName").textContent = "פרשת השבוע";
-        document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
-        startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
-      }
+    // לפעמים Hebcal מוסיף גם readings בתוך item (לא תמיד)
+    let extra = "";
+    if (p && p.readings) {
+      const ali = p.readings?.aliyot ? "עליות" : "";
+      const torah = p.readings?.torah ? "תורה" : "";
+      const haft = p.readings?.haftara ? "הפטרה" : "";
+      const parts = [torah, ali, haft].filter(Boolean).join(" • ");
+      if (parts) extra = ` | ${parts}`;
     }
+
+    // טקסט רץ מלא יותר (אבל עדיין לא “פסוקים”)
+    const marqueeText =
+      `• פרשת השבוע: ${parashaTitle}${extra} • תאריך עברי: ${heb || "—"} • ${cand.join(" • ")} • `;
+
+    // לופ אינסופי + בלי “ריק”
+    startMarquee(marqueeText);
+
+  }catch(e){
+    document.getElementById("parashaName").textContent = "פרשת השבוע";
+    document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
+    startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
+  }
+}
 
     function mapAreaToQuery(val){ return val; }
 
