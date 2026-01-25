@@ -392,9 +392,10 @@
 
     <div class="marquee">
       <div class="track" id="marqueeTrack" aria-label="marquee">
-        <div class="marqueeText" id="marqueeA">• טוען פרשת השבוע… •</div>
-        <div class="marqueeText" id="marqueeB">• טוען פרשת השבוע… •</div>
-      </div>
+  <div class="marqueeText" id="marqueeA">• טוען פרשת השבוע… •</div>
+  <div class="marqueeText" id="marqueeA2">• טוען פרשת השבוע… •</div>
+</div>
+
     </div>
   </div>
 
@@ -506,24 +507,30 @@
     }
 
     /* ===== MARQUEE (לופ חלק אמיתי) ===== */
-    function setMarqueeText(text){
-      const A = document.getElementById("marqueeA");
-      const B = document.getElementById("marqueeB");
-      const track = document.getElementById("marqueeTrack");
+   function setMarqueeText(text){
+  const A = document.getElementById("marqueeA");
+  const A2 = document.getElementById("marqueeA2");
+  const track = document.getElementById("marqueeTrack");
 
-      let t = safeText(text);
-      if(!t) t = "• פרשת השבוע •";
+  let t = safeText(text);
+  if(!t) t = "• טוען פרשת השבוע… •";
 
-      // חייב להיות ארוך + שני עותקים זהים כדי שהלופ יהיה “בלי חור”
-      while (t.length < 650) t += "     " + t;
+  // מספיק ארוך
+  while (t.length < 700) t += "     " + t;
 
-      A.textContent = t;
-      B.textContent = t;
+  // שני עותקים זהים כדי שהלולאה תהיה חלקה
+  A.textContent = t;
+  A2.textContent = t;
 
-      // מהירות לפי אורך
-      const seconds = Math.min(80, Math.max(22, Math.floor(t.length / 18)));
-      track.style.animationDuration = seconds + "s";
-    }
+  // חשוב: ה-track צריך להיות בדיוק שני עותקים
+  // אז נותנים לו מינימום רוחב של 200% (שני חצאים)
+  track.style.minWidth = "200%";
+
+  // מהירות לפי אורך
+  const seconds = Math.min(90, Math.max(24, Math.floor(t.length / 18)));
+  track.style.animationDuration = seconds + "s";
+}
+
 
     /* ===== פרשה מלאה בחתיכות ===== */
     let PARASHA_CHUNKS = [];
