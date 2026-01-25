@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>לוח מצב</title>
 
-  <!-- פונטים: תנ"כי לתוכן + מודרני לממשק -->
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* =========================
-       בסיס
-    ========================== */
     :root{
       --bg1:#0f5a27;
       --bg2:#073216;
@@ -43,7 +39,7 @@
     }
 
     /* =========================
-       שורה עליונה (Header)
+       שורה עליונה (גדולה יותר)
     ========================== */
     .header{
       position: fixed;
@@ -64,38 +60,38 @@
     }
 
     .badge{
-      padding: 6px 10px;
+      padding: 8px 12px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.22);
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       white-space: nowrap;
       box-shadow: 0 8px 18px rgba(0,0,0,.22);
-      font-size: 13px;
+      font-size: 15px;          /* היה 13 */
+      line-height: 1;
     }
 
-    .clock { font-family: var(--mono); }
+    .clock { font-family: var(--mono); font-size: 15px; }
     .muted { opacity: .92; }
 
     /* =========================
-       אזור מרקיזה (הפרשה רצה)
-       - כיוון: מימין לשמאל
-       - בלי "ריק" ארוך: משכפלים תוכן
+       מרקיזה (הפרשה רצה)
+       כיוון "הפוך" יחסית קודם: שמאל->ימין
     ========================== */
     .marquee-wrap{
       position: fixed;
-      top: 64px;               /* מתחת לשורה העליונה */
+      top: 70px;
       left: 0; right: 0;
-      height: 170px;
+      height: 175px;
       overflow: hidden;
       display: flex;
       align-items: center;
       padding-inline: 16px;
       box-sizing: border-box;
       z-index: 20;
-      pointer-events: none;    /* שלא יתנגש עם כפתורים */
+      pointer-events: none;
     }
 
     .marquee-track{
@@ -127,7 +123,7 @@
       font-size: 20px;
       line-height: 1.35;
 
-      color: #001b0c; /* ביקשת שחור/כהה */
+      color: #001b0c;
       background: linear-gradient(180deg, var(--greenGlow1), var(--greenGlow2));
       padding: 12px 18px;
 
@@ -138,26 +134,52 @@
     }
 
     /* =========================
-       פינת דיווחים בטחוניים (שמאל למטה)
+       פינת דיווחים בטחוניים (נפתחת/נסגרת)
     ========================== */
     .security{
       position: fixed;
       bottom: 16px;
       left: 16px;
-      width: 300px;
+      width: 330px;
       background: rgba(120,0,0,.85);
-      padding: 12px 12px;
       border: 1px solid rgba(255,255,255,.2);
       border-radius: 10px;
       box-shadow: var(--cardShadow);
       z-index: 40;
+      overflow: hidden;
     }
 
-    .security strong{
-      display: block;
-      margin-bottom: 8px;
-      font-size: 13px;
+    .sec-head{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(0,0,0,.18);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+
+    .sec-title{
+      font-weight: 800;
+      font-size: 13.5px;
       letter-spacing: .2px;
+    }
+
+    .sec-toggle{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-family: var(--mono);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .sec-body{
+      padding: 10px 12px 12px;
     }
 
     .sec-row{
@@ -184,8 +206,45 @@
       opacity: .98;
     }
 
+    .sec-log{
+      margin-top: 10px;
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      padding-top: 10px;
+    }
+
+    .log-item{
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+    }
+
+    .log-top{
+      display:flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      opacity: .95;
+      margin-bottom: 6px;
+    }
+
+    .log-places{
+      font-size: 13px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .collapsed .sec-body{ display:none; }
+
     /* =========================
-       Overlay אזעקה (אוטומטי מירושלים)
+       Overlay אזעקה
     ========================== */
     .alert-overlay{
       position: fixed;
@@ -250,9 +309,7 @@
       max-width: min(92vw, 900px);
     }
 
-    /* =========================
-       Overlay "טעית" (כפתור)
-    ========================== */
+    /* Overlay "טעית" */
     .oops-overlay{
       position: fixed;
       inset: 0;
@@ -287,18 +344,12 @@
       50%{ opacity: .25; transform: scale(1.03); }
       100%{ opacity: 1; transform: scale(1); }
     }
-    .oops-sub{
-      font-size: 14px;
-      opacity: .92;
-      margin: 0;
-    }
+    .oops-sub{ font-size: 14px; opacity: .92; margin: 0; }
 
-    /* =========================
-       כפתור גדול (ימין למעלה, קצת נמוך)
-    ========================== */
+    /* כפתור */
     .danger-btn{
       position: fixed;
-      top: 118px;          /* "להוריד למטה קצת" */
+      top: 118px;
       right: 16px;
       z-index: 60;
       padding: 16px 18px;
@@ -317,13 +368,7 @@
     }
     .danger-btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.08); }
     .danger-btn:active{ transform: translateY(0) scale(.99); }
-
-    .danger-btn[disabled]{
-      opacity: .55;
-      cursor: not-allowed;
-      transform: none !important;
-      filter: none !important;
-    }
+    .danger-btn[disabled]{ opacity: .55; cursor: not-allowed; transform: none !important; filter: none !important; }
 
     .btn-small{
       display:block;
@@ -333,24 +378,22 @@
       margin-top: 6px;
     }
 
-    /* Responsive קטן */
     @media (max-width: 520px){
-      .security{ width: 265px; }
-      .danger-btn{ left: 16px; right: auto; top: 118px; } /* אם צפוף - יעבור לצד שמאל */
-      .marquee-wrap{ height: 160px; }
+      .security{ width: 290px; }
+      .danger-btn{ left: 16px; right: auto; top: 118px; }
+      .marquee-wrap{ height: 165px; }
+      .badge{ font-size: 14px; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Overlay אזעקה אמיתית -->
   <div class="alert-overlay" id="alertOverlay" aria-hidden="true">
     <div class="sirens-grid" id="sirensGrid"></div>
-    <div class="alert-text" id="alertText">🚨 אזעקה בירושלים 🚨</div>
+    <div class="alert-text" id="alertText">🚨 התרעה 🚨</div>
   </div>
 
-  <!-- Overlay "טעית" -->
   <div class="oops-overlay" id="oopsOverlay" aria-hidden="true">
     <div class="oops-box">
       <div class="oops-title">טעית</div>
@@ -358,7 +401,6 @@
     </div>
   </div>
 
-  <!-- Header -->
   <div class="header">
     <div class="headerRow">
       <span class="badge" id="greeting">טוען…</span>
@@ -369,13 +411,11 @@
     </div>
   </div>
 
-  <!-- כפתור גדול -->
   <button class="danger-btn" id="dangerBtn" type="button">
     לא ללחוץ
     <span class="btn-small" id="btnHint">קולדאון: מוכן</span>
   </button>
 
-  <!-- מרקיזה -->
   <div class="marquee-wrap">
     <div class="marquee-track" id="track">
       <div class="marquee-content" id="content">
@@ -385,299 +425,370 @@
     </div>
   </div>
 
-  <!-- פינה בטחונית -->
-  <div class="security">
-    <strong>פינת דיווחים ביטחוניים</strong>
-    <div class="sec-row">
-      <span>ירושלים</span>
-      <span class="sec-pill" id="secClock">--:--:--</span>
+  <!-- פינה בטחונית (נפתחת/נסגרת) -->
+  <div class="security" id="securityPanel">
+    <div class="sec-head" id="secHead" title="פתח/סגור">
+      <div>
+        <div class="sec-title">פינת דיווחים ביטחוניים • 30 ימים</div>
+        <div class="sec-row" style="margin-top:6px">
+          <span class="sec-pill" id="secClock">--:--:--</span>
+          <span class="sec-pill" id="secCount">0 אירועים</span>
+        </div>
+      </div>
+      <button class="sec-toggle" id="secToggle" type="button">סגור</button>
     </div>
-    <div class="sec-status" id="secStatus">בודק התרעות…</div>
+
+    <div class="sec-body">
+      <div class="sec-status" id="secStatus">בודק התרעות…</div>
+      <div class="sec-log" id="secLog"></div>
+    </div>
   </div>
 
-  <script>
-    /* =========================
-       הגדרות
-    ========================== */
-    const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev/"; // <-- ה-URL שלך
-    const TZ = "Asia/Jerusalem";
-    const WATCH_CITY = "ירושלים";
+<script>
+  /* =========================
+     הגדרות
+  ========================== */
+  const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev/";
+  const TZ = "Asia/Jerusalem";
+  const WATCH_CITY = "ירושלים";
+  const OPEN_URL = "https://www.gov.il/he/departments/prime_ministers_office/govil-landing-page";
 
-    // יעד פתיחה בכפתור
-    const OPEN_URL = "https://www.gov.il/he/departments/prime_ministers_office/govil-landing-page";
+  /* =========================
+     שעון + תאריכים + ברכה
+  ========================== */
+  function tickTopBar(){
+    const now = new Date();
 
-    /* =========================
-       שעון + תאריכים + ברכה
-    ========================== */
-    function tickTopBar(){
-      const now = new Date();
+    const timeStr = new Intl.DateTimeFormat("he-IL",{
+      timeZone: TZ,
+      hour:"2-digit", minute:"2-digit", second:"2-digit"
+    }).format(now);
 
-      const timeStr = new Intl.DateTimeFormat("he-IL",{
+    document.getElementById("clock").textContent = timeStr;
+    document.getElementById("secClock").textContent = timeStr;
+
+    let heb = "";
+    try{
+      heb = new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
         timeZone: TZ,
-        hour:"2-digit", minute:"2-digit", second:"2-digit"
+        day:"numeric", month:"long", year:"numeric"
       }).format(now);
+    }catch(e){}
 
-      document.getElementById("clock").textContent = timeStr;
-      document.getElementById("secClock").textContent = timeStr;
+    const greg = new Intl.DateTimeFormat("he-IL",{
+      timeZone: TZ,
+      weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
+    }).format(now);
 
-      // תאריך עברי (אם הדפדפן תומך)
-      let heb = "";
-      try{
-        heb = new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
-          timeZone: TZ,
-          day:"numeric", month:"long", year:"numeric"
-        }).format(now);
-      }catch(e){}
+    document.getElementById("dates").textContent = heb ? (heb + " • " + greg) : greg;
 
-      // תאריך לועזי
-      const greg = new Intl.DateTimeFormat("he-IL",{
-        timeZone: TZ,
-        weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
-      }).format(now);
+    const isSat = new Intl.DateTimeFormat("en-US",{ timeZone: TZ, weekday:"short" }).format(now) === "Sat";
+    document.getElementById("greeting").textContent = isSat ? "שבת שלום" : "שבוע טוב";
+  }
+  setInterval(tickTopBar, 1000);
+  tickTopBar();
 
-      document.getElementById("dates").textContent = heb ? (heb + " • " + greg) : greg;
+  /* =========================
+     טיימר מאז 07.10.2023
+  ========================== */
+  const startDate = new Date("2023-10-07T00:00:00+03:00");
+  function updateSinceOct7(){
+    const now = new Date();
+    let diff = Math.max(0, now - startDate);
 
-      // שבת/שבוע
-      const isSat = new Intl.DateTimeFormat("en-US",{ timeZone: TZ, weekday:"short" }).format(now) === "Sat";
-      document.getElementById("greeting").textContent = isSat ? "שבת שלום" : "שבוע טוב";
-    }
-    setInterval(tickTopBar, 1000);
-    tickTopBar();
+    const days = Math.floor(diff / (1000*60*60*24));
+    diff %= (1000*60*60*24);
+    const hours = Math.floor(diff / (1000*60*60));
+    diff %= (1000*60*60);
+    const minutes = Math.floor(diff / (1000*60));
+    const seconds = Math.floor((diff % (1000*60)) / 1000);
 
-    /* =========================
-       טיימר מאז 07.10.2023
-    ========================== */
-    const startDate = new Date("2023-10-07T00:00:00+03:00");
-    function updateSinceOct7(){
-      const now = new Date();
-      let diff = Math.max(0, now - startDate);
+    document.getElementById("sinceOct7").textContent =
+      `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
+  }
+  setInterval(updateSinceOct7, 1000);
+  updateSinceOct7();
 
-      const days = Math.floor(diff / (1000*60*60*24));
-      diff %= (1000*60*60*24);
-      const hours = Math.floor(diff / (1000*60*60));
-      diff %= (1000*60*60);
-      const minutes = Math.floor(diff / (1000*60));
-      const seconds = Math.floor((diff % (1000*60)) / 1000);
+  /* =========================
+     מרקיזה: לולאה רציפה בלי "ריק"
+     כיוון "הפוך": שמאל->ימין
+  ========================== */
+  let x = 0;
+  let speed = 0.85; // תשאירי
+  let contentWidth = 0;
 
-      document.getElementById("sinceOct7").textContent =
-        `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
-    }
-    setInterval(updateSinceOct7, 1000);
-    updateSinceOct7();
+  function startMarquee(){
+    const track = document.getElementById("track");
+    const content = document.getElementById("content");
 
-    /* =========================
-       מרקיזה: לולאה רציפה בלי "ריק"
-       כיוון: מימין לשמאל => translateX יורד
-    ========================== */
-    let x = 0;
-    let speed = 0.85; // תשאירי כמו שאהבת - אפשר לשנות פה אם צריך
-    let contentWidth = 0;
+    while(track.children.length > 1) track.removeChild(track.lastChild);
+    const clone = content.cloneNode(true);
+    track.appendChild(clone);
 
-    function startMarquee(){
-      const track = document.getElementById("track");
-      const content = document.getElementById("content");
+    contentWidth = content.getBoundingClientRect().width;
 
-      // מנקים שכפולים אם רעננו
-      while(track.children.length > 1) track.removeChild(track.lastChild);
+    // כדי לנוע שמאלה->ימין בלופ:
+    // מתחילים מ-(-contentWidth) ומעלים עד 0 ואז חוזרים.
+    x = -contentWidth;
 
-      // משכפלים כדי שלא יהיה ריק
-      const clone = content.cloneNode(true);
-      track.appendChild(clone);
-
-      // מודדים רוחב תוכן אחד
-      contentWidth = content.getBoundingClientRect().width;
-
-      // מתחילים מאפס
-      x = 0;
-
-      function animate(){
-        x -= speed; // מימין לשמאל
-        if (Math.abs(x) >= contentWidth) x = 0;
-        track.style.transform = `translateX(${x}px)`;
-        requestAnimationFrame(animate);
-      }
+    function animate(){
+      x += speed; // הפוך מהקודם
+      if (x >= 0) x = -contentWidth;
+      track.style.transform = `translateX(${x}px)`;
       requestAnimationFrame(animate);
     }
+    requestAnimationFrame(animate);
+  }
 
-    /* =========================
-       פרשת השבוע (Hebcal) + טקסט (Sefaria)
-    ========================== */
-    async function loadParasha(){
-      try{
-        // Jerusalem geonameid=281184
-        const shabbatRes = await fetch("https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=281184");
-        const shabbat = await shabbatRes.json();
+  /* =========================
+     פרשת השבוע + טקסט
+  ========================== */
+  async function loadParasha(){
+    try{
+      const shabbatRes = await fetch("https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=281184");
+      const shabbat = await shabbatRes.json();
 
-        const p = (shabbat.items || []).find(i => i.category === "parashat");
-        if(!p) throw new Error("no parasha");
+      const p = (shabbat.items || []).find(i => i.category === "parashat");
+      if(!p) throw new Error("no parasha");
 
-        // שם הפרשה לשורה העליונה
-        const hebName = String(p.hebrew || "").replace("פרשת ","").trim();
-        document.getElementById("parashaName").textContent = hebName || "—";
+      const hebName = String(p.hebrew || "").replace("פרשת ","").trim();
+      document.getElementById("parashaName").textContent = hebName || "—";
 
-        // טקסט הקריאה
-        const leyn = p.leyning && p.leyning.torah ? p.leyning.torah : null;
-        if(!leyn) throw new Error("no leyning");
+      const leyn = p.leyning && p.leyning.torah ? p.leyning.torah : null;
+      if(!leyn) throw new Error("no leyning");
 
-        const sefRes = await fetch("https://www.sefaria.org/api/texts/" + encodeURIComponent(leyn) + "?lang=he&context=0");
-        const sef = await sefRes.json();
+      const sefRes = await fetch("https://www.sefaria.org/api/texts/" + encodeURIComponent(leyn) + "?lang=he&context=0");
+      const sef = await sefRes.json();
 
-        // טקסט ארוך: מאחדים בלי שבירת שורות, כדי שירוץ רציף
-        const raw = Array.isArray(sef.he) ? sef.he.join(" ") : (sef.he || "");
-        const clean = String(raw)
-          .replace(/\s+/g, " ")
-          .trim();
+      const raw = Array.isArray(sef.he) ? sef.he.join(" ") : (sef.he || "");
+      const clean = String(raw).replace(/\s+/g, " ").trim();
 
-        document.getElementById("parashaText").textContent = clean || "טקסט הפרשה לא זמין כרגע.";
-        startMarquee();
-      }catch(e){
-        document.getElementById("parashaName").textContent = "—";
-        document.getElementById("parashaText").textContent = "שגיאה בטעינה.";
-        startMarquee();
-      }
+      document.getElementById("parashaText").textContent = clean || "טקסט הפרשה לא זמין כרגע.";
+      startMarquee();
+    }catch(e){
+      document.getElementById("parashaName").textContent = "—";
+      document.getElementById("parashaText").textContent = "שגיאה בטעינה.";
+      startMarquee();
     }
-    loadParasha();
+  }
+  loadParasha();
 
-    /* =========================
-       Overlay אזעקה - בניית סירנות פעם אחת
-    ========================== */
-    const overlay = document.getElementById("alertOverlay");
-    const grid = document.getElementById("sirensGrid");
-    const alertText = document.getElementById("alertText");
-    const secStatus = document.getElementById("secStatus");
+  /* =========================
+     Overlay אזעקה (בניית סירנות)
+  ========================== */
+  const overlay = document.getElementById("alertOverlay");
+  const grid = document.getElementById("sirensGrid");
+  const alertText = document.getElementById("alertText");
+  const secStatus = document.getElementById("secStatus");
+  const secLog = document.getElementById("secLog");
+  const secCount = document.getElementById("secCount");
 
-    (function buildSirens(){
-      const count = 100;
-      const frag = document.createDocumentFragment();
-      for(let i=0;i<count;i++){
-        const s = document.createElement("div");
-        s.className = "siren";
-        s.textContent = "🚨";
-        s.style.animationDelay = (Math.random()*0.15).toFixed(2) + "s";
-        frag.appendChild(s);
-      }
-      grid.appendChild(frag);
-    })();
+  (function buildSirens(){
+    const count = 100;
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const s = document.createElement("div");
+      s.className = "siren";
+      s.textContent = "🚨";
+      s.style.animationDelay = (Math.random()*0.15).toFixed(2) + "s";
+      frag.appendChild(s);
+    }
+    grid.appendChild(frag);
+  })();
 
-    /* =========================
-       קריאת Worker + זיהוי ירושלים
-       Worker מחזיר: { ok:true, data: ... }
-    ========================== */
-    function extractPlaces(payload){
-      if(!payload || payload.ok !== true) return [];
-      const d = payload.data;
-      const items = Array.isArray(d) ? d : [d];
+  /* =========================
+     "חודש אחרון" מקומי: לוג בדפדפן (30 יום)
+  ========================== */
+  const LOG_KEY = "alerts_log_v1";
+  const KEEP_MS = 30 * 24 * 60 * 60 * 1000; // 30 ימים
+  const MAX_ITEMS = 1200;
 
-      const places = [];
-      for(const it of items){
-        if(!it) continue;
+  function loadLog(){
+    try{ return JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); }
+    catch{ return []; }
+  }
+  function saveLog(arr){
+    localStorage.setItem(LOG_KEY, JSON.stringify(arr));
+  }
+  function pruneLog(arr){
+    const now = Date.now();
+    const filtered = arr.filter(x => x && x.ts && (now - x.ts) <= KEEP_MS);
+    // מגבלה כדי שלא יתנפח
+    while(filtered.length > MAX_ITEMS) filtered.shift();
+    return filtered;
+  }
 
-        // פורמטים נפוצים
-        if(Array.isArray(it.data)) places.push(...it.data);
-        if(typeof it.data === "string") places.push(it.data);
-        if(Array.isArray(it.alerts)) places.push(...it.alerts);
-        if(Array.isArray(it.places)) places.push(...it.places);
+  function renderLog(){
+    const log = pruneLog(loadLog());
+    saveLog(log);
+    secCount.textContent = `${log.length} אירועים`;
 
-        // fallback: אם יש מחרוזת כללית
-        if(typeof it === "string") places.push(it);
-      }
-
-      return places.filter(Boolean).map(String);
+    if(log.length === 0){
+      secLog.innerHTML = `<div class="log-item"><div class="log-places">אין היסטוריה עדיין (מהרגע שהאתר רץ).</div></div>`;
+      return;
     }
 
-    let alertActive = false;
-    let lastSeenKey = "";
+    const fmt = new Intl.DateTimeFormat("he-IL",{
+      timeZone: TZ,
+      day:"2-digit", month:"2-digit", year:"numeric",
+      hour:"2-digit", minute:"2-digit", second:"2-digit"
+    });
 
-    async function pollAlerts(){
-      try{
-        const r = await fetch(WORKER_URL, { cache:"no-store" });
-        const payload = await r.json();
+    secLog.innerHTML = log.slice().reverse().map(item=>{
+      const dt = fmt.format(new Date(item.ts));
+      const places = (item.places || []).join(" • ");
+      return `
+        <div class="log-item">
+          <div class="log-top">
+            <span>${dt}</span>
+            <span>${(item.places||[]).length} אזורים</span>
+          </div>
+          <div class="log-places">${places || "—"}</div>
+        </div>`;
+    }).join("");
+  }
 
-        const places = extractPlaces(payload);
-        const hit = places.some(p => p.includes(WATCH_CITY));
-        const key = places.join("|");
+  renderLog();
 
-        if(hit){
-          if(!alertActive || key !== lastSeenKey){
-            overlay.classList.add("show");
-            alertText.textContent = `🚨 אזעקה באזור ${WATCH_CITY} 🚨`;
-            secStatus.textContent = `התרעה פעילה: ${WATCH_CITY}`;
-            alertActive = true;
-            lastSeenKey = key;
-          }
-        }else{
-          if(alertActive){
-            overlay.classList.remove("show");
-            secStatus.textContent = "אין התרעות";
-            alertActive = false;
-            lastSeenKey = "";
-          }else{
-            secStatus.textContent = "אין התרעות";
-          }
+  /* =========================
+     קריאת Worker + זיהוי ירושלים + לוג כל הארץ
+  ========================== */
+  function extractPlaces(payload){
+    if(!payload || payload.ok !== true) return [];
+    const d = payload.data;
+    const items = Array.isArray(d) ? d : [d];
+
+    const places = [];
+    for(const it of items){
+      if(!it) continue;
+      if(Array.isArray(it.data)) places.push(...it.data);
+      if(typeof it.data === "string") places.push(it.data);
+      if(Array.isArray(it.alerts)) places.push(...it.alerts);
+      if(Array.isArray(it.places)) places.push(...it.places);
+      if(typeof it === "string") places.push(it);
+    }
+    return places.filter(Boolean).map(String);
+  }
+
+  let alertActive = false;
+  let lastSeenKey = "";
+
+  async function pollAlerts(){
+    try{
+      const r = await fetch(WORKER_URL, { cache:"no-store" });
+      const payload = await r.json();
+
+      const places = extractPlaces(payload);
+      const key = places.join("|");
+
+      // אם יש התרעה חדשה (כל הארץ) — מוסיפים לוג
+      if(places.length > 0 && key && key !== lastSeenKey){
+        const log = pruneLog(loadLog());
+        log.push({ ts: Date.now(), places: places.slice(0, 200) });
+        saveLog(log);
+        renderLog();
+      }
+
+      const hitJerusalem = places.some(p => p.includes(WATCH_CITY));
+
+      if(hitJerusalem){
+        if(!alertActive || key !== lastSeenKey){
+          overlay.classList.add("show");
+          alertText.textContent = `🚨 אזעקה באזור ${WATCH_CITY} 🚨`;
+          secStatus.textContent = `התרעה פעילה: ${WATCH_CITY}`;
+          alertActive = true;
         }
-      }catch(e){
-        if(!alertActive) secStatus.textContent = "בעיה בקבלת נתונים (Worker/רשת)";
-      }
-    }
-
-    // כל 2 שניות – לייב יחסית
-    setInterval(pollAlerts, 2000);
-    pollAlerts();
-
-    /* =========================
-       כפתור "לא ללחוץ"
-       - קולדאון 5 שניות: בזמן הזה מציג סירנות (overlay)
-       - ואז פותח יעד בחלון חדש
-       - מציג "טעית" 7 שניות ומתאפס
-    ========================== */
-    const dangerBtn = document.getElementById("dangerBtn");
-    const btnHint = document.getElementById("btnHint");
-    const oopsOverlay = document.getElementById("oopsOverlay");
-
-    let btnBusy = false;
-    let countdownTimer = null;
-
-    function showOops7s(){
-      oopsOverlay.classList.add("show");
-      setTimeout(()=> oopsOverlay.classList.remove("show"), 7000);
-    }
-
-    function startCooldownAndOpen(){
-      if(btnBusy) return;
-      btnBusy = true;
-      dangerBtn.disabled = true;
-
-      // מציג overlay של סירנות ל-5 שניות (אפקט "מאיים")
-      overlay.classList.add("show");
-      alertText.textContent = "🚨 🚨 🚨";
-
-      let left = 5;
-      btnHint.textContent = `קולדאון: ${left}s`;
-
-      countdownTimer = setInterval(()=>{
-        left--;
-        btnHint.textContent = `קולדאון: ${left}s`;
-        if(left <= 0){
-          clearInterval(countdownTimer);
-
-          // פותח חלון חדש
-          window.open(OPEN_URL, "_blank", "noopener,noreferrer");
-
-          // מוריד סירנות (אם אין אזעקה אמיתית, pollAlerts ינהל; אבל לא נרצה לדרוס)
+      }else{
+        if(alertActive){
           overlay.classList.remove("show");
-
-          // "טעית" 7 שניות
-          showOops7s();
-
-          // Reset
-          btnBusy = false;
-          dangerBtn.disabled = false;
-          btnHint.textContent = "קולדאון: מוכן";
+          secStatus.textContent = "אין התרעות";
+          alertActive = false;
+        }else{
+          secStatus.textContent = places.length ? `התרעה פעילה בארץ (${places.length} אזורים)` : "אין התרעות";
         }
-      }, 1000);
-    }
+      }
 
-    dangerBtn.addEventListener("click", startCooldownAndOpen);
-  </script>
+      lastSeenKey = key;
+    }catch(e){
+      if(!alertActive) secStatus.textContent = "בעיה בקבלת נתונים (Worker/רשת)";
+    }
+  }
+
+  setInterval(pollAlerts, 2000);
+  pollAlerts();
+
+  /* =========================
+     כפתור "לא ללחוץ"
+  ========================== */
+  const dangerBtn = document.getElementById("dangerBtn");
+  const btnHint = document.getElementById("btnHint");
+  const oopsOverlay = document.getElementById("oopsOverlay");
+
+  let btnBusy = false;
+  let countdownTimer = null;
+
+  function showOops7s(){
+    oopsOverlay.classList.add("show");
+    setTimeout(()=> oopsOverlay.classList.remove("show"), 7000);
+  }
+
+  function startCooldownAndOpen(){
+    if(btnBusy) return;
+    btnBusy = true;
+    dangerBtn.disabled = true;
+
+    overlay.classList.add("show");
+    alertText.textContent = "🚨 🚨 🚨";
+
+    let left = 5;
+    btnHint.textContent = `קולדאון: ${left}s`;
+
+    countdownTimer = setInterval(()=>{
+      left--;
+      btnHint.textContent = `קולדאון: ${left}s`;
+      if(left <= 0){
+        clearInterval(countdownTimer);
+
+        window.open(OPEN_URL, "_blank", "noopener,noreferrer");
+
+        overlay.classList.remove("show");
+        showOops7s();
+
+        btnBusy = false;
+        dangerBtn.disabled = false;
+        btnHint.textContent = "קולדאון: מוכן";
+      }
+    }, 1000);
+  }
+
+  dangerBtn.addEventListener("click", startCooldownAndOpen);
+
+  /* =========================
+     פאנל דיווחים: פתיחה/סגירה
+  ========================== */
+  const securityPanel = document.getElementById("securityPanel");
+  const secHead = document.getElementById("secHead");
+  const secToggle = document.getElementById("secToggle");
+
+  function setCollapsed(isCollapsed){
+    securityPanel.classList.toggle("collapsed", isCollapsed);
+    secToggle.textContent = isCollapsed ? "פתח" : "סגור";
+  }
+
+  let collapsed = false;
+  setCollapsed(collapsed);
+
+  secHead.addEventListener("click", (e)=>{
+    // לא להכפיל קליק אם לוחצים על הכפתור עצמו
+    if(e.target === secToggle) return;
+    collapsed = !collapsed;
+    setCollapsed(collapsed);
+  });
+
+  secToggle.addEventListener("click", ()=>{
+    collapsed = !collapsed;
+    setCollapsed(collapsed);
+  });
+</script>
 </body>
 </html>
