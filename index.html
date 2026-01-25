@@ -163,12 +163,13 @@
       border: 1px solid rgba(255,255,255,0.20);
       background: rgba(255,255,255,0.06);
       box-shadow: 0 14px 40px rgba(0,0,0,0.45);
-      z-index: 999; /* מעל הטקסט */
+      z-index: 999;
     }
 
     .marquee{
       width:100%;
       overflow:hidden;
+      padding-right: 60px; /* ✅ מקום לתמונה כדי שהטקסט לא ייחתך */
     }
 
     .track{
@@ -184,17 +185,17 @@
       font-family: "Frank Ruhl Libre", "David", serif;
       font-size: 28px;
       font-weight: 900;
-      color: rgba(255,255,255,0.92);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.95); /* ✅ לבן */
+      text-shadow: 0 1px 0 rgba(0,0,0,0.35);
       white-space: nowrap;
       letter-spacing: 0.3px;
       direction: rtl;
     }
 
-    /* ריצה "הפוכה" כמו אצלך: ימינה->שמאלה (RTL) */
+    /* ✅ לופ אינסופי אמיתי */
     @keyframes scroll{
-      from { transform: translateX(-50%); }
-      to   { transform: translateX(0%); }
+      from { transform: translateX(0%); }
+      to   { transform: translateX(-50%); }
     }
 
     /* ====== Main ====== */
@@ -441,7 +442,6 @@
 
     <div class="pill good"><b id="greeting">שבוע טוב</b></div>
 
-    <!-- הכפתור עבר לשורה העליונה -->
     <button class="dontpress" id="dontPressBtn" type="button" title="באמת לא ללחוץ">
       <span class="warn"></span>
       לא ללחוץ
@@ -451,7 +451,6 @@
 
   <!-- MARQUEE -->
   <div class="marqueeWrap" id="marqueeWrap">
-    <!-- התמונה מעל הטקסט (טקסט עובר מתחת) -->
     <img class="marqueeAvatar" id="marqueeAvatar"
          src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg"
          alt="avatar">
@@ -527,35 +526,15 @@
   </div>
 
   <script>
-    /* =========================
-       CONFIG
-    ========================= */
-    // ה-Worker שלך (כמו שביקשת)
     const WORKER_BASE = "https://jolly-mode-0a2a.dolevbd12.workers.dev";
-
-    // יעד הכפתור
     const PMO_URL = "https://www.pmo.gov.il";
-
-    // ירושלים ל-hebcal
     const HEBCAL_URL = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he";
 
-    /* =========================
-       Helpers
-    ========================= */
     function pad(n){ return String(n).padStart(2,"0"); }
-    function safeText(v){
-      return (v ?? "").toString().replace(/\s+/g," ").trim();
-    }
-    function isShabbatIsrael(now=new Date()){
-      // בקירוב: שבת = שבת בלוח גרגוריאני (Saturday)
-      return now.getDay() === 6;
-    }
-    function formatGreg(d=new Date()){
-      return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
-    }
-    function formatClock(d=new Date()){
-      return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-    }
+    function safeText(v){ return (v ?? "").toString().replace(/\s+/g," ").trim(); }
+    function isShabbatIsrael(now=new Date()){ return now.getDay() === 6; }
+    function formatGreg(d=new Date()){ return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`; }
+    function formatClock(d=new Date()){ return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
     function msToDHMS(ms){
       const s = Math.max(0, Math.floor(ms/1000));
       const days = Math.floor(s / 86400);
@@ -565,9 +544,7 @@
       return {days,hours,mins,secs};
     }
 
-    /* =========================
-       Marquee (loop real)
-    ========================= */
+    // ✅ מרקיז: לופ אינסופי אמיתי בלי ריקים
     function startMarquee(text){
       const A = document.getElementById("marqueeA");
       const B = document.getElementById("marqueeB");
@@ -576,33 +553,28 @@
       let t = safeText(text);
       if(!t) t = "• פרשת השבוע •";
 
-      // מאריכים כדי שלא יהיה "ריק"
-      while(t.length < 220){
+      // מאריכים שלא יהיו "חללים" בזמן ריצה
+      while(t.length < 240){
         t += "   " + t;
       }
 
       A.textContent = t;
       B.textContent = t;
 
-      // משך אנימציה יציב (לא מקרטע)
-      const seconds = Math.min(60, Math.max(18, Math.floor(t.length / 10)));
+      // קצב יציב לפי אורך
+      const seconds = Math.min(70, Math.max(18, Math.floor(t.length / 10)));
       track.style.animationDuration = seconds + "s";
     }
 
-    /* =========================
-       Parasha + Hebrew date
-    ========================= */
     async function fetchParashaAndHebDate(){
       try{
         const r = await fetch(HEBCAL_URL, { cache:"no-store" });
         if(!r.ok) throw new Error("Hebcal failed");
         const j = await r.json();
 
-        // תאריך עברי
         const heb = safeText(j.hebrew || "");
         if(heb) document.getElementById("dateHeb").textContent = heb;
 
-        // פרשה (כמה מצבי גיבוי)
         const items = Array.isArray(j.items) ? j.items : [];
         let p = items.find(x => x && x.category === "parashat");
         if(!p) p = items.find(x => safeText(x?.title).includes("פרשת"));
@@ -613,28 +585,18 @@
 
         document.getElementById("parashaName").textContent = parashaTitle;
 
-        // טקסט רץ (לופ אינסופי)
         const marqueeText =
           `• פרשת השבוע: ${parashaTitle} • עדכון אוטומטי • פרשת השבוע: ${parashaTitle} • עדכון אוטומטי •`;
 
         startMarquee(marqueeText);
       }catch(e){
-        // לא משאירים ריק
         document.getElementById("parashaName").textContent = "פרשת השבוע";
         document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
         startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
       }
     }
 
-    /* =========================
-       Security widget (history)
-       (אם אין נתונים - מציג ברירת מחדל)
-    ========================= */
-    function mapAreaToQuery(val){
-      // זה פילטר ויזואלי; אם השרת שלך תומך בפילטרים, אפשר לשנות פה.
-      // כרגע: שולחים כפרמטרים ל-worker (אם יבחרת להוסיף שם)
-      return val;
-    }
+    function mapAreaToQuery(val){ return val; }
 
     async function loadSecurityHistory(){
       const area = document.getElementById("filterArea").value;
@@ -647,7 +609,6 @@
 
       updated.textContent = "עודכן: " + formatClock(new Date());
 
-      // UI loading
       list.innerHTML = `
         <div class="secItem">
           <div class="msg">טוען נתונים…</div>
@@ -656,12 +617,9 @@
       `;
 
       try{
-        // אם ה-Worker שלך תומך בפרמטרים:
-        // /history?days=30&area=all
         const url = `${WORKER_BASE}/history?days=${encodeURIComponent(days)}&area=${encodeURIComponent(mapAreaToQuery(area))}`;
         const r = await fetch(url, { cache:"no-store" });
         const j = await r.json();
-
         const arr = Array.isArray(j?.data) ? j.data : [];
 
         if(arr.length === 0){
@@ -679,7 +637,6 @@
         title.textContent = "תצוגת היסטוריה";
         sub.textContent = `נמצאו ${arr.length} רשומות`;
 
-        // בונים רשימה
         list.innerHTML = arr.slice(0, 100).map(item=>{
           const msg = safeText(item?.message || item?.title || "דיווח");
           const ts = item?.ts || item?.time || item?.timestamp;
@@ -709,9 +666,6 @@
       }
     }
 
-    /* =========================
-       Button logic (cooldown -> open -> oops 7s)
-    ========================= */
     let pressCooldown = false;
     async function handleDontPress(){
       if(pressCooldown) return;
@@ -731,14 +685,11 @@
         if(t <= 0){
           clearInterval(iv);
           hint.textContent = "";
-          // פותח חלון חדש
           window.open(PMO_URL, "_blank", "noopener,noreferrer");
-          // מציג "טעית" ל-7 שניות ואז מתאפס
           showOopsThenReset();
         }
       }, 1000);
 
-      // משחררים את הכפתור אחרי 7 שניות (בערך יחד עם האיפוס)
       setTimeout(()=>{
         pressCooldown = false;
         btn.removeAttribute("disabled");
@@ -749,23 +700,15 @@
     function showOopsThenReset(){
       const oops = document.getElementById("oops");
       oops.classList.add("show");
-      setTimeout(()=>{
-        oops.classList.remove("show");
-      }, 7000);
+      setTimeout(()=>{ oops.classList.remove("show"); }, 7000);
     }
 
-    /* =========================
-       Live clocks + greeting + Oct7 timer
-    ========================= */
     function tickTop(){
       const now = new Date();
       document.getElementById("liveClock").textContent = "שעה: " + formatClock(now);
       document.getElementById("gregDate").textContent = "תאריך: " + formatGreg(now);
-
-      // שבוע טוב / שבת שלום
       document.getElementById("greeting").textContent = isShabbatIsrael(now) ? "שבת שלום" : "שבוע טוב";
 
-      // מאז 07.10.2023
       const start = new Date("2023-10-07T00:00:00+03:00");
       const diff = now.getTime() - start.getTime();
       const o = msToDHMS(diff);
@@ -773,9 +716,6 @@
         `מאז 07.10.2023: ${o.days}ד ${pad(o.hours)}:${pad(o.mins)}:${pad(o.secs)}`;
     }
 
-    /* =========================
-       UI events
-    ========================= */
     document.getElementById("dontPressBtn").addEventListener("click", handleDontPress);
 
     document.getElementById("secToggleBtn").addEventListener("click", ()=>{
@@ -789,17 +729,12 @@
     document.getElementById("filterArea").addEventListener("change", loadSecurityHistory);
     document.getElementById("filterDays").addEventListener("change", loadSecurityHistory);
 
-    /* =========================
-       Boot
-    ========================= */
     tickTop();
     setInterval(tickTop, 1000);
 
-    // פרשה + תאריך עברי
     fetchParashaAndHebDate();
     setInterval(fetchParashaAndHebDate, 6*60*60*1000);
 
-    // פינה ביטחונית
     loadSecurityHistory();
     setInterval(loadSecurityHistory, 60*1000);
   </script>
