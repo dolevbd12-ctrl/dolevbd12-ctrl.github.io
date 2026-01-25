@@ -12,7 +12,6 @@
 <style>
   html,body{height:100%; margin:0;}
   body{
-    /* ✅ רקע ירוק */
     background: radial-gradient(circle at top, #0f5a27 0%, #073216 55%, #03180a 100%);
     font-family:"IBM Plex Sans Hebrew",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
     overflow:hidden;
@@ -36,7 +35,7 @@
     justify-content:space-between;
     gap:10px;
     flex-wrap:wrap;
-    padding-inline-end:170px; /* מקום לכפתור בצד ימין */
+    padding-inline-end:230px; /* יותר מקום לכפתור (כי הוא גדול) */
   }
   .badge{
     padding:6px 10px;
@@ -50,25 +49,26 @@
   .clock{font-family:"Roboto Mono",monospace}
   .muted{opacity:.92}
 
-  /* ✅ כפתור בימין למעלה מתחת לשבוע טוב */
+  /* ✅ כפתור בימין למעלה – ירד למטה + גדול יותר */
   .doom{
     position:absolute;
-    top:38px;        /* מתחת לשורה של התגיות */
+    top:60px;        /* ⬅️ ירד למטה */
     right:14px;
+
     z-index:45;
 
-    font-size:16px;
-    padding:10px 14px;
+    font-size:20px;  /* ⬅️ גדול יותר */
+    padding:14px 18px;
     font-weight:900;
     letter-spacing:1px;
 
     background:rgba(0,0,0,.35);
     color:#fff;
-    border:2px solid rgba(0,255,120,.55);
-    border-radius:12px;
+    border:2px solid rgba(0,255,120,.65);
+    border-radius:14px;
     cursor:pointer;
 
-    box-shadow:0 0 20px rgba(0,255,120,.25);
+    box-shadow:0 0 22px rgba(0,255,120,.25);
     user-select:none;
 
     opacity:0;
@@ -92,7 +92,14 @@
     100%{ background:#000; color:#fff; transform:translateY(0) scale(1); }
   }
 
-  /* MARQUEE */
+  /* מצב קולדאון – כפתור מושבת */
+  .doom.cooldown{
+    cursor:not-allowed;
+    opacity:.85;
+    filter:saturate(.7);
+  }
+
+  /* MARQUEE (לא נוגעים במהירות/סגנון – רק נשאר יפה) */
   .marquee-wrap{
     position:absolute;
     top:86px;
@@ -160,25 +167,87 @@
     box-shadow:0 12px 34px rgba(0,0,0,.35);
   }
   .security strong{display:block;margin-bottom:6px}
+
+  /* ✅ מסך סירנות לקולדאון */
+  .siren-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+    background:rgba(0,0,0,.65);
+    backdrop-filter: blur(2px);
+  }
+  .siren-overlay.show{
+    display:flex;
+    animation:overlayPulse .18s infinite;
+  }
+  @keyframes overlayPulse{
+    0%{ background:rgba(0,0,0,.70); }
+    50%{ background:rgba(120,0,0,.75); }
+    100%{ background:rgba(0,0,0,.70); }
+  }
+
+  .sirens-grid{
+    width:min(980px, 92vw);
+    height:min(520px, 70vh);
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    gap:10px;
+    align-content:center;
+    justify-items:center;
+    padding:18px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.25);
+    border-radius:16px;
+    box-shadow:0 0 80px rgba(255,0,0,.30);
+  }
+  .siren{
+    font-size:clamp(26px, 3.2vw, 44px);
+    filter:drop-shadow(0 0 10px rgba(255,0,0,.55));
+    animation:sirenWobble .28s infinite;
+  }
+  @keyframes sirenWobble{
+    0%{ transform:translateY(0) rotate(-3deg) scale(1); opacity:1; }
+    50%{ transform:translateY(-2px) rotate(3deg) scale(1.05); opacity:.92; }
+    100%{ transform:translateY(0) rotate(-3deg) scale(1); opacity:1; }
+  }
+
+  .siren-text{
+    position:absolute;
+    bottom:10%;
+    left:50%;
+    transform:translateX(-50%);
+    font-family:"Roboto Mono",monospace;
+    font-weight:800;
+    letter-spacing:1px;
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.35);
+    box-shadow:0 0 30px rgba(255,0,0,.25);
+  }
 </style>
 </head>
 
 <body>
 
+  <!-- OVERLAY של סירנות -->
+  <div class="siren-overlay" id="sirenOverlay" aria-hidden="true">
+    <div class="sirens-grid" id="sirensGrid"></div>
+    <div class="siren-text" id="cooldownText">פותח בעוד 5…</div>
+  </div>
+
   <!-- HEADER -->
   <div class="header">
     <div class="headerRow">
       <span class="badge" id="greeting">טוען…</span>
-
       <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
-
       <span class="badge clock" id="clock">--:--:--</span>
-
       <span class="badge muted" id="dates">טוען תאריך…</span>
-
       <span class="badge clock" id="sinceOct7">מאז 07.10.2023: —</span>
 
-      <!-- ✅ הכפתור עכשיו כאן (ימין למעלה, מתחת לשבוע טוב) -->
       <button class="doom" id="doomBtn">לא ללחוץ</button>
     </div>
   </div>
@@ -245,20 +314,18 @@
   setInterval(updateSinceOct7, 1000);
   updateSinceOct7();
 
-  /* ✅ מרקיזה “מושלמת” — לא נוגעים במהירות, רק שומרים כמו שזה */
+  /* מרקיזה – משאירים כמו שזה (לא נוגעים במהירות) */
   let x = 0;
-  let speed = 0.5; // לא נוגע
+  let speed = 0.5;
+
   function startMarquee(){
     const track = document.getElementById("track");
     const content = document.getElementById("content");
 
-    // שכפול פעם אחת לריצה רציפה
     track.appendChild(content.cloneNode(true));
-
     const contentWidth = content.offsetWidth;
 
     function animate(){
-      // הכיוון נשאר כמו שעשינו קודם (הפוך)
       x += speed;
       if (x >= contentWidth) x = 0;
       track.style.transform = `translateX(${x}px)`;
@@ -277,7 +344,6 @@
       document.getElementById("parashaName").textContent =
         String(p.hebrew || "").replace("פרשת ","").trim() || "—";
 
-      // שבת שלום/שבוע טוב (פשוט)
       const now = new Date();
       const isSat = new Intl.DateTimeFormat("en-US",{timeZone:TZ, weekday:"short"}).format(now) === "Sat";
       document.getElementById("greeting").textContent = isSat ? "שבת שלום" : "שבוע טוב";
@@ -301,29 +367,74 @@
       startMarquee();
     });
 
-  /* ✅ כפתור: פותח חלון חדש + מהבהב "טעית" + מתאפס אחרי 7 שניות */
+  /* כפתור: מופיע אחרי 6 שניות */
   const doomBtn = document.getElementById("doomBtn");
-
-  // אם את רוצה שעדיין יופיע באיחור:
   setTimeout(()=> doomBtn.classList.add("show"), 6000);
 
+  /* === קולדאון + סירנות === */
+  const overlay = document.getElementById("sirenOverlay");
+  const grid = document.getElementById("sirensGrid");
+  const cdText = document.getElementById("cooldownText");
+
+  // בונים הרבה סירנות פעם אחת
+  (function buildSirens(){
+    const count = 64; // "מלא סירנות"
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const s = document.createElement("div");
+      s.className = "siren";
+      s.textContent = "🚨";
+      // וריאציה קטנה באיחור האנימציה
+      s.style.animationDelay = (Math.random()*0.2).toFixed(2) + "s";
+      frag.appendChild(s);
+    }
+    grid.appendChild(frag);
+  })();
+
   let resetTimer = null;
+  let cooldownTimer = null;
+  let countingInterval = null;
 
   doomBtn.addEventListener("click", () => {
-    // פותחים אתר בחלון חדש
-    window.open("https://www.gov.il/he/departments/prime_ministers_office", "_blank", "noopener,noreferrer");
+    // אם כבר בקולדאון – לא עושים כלום
+    if (doomBtn.classList.contains("cooldown")) return;
 
-    // הופכים ל"טעית" ומהבהבים
-    doomBtn.classList.add("triggered");
+    // מצב "טעית" + הבהוב
+    doomBtn.classList.add("triggered", "cooldown");
     doomBtn.textContent = "טעית";
 
-    // אם לוחצים שוב בזמן שזה פעיל — מאפסים את הטיימר
-    if (resetTimer) clearTimeout(resetTimer);
+    // מסך סירנות
+    overlay.classList.add("show");
+
+    // קולדאון 5 שניות עם ספירה
+    let remaining = 5;
+    cdText.textContent = `פותח בעוד ${remaining}…`;
+
+    if (countingInterval) clearInterval(countingInterval);
+    countingInterval = setInterval(() => {
+      remaining--;
+      if (remaining > 0) cdText.textContent = `פותח בעוד ${remaining}…`;
+    }, 1000);
+
+    // אחרי 5 שניות פותחים חלון חדש
+    cooldownTimer = setTimeout(() => {
+      clearInterval(countingInterval);
+      overlay.classList.remove("show");
+      window.open(
+        "https://www.gov.il/he/departments/prime_ministers_office",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }, 5000);
 
     // מתאפס אחרי 7 שניות
+    if (resetTimer) clearTimeout(resetTimer);
     resetTimer = setTimeout(() => {
-      doomBtn.classList.remove("triggered");
+      doomBtn.classList.remove("triggered", "cooldown");
       doomBtn.textContent = "לא ללחוץ";
+      overlay.classList.remove("show");
+      clearTimeout(cooldownTimer);
+      clearInterval(countingInterval);
       resetTimer = null;
     }, 7000);
   });
