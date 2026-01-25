@@ -3,792 +3,1215 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>לוח מצב</title>
+  <title>דולב ורועי</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+  <link rel="apple-touch-icon" href="/aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+
+  <!-- פונטים -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- מודרני -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <!-- תנכ״י (Frank Ruhl Libre) -->
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#0f5a27;
-      --bg2:#073216;
-      --bg3:#03180a;
+      --bg0:#041a10;
+      --bg1:#062716;
+      --bg2:#07331b;
 
-      --glass: rgba(0,0,0,.22);
-      --stroke: rgba(255,255,255,.14);
+      --glass: rgba(255,255,255,0.08);
+      --glass2: rgba(255,255,255,0.12);
+      --line: rgba(255,255,255,0.14);
 
-      --greenGlow1: rgba(0,255,140,.94);
-      --greenGlow2: rgba(0,190,95,.92);
+      --green:#00ff73;
+      --green2:#00d864;
+      --greenGlow: rgba(0,255,115,0.35);
 
-      --dangerBg: rgba(0,0,0,.78);
-      --dangerRed: rgba(160,0,0,.86);
+      --text:#eafff3;
+      --muted: rgba(234,255,243,0.72);
 
-      --cardShadow: 0 12px 34px rgba(0,0,0,.35);
-      --mono: "Roboto Mono", monospace;
-      --ui: "IBM Plex Sans Hebrew", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      --tanach: "Frank Ruhl Libre", serif;
+      --danger:#ff2e2e;
+      --dangerGlow: rgba(255,46,46,0.35);
 
-      --radius: 12px;
+      --shadow: 0 16px 60px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --ui: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      --tanach: "Frank Ruhl Libre", "David", "SBL Hebrew", serif;
     }
 
     html, body { height: 100%; margin: 0; }
     body{
-      background: radial-gradient(circle at top, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(0,255,115,0.10), transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(0,255,115,0.08), transparent 46%),
+        radial-gradient(circle at 60% 85%, rgba(0,255,115,0.07), transparent 45%),
+        linear-gradient(180deg, var(--bg2), var(--bg0));
+      color: var(--text);
       font-family: var(--ui);
-      color: #fff;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
-    /* =========================
-       שורה עליונה (גדולה יותר)
-    ========================== */
-    .header{
+    /* ====== TOP BAR ====== */
+    .topbar-wrap{
       position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 12px 14px;
-      background: var(--glass);
-      border-bottom: 1px solid var(--stroke);
-      backdrop-filter: blur(10px);
+      top: 14px;
+      left: 14px;
+      right: 14px;
       z-index: 50;
-    }
-
-    .headerRow{
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .badge{
-      padding: 8px 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.22);
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      white-space: nowrap;
-      box-shadow: 0 8px 18px rgba(0,0,0,.22);
-      font-size: 15px;          /* היה 13 */
-      line-height: 1;
-    }
-
-    .clock { font-family: var(--mono); font-size: 15px; }
-    .muted { opacity: .92; }
-
-    /* =========================
-       מרקיזה (הפרשה רצה)
-       כיוון "הפוך" יחסית קודם: שמאל->ימין
-    ========================== */
-    .marquee-wrap{
-      position: fixed;
-      top: 70px;
-      left: 0; right: 0;
-      height: 175px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      padding-inline: 16px;
-      box-sizing: border-box;
-      z-index: 20;
+      justify-content: center;
       pointer-events: none;
     }
 
-    .marquee-track{
-      display: flex;
-      align-items: center;
-      will-change: transform;
-      transform: translateX(0);
+    .topbar{
+      width: min(1180px, 100%);
+      pointer-events: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
 
-    .marquee-content{
+    .topline{
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      padding: 10px 14px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      gap: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .topline .chunk{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: rgba(234,255,243,0.9);
+      font-size: 15px;
+      line-height: 1;
       white-space: nowrap;
     }
 
-    .marquee-content img{
-      width: 96px;
-      height: 96px;
+    .topline .greet{
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.2px;
+      font-size: 18px; /* הגדלנו */
+      text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+
+    .chip{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(234,255,243,0.92);
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 6px 10px;
+      border-radius: 999px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .sep{
+      width: 1px;
+      height: 18px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+    }
+
+    /* ====== PARASHA MARQUEE (glowing green strip) ====== */
+    .marquee-shell{
+      position: relative;
+      background: rgba(0,255,115,0.08);
+      border: 1px solid rgba(0,255,115,0.22);
+      box-shadow: 0 0 0 1px rgba(0,255,115,0.08), 0 20px 70px rgba(0,0,0,0.55);
+      border-radius: var(--radius);
+      overflow: hidden;
+      padding: 10px 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .marquee-glow{
+      position:absolute; inset:-60px;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(0,255,115,0.22), transparent 45%),
+        radial-gradient(circle at 80% 50%, rgba(0,255,115,0.16), transparent 48%);
+      filter: blur(12px);
+      opacity: 0.9;
+      pointer-events:none;
+    }
+
+    .marquee-viewport{
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+      direction: rtl;
+    }
+
+    /* חשוב: כדי שהטקסט לא ייעלם/יקרטע */
+    .marquee-track{
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      will-change: transform;
+      transform: translate3d(0,0,0);
+    }
+
+    .marquee-item{
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 2px 2px;
+    }
+
+    .marquee-avatar{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       object-fit: cover;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 12px 34px rgba(0,0,0,.45);
-      margin-inline: 18px;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+      background: rgba(255,255,255,0.06);
       flex: 0 0 auto;
     }
 
     .parasha-text{
       font-family: var(--tanach);
-      font-size: 20px;
-      line-height: 1.35;
-
-      color: #001b0c;
-      background: linear-gradient(180deg, var(--greenGlow1), var(--greenGlow2));
-      padding: 12px 18px;
-
-      border-radius: 14px;
-      border: 1px solid rgba(0,255,140,.55);
-      box-shadow: 0 0 22px rgba(0,255,140,.55), 0 12px 34px rgba(0,0,0,.25);
-      white-space: nowrap;
+      font-weight: 800;
+      font-size: clamp(20px, 3.2vw, 32px);
+      letter-spacing: 0.2px;
+      color: #eafff3;
+      text-shadow:
+        0 0 22px rgba(0,255,115,0.18),
+        0 14px 45px rgba(0,0,0,0.65);
+      line-height: 1.25;
     }
 
-    /* =========================
-       פינת דיווחים בטחוניים (נפתחת/נסגרת)
-    ========================== */
-    .security{
+    .parasha-sub{
+      font-family: var(--ui);
+      font-weight: 600;
+      font-size: 14px;
+      color: rgba(234,255,243,0.78);
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    /* ====== MAIN CENTER AREA ====== */
+    .main{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 160px 18px 90px; /* מספיק מקום לטופ-בר */
+    }
+
+    .hero-card{
+      width: min(980px, 100%);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 26px 20px;
+      position: relative;
+    }
+
+    .hero-title{
+      font-size: clamp(26px, 4.2vw, 52px);
+      margin: 0 0 10px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      text-shadow: 0 18px 60px rgba(0,0,0,0.65);
+    }
+
+    .hero-sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ====== DONT CLICK BUTTON ====== */
+    .dontclick-wrap{
       position: fixed;
-      bottom: 16px;
-      left: 16px;
+      top: 92px; /* מתחת לטופ-ליין */
+      right: 22px;
+      z-index: 60;
+    }
+
+    .dontclick{
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: rgba(0,0,0,0.18);
+      box-shadow: 0 18px 70px rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      min-width: 220px;
+      text-align: center;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .dontclick:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 24px 85px rgba(0,0,0,0.65);
+    }
+    .dontclick .big{
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.4px;
+      color: #fff;
+      text-shadow: 0 16px 50px rgba(0,0,0,0.7);
+    }
+    .dontclick .small{
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.76);
+      font-family: var(--mono);
+    }
+    .dontclick.disabled{
+      opacity: 0.55;
+      pointer-events: none;
+      filter: grayscale(0.4);
+    }
+
+    /* ====== SECURITY WIDGET (bottom-left) ====== */
+    .sec-widget{
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
       width: 330px;
-      background: rgba(120,0,0,.85);
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 10px;
-      box-shadow: var(--cardShadow);
-      z-index: 40;
+      z-index: 70;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
       overflow: hidden;
     }
 
     .sec-head{
-      display: flex;
-      align-items: center;
+      display:flex;
+      align-items:center;
       justify-content: space-between;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.10);
       gap: 10px;
-      padding: 10px 12px;
-      cursor: pointer;
-      user-select: none;
-      background: rgba(0,0,0,.18);
-      border-bottom: 1px solid rgba(255,255,255,.14);
     }
 
     .sec-title{
-      font-weight: 800;
-      font-size: 13.5px;
-      letter-spacing: .2px;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.25px;
+      color: rgba(234,255,243,0.94);
+    }
+
+    .sec-meta{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(234,255,243,0.72);
+      white-space: nowrap;
     }
 
     .sec-toggle{
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.22);
-      color: #fff;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-family: var(--mono);
-      font-weight: 900;
-      cursor: pointer;
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.18);
+      color: rgba(234,255,243,0.92);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-family: var(--ui);
+      font-weight: 700;
+      font-size: 12px;
     }
 
     .sec-body{
       padding: 10px 12px 12px;
-    }
-
-    .sec-row{
-      display: flex;
-      justify-content: space-between;
+      display: grid;
       gap: 10px;
-      align-items: center;
-      font-size: 12.5px;
-    }
-
-    .sec-pill{
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.22);
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-
-    .sec-status{
-      margin-top: 10px;
-      font-size: 13px;
-      line-height: 1.35;
-      opacity: .98;
-    }
-
-    .sec-log{
-      margin-top: 10px;
-      max-height: 220px;
+      max-height: 420px;
       overflow: auto;
-      padding-right: 4px;
-      border-top: 1px solid rgba(255,255,255,.12);
-      padding-top: 10px;
+    }
+
+    .sec-body.hidden{ display:none; }
+
+    .filters{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field{
+      display:grid;
+      gap: 6px;
+    }
+    .label{
+      font-size: 11px;
+      color: rgba(234,255,243,0.72);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    select, input{
+      width: 100%;
+      border-radius: 12px;
+      padding: 10px 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(234,255,243,0.92);
+      outline: none;
+      font-family: var(--ui);
+      font-size: 13px;
+    }
+
+    .sec-list{
+      display:grid;
+      gap: 8px;
     }
 
     .log-item{
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 10px 10px;
+      display:grid;
+      gap: 6px;
+      animation: fadeIn .28s ease both;
     }
 
     .log-top{
       display:flex;
+      align-items:center;
       justify-content: space-between;
-      gap: 8px;
-      align-items: center;
+      gap: 10px;
+    }
+
+    .log-date{
       font-family: var(--mono);
-      font-size: 12px;
-      opacity: .95;
-      margin-bottom: 6px;
+      font-size: 11px;
+      color: rgba(234,255,243,0.72);
+    }
+
+    .badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.12);
+      color: rgba(234,255,243,0.9);
+      white-space: nowrap;
+    }
+    .badge.danger{
+      border-color: rgba(255,46,46,0.35);
+      background: rgba(255,46,46,0.10);
+      color: rgba(255,220,220,0.95);
+      box-shadow: 0 0 18px rgba(255,46,46,0.12);
     }
 
     .log-places{
       font-size: 13px;
+      color: rgba(234,255,243,0.92);
       line-height: 1.35;
-      word-break: break-word;
     }
 
-    .collapsed .sec-body{ display:none; }
+    .log-areas{
+      font-size: 12px;
+      color: rgba(234,255,243,0.72);
+    }
 
-    /* =========================
-       Overlay אזעקה
-    ========================== */
+    /* ====== ALERT OVERLAY ====== */
     .alert-overlay{
       position: fixed;
       inset: 0;
+      z-index: 999;
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 999;
-      background: var(--dangerBg);
-      backdrop-filter: blur(2px);
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
     }
-    .alert-overlay.show{
-      display: flex;
-      animation: overlayPulse .14s infinite;
-    }
-    @keyframes overlayPulse{
-      0%   { background: var(--dangerBg); }
-      50%  { background: var(--dangerRed); }
-      100% { background: var(--dangerBg); }
-    }
+    .alert-overlay.show{ display:flex; }
 
-    .sirens-grid{
-      width: min(1050px, 94vw);
-      height: min(560px, 76vh);
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      align-content: center;
-      justify-items: center;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      border-radius: 16px;
-      box-shadow: 0 0 90px rgba(255,0,0,.30);
-    }
-
-    .siren{
-      font-size: clamp(26px, 3vw, 44px);
-      filter: drop-shadow(0 0 10px rgba(255,0,0,.55));
-      animation: sirenWobble .22s infinite;
-    }
-    @keyframes sirenWobble{
-      0%   { transform: translateY(0) rotate(-3deg) scale(1); }
-      50%  { transform: translateY(-2px) rotate(3deg) scale(1.06); }
-      100% { transform: translateY(0) rotate(-3deg) scale(1); }
-    }
-
-    .alert-text{
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--mono);
-      font-weight: 900;
-      letter-spacing: 1px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 0 30px rgba(255,0,0,.25);
+    .alert-card{
+      width: min(820px, 92vw);
+      border-radius: 24px;
+      padding: 24px 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.25);
+      box-shadow: 0 30px 120px rgba(0,0,0,0.75);
       text-align: center;
-      max-width: min(92vw, 900px);
+      animation: pop .35s ease both;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* Overlay "טעית" */
-    .oops-overlay{
+    .alert-flash{
+      position:absolute; inset:-40px;
+      background:
+        radial-gradient(circle at 30% 50%, rgba(255,46,46,0.18), transparent 50%),
+        radial-gradient(circle at 70% 50%, rgba(255,46,46,0.14), transparent 55%);
+      filter: blur(10px);
+      opacity: 0.9;
+      animation: pulse 0.9s infinite ease-in-out;
+      pointer-events:none;
+    }
+
+    .alert-emoji{
+      font-size: clamp(44px, 6vw, 84px);
+      line-height: 1;
+      filter: drop-shadow(0 18px 55px rgba(0,0,0,0.85));
+      animation: shake 0.35s infinite linear;
+      margin-bottom: 10px;
+    }
+    .alert-text{
+      font-weight: 900;
+      font-size: clamp(20px, 3.3vw, 34px);
+      margin: 0;
+    }
+    .alert-sub{
+      margin: 10px 0 0;
+      color: rgba(255,230,230,0.88);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    /* ====== "טעית" overlay ====== */
+    .oops{
       position: fixed;
       inset: 0;
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 998;
-      background: rgba(0,0,0,.82);
-      backdrop-filter: blur(2px);
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
     }
-    .oops-overlay.show{ display:flex; }
+    .oops.show{ display:flex; }
 
     .oops-box{
-      text-align:center;
-      padding: 20px 22px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 0 80px rgba(255,0,0,.25);
-      font-family: var(--mono);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.25);
+      box-shadow: 0 30px 120px rgba(0,0,0,0.75);
+      padding: 22px 18px;
+      width: min(720px, 92vw);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
+
     .oops-title{
-      font-size: clamp(34px, 6vw, 80px);
       font-weight: 900;
-      letter-spacing: 2px;
-      color: #ff2a2a;
-      animation: oopsBlink .18s infinite;
-      margin: 0 0 8px 0;
+      font-size: clamp(28px, 5vw, 64px);
+      margin: 0;
+      animation: blink 0.35s infinite ease-in-out;
+      color: rgba(255,255,255,0.96);
+      text-shadow: 0 24px 90px rgba(0,0,0,0.8);
     }
-    @keyframes oopsBlink{
-      0%{ opacity: 1; transform: scale(1); }
-      50%{ opacity: .25; transform: scale(1.03); }
-      100%{ opacity: 1; transform: scale(1); }
-    }
-    .oops-sub{ font-size: 14px; opacity: .92; margin: 0; }
 
-    /* כפתור */
-    .danger-btn{
-      position: fixed;
-      top: 118px;
-      right: 16px;
-      z-index: 60;
-      padding: 16px 18px;
-      border-radius: 16px;
-      border: 2px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 12px 34px rgba(0,0,0,.45), 0 0 28px rgba(255,0,0,.18);
-      color: #fff;
+    .oops-sub{
+      margin-top: 10px;
       font-family: var(--mono);
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: .6px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform .12s ease, filter .12s ease;
-    }
-    .danger-btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.08); }
-    .danger-btn:active{ transform: translateY(0) scale(.99); }
-    .danger-btn[disabled]{ opacity: .55; cursor: not-allowed; transform: none !important; filter: none !important; }
-
-    .btn-small{
-      display:block;
-      font-size: 12px;
-      opacity: .85;
-      font-weight: 700;
-      margin-top: 6px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.78);
     }
 
-    @media (max-width: 520px){
-      .security{ width: 290px; }
-      .danger-btn{ left: 16px; right: auto; top: 118px; }
-      .marquee-wrap{ height: 165px; }
-      .badge{ font-size: 14px; }
+    /* ====== ANIMATIONS ====== */
+    @keyframes fadeIn{ from{opacity:0; transform: translateY(6px);} to{opacity:1; transform:none;} }
+    @keyframes pop{ from{transform: scale(0.97); opacity:0;} to{transform: scale(1); opacity:1;} }
+    @keyframes pulse{ 0%,100%{opacity:0.55} 50%{opacity:0.95} }
+    @keyframes shake{
+      0%{transform: translate(0,0) rotate(0deg)}
+      25%{transform: translate(1px,-1px) rotate(-1deg)}
+      50%{transform: translate(-1px,1px) rotate(1deg)}
+      75%{transform: translate(1px,1px) rotate(0deg)}
+      100%{transform: translate(0,0) rotate(0deg)}
+    }
+    @keyframes blink{ 0%,100%{opacity:0.35} 50%{opacity:1} }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 740px){
+      .dontclick-wrap{ right: 14px; top: 126px; }
+      .sec-widget{ width: min(92vw, 360px); }
+      .topline{ flex-wrap: wrap; border-radius: 18px; justify-content: center; }
+      .topline .chunk{ font-size: 13px; }
+      .topline .greet{ font-size: 16px; }
     }
   </style>
 </head>
 
 <body>
+  <!-- TOP BAR -->
+  <div class="topbar-wrap">
+    <div class="topbar">
 
-  <div class="alert-overlay" id="alertOverlay" aria-hidden="true">
-    <div class="sirens-grid" id="sirensGrid"></div>
-    <div class="alert-text" id="alertText">🚨 התרעה 🚨</div>
-  </div>
+      <!-- LINE: greeting / dates / timer / parasha name -->
+      <div class="topline" id="topline">
+        <div class="chunk greet" id="greet">שבוע טוב</div>
+        <div class="sep"></div>
 
-  <div class="oops-overlay" id="oopsOverlay" aria-hidden="true">
-    <div class="oops-box">
-      <div class="oops-title">טעית</div>
-      <p class="oops-sub">המסך יתאפס אוטומטית בעוד כמה שניות…</p>
-    </div>
-  </div>
+        <div class="chunk">
+          <span class="chip" id="timeNow">--:--:--</span>
+          <span class="chip" id="dateGreg">--/--/----</span>
+          <span class="chip" id="dateHeb">--</span>
+        </div>
 
-  <div class="header">
-    <div class="headerRow">
-      <span class="badge" id="greeting">טוען…</span>
-      <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
-      <span class="badge clock" id="clock">--:--:--</span>
-      <span class="badge muted" id="dates">טוען תאריך…</span>
-      <span class="badge clock" id="sinceOct7">מאז 07.10.2023: —</span>
-    </div>
-  </div>
+        <div class="sep"></div>
 
-  <button class="danger-btn" id="dangerBtn" type="button">
-    לא ללחוץ
-    <span class="btn-small" id="btnHint">קולדאון: מוכן</span>
-  </button>
+        <!-- TIMER SINCE 7.10.23 -->
+        <div class="chunk">
+          <span class="chip" id="since">מאז 07.10.2023: --</span>
+        </div>
 
-  <div class="marquee-wrap">
-    <div class="marquee-track" id="track">
-      <div class="marquee-content" id="content">
-        <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
-        <div class="parasha-text" id="parashaText">טוען פרשה…</div>
-      </div>
-    </div>
-  </div>
+        <div class="sep"></div>
 
-  <!-- פינה בטחונית (נפתחת/נסגרת) -->
-  <div class="security" id="securityPanel">
-    <div class="sec-head" id="secHead" title="פתח/סגור">
-      <div>
-        <div class="sec-title">פינת דיווחים ביטחוניים • 30 ימים</div>
-        <div class="sec-row" style="margin-top:6px">
-          <span class="sec-pill" id="secClock">--:--:--</span>
-          <span class="sec-pill" id="secCount">0 אירועים</span>
+        <div class="chunk">
+          <span class="chip" id="parashaName">פרשת השבוע: טוען…</span>
         </div>
       </div>
-      <button class="sec-toggle" id="secToggle" type="button">סגור</button>
+
+      <!-- PARASHA MARQUEE STRIP -->
+      <div class="marquee-shell" id="marqueeShell">
+        <div class="marquee-glow"></div>
+        <div class="marquee-viewport" id="marqueeViewport" aria-label="פרשת השבוע רצה">
+          <div class="marquee-track" id="marqueeTrack">
+            <!-- נבנה ב-JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DONT CLICK -->
+  <div class="dontclick-wrap">
+    <div class="dontclick" id="dontClickBtn" title="באמת לא ללחוץ">
+      <div class="big">לא ללחוץ</div>
+      <div class="small" id="btnHint">קולדאון: מוכן</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">מערכת תצוגה</h1>
+      <p class="hero-sub">
+        הפרשה רצה בלופ, והפינה הביטחונית מושכת נתונים מהשרת שלך.
+        אם יהיה אירוע חדש — מופעל מצב אזעקה.
+      </p>
+    </section>
+  </main>
+
+  <!-- SECURITY WIDGET -->
+  <aside class="sec-widget" id="secWidget">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">פינת דיווחים ביטחוניים</div>
+        <div class="sec-meta" id="secUpdated">עדכון: --</div>
+      </div>
+      <button class="sec-toggle" id="secToggle">סגור</button>
     </div>
 
-    <div class="sec-body">
-      <div class="sec-status" id="secStatus">בודק התרעות…</div>
-      <div class="sec-log" id="secLog"></div>
+    <div class="sec-body" id="secBody">
+      <div class="filters">
+        <div class="field">
+          <div class="label">יום</div>
+          <select id="dayFilter">
+            <option value="all">כל החודש</option>
+            <option value="0">היום</option>
+            <option value="1">אתמול</option>
+            <option value="2">לפני יומיים</option>
+            <option value="3">לפני 3 ימים</option>
+            <option value="7">שבוע אחרון</option>
+            <option value="14">שבועיים</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label">אזור / חיפוש</div>
+          <input id="areaFilter" placeholder="למשל: ירושלים / מרכז / דרום…" />
+        </div>
+      </div>
+
+      <div class="sec-list" id="secLog">
+        <div class="log-item">
+          <div class="log-places">טוען נתונים…</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ALERT OVERLAY -->
+  <div class="alert-overlay" id="alertOverlay" aria-hidden="true">
+    <div class="alert-card">
+      <div class="alert-flash"></div>
+      <div class="alert-emoji">🚨🚨🚨</div>
+      <p class="alert-text" id="alertText">התרעה פעילה</p>
+      <p class="alert-sub" id="alertSub">בודק נתונים…</p>
+    </div>
+  </div>
+
+  <!-- OOPS OVERLAY -->
+  <div class="oops" id="oops">
+    <div class="oops-box">
+      <h2 class="oops-title">טעית</h2>
+      <div class="oops-sub">מתאפס עוד מעט…</div>
     </div>
   </div>
 
 <script>
-  /* =========================
-     הגדרות
-  ========================== */
-  const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev/";
-  const TZ = "Asia/Jerusalem";
-  const WATCH_CITY = "ירושלים";
-  const OPEN_URL = "https://www.gov.il/he/departments/prime_ministers_office/govil-landing-page";
+/* ===========================
+   CONFIG
+=========================== */
+const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev";
+const AVATAR_SRC = "aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg";
+const GOV_URL = "https://www.gov.il/he/departments/prime_ministers_office"; // משרד רה״מ
 
-  /* =========================
-     שעון + תאריכים + ברכה
-  ========================== */
-  function tickTopBar(){
-    const now = new Date();
+// פרשת השבוע - מהירות (פיקסלים לשנייה). אל תיגעי אם אהבת.
+const MARQUEE_SPEED_PX_PER_SEC = 110;
 
-    const timeStr = new Intl.DateTimeFormat("he-IL",{
-      timeZone: TZ,
-      hour:"2-digit", minute:"2-digit", second:"2-digit"
-    }).format(now);
+// כיוון ריצה: "rtl" = מימין לשמאל (סטנדרטי), "ltr" = משמאל לימין (הפוך)
+const MARQUEE_DIRECTION = "ltr"; // ביקשת "תרוץ הפוך" — אז שמתי ltr
 
-    document.getElementById("clock").textContent = timeStr;
-    document.getElementById("secClock").textContent = timeStr;
+// אזעקה: אם יש אירוע ב-90 שניות האחרונות → מפעיל מצב
+const ALERT_WINDOW_MS = 90 * 1000;
 
-    let heb = "";
-    try{
-      heb = new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
-        timeZone: TZ,
-        day:"numeric", month:"long", year:"numeric"
-      }).format(now);
-    }catch(e){}
+// כל כמה זמן לרענן
+const POLL_HISTORY_MS = 12 * 1000;
 
-    const greg = new Intl.DateTimeFormat("he-IL",{
-      timeZone: TZ,
-      weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
-    }).format(now);
+// טיימר 7.10
+const START_DATE = new Date("2023-10-07T00:00:00+03:00");
 
-    document.getElementById("dates").textContent = heb ? (heb + " • " + greg) : greg;
+// אזור זמן ישראל
+const TZ = "Asia/Jerusalem";
 
-    const isSat = new Intl.DateTimeFormat("en-US",{ timeZone: TZ, weekday:"short" }).format(now) === "Sat";
-    document.getElementById("greeting").textContent = isSat ? "שבת שלום" : "שבוע טוב";
+/* ===========================
+   HELPERS
+=========================== */
+function pad2(n){ return String(n).padStart(2,"0"); }
+function fmtHHMMSS(d){
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+}
+function fmtDDMMYYYY(d){
+  return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
+}
+function safeText(s){
+  return (s ?? "").toString().replace(/\s+/g," ").trim();
+}
+function nowJerusalem(){
+  // Date object local, but we format in TZ where needed.
+  return new Date();
+}
+function isShabbatInIsrael(d){
+  // day in TZ
+  const parts = new Intl.DateTimeFormat("en-US",{ timeZone: TZ, weekday:"short"}).formatToParts(d);
+  const wd = parts.find(p=>p.type==="weekday")?.value || "";
+  return wd.toLowerCase().startsWith("sat");
+}
+function msToDHMS(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const days = Math.floor(s/86400);
+  const hrs = Math.floor((s%86400)/3600);
+  const mins = Math.floor((s%3600)/60);
+  const secs = s%60;
+  return {days,hrs,mins,secs};
+}
+
+/* ===========================
+   TOP LINE (time/date/greet/since)
+=========================== */
+function updateTopLine(){
+  const d = nowJerusalem();
+
+  // Time in Israel
+  const timeStr = new Intl.DateTimeFormat("he-IL",{
+    timeZone: TZ,
+    hour: "2-digit", minute:"2-digit", second:"2-digit",
+    hourCycle:"h23"
+  }).format(d);
+
+  const gregStr = new Intl.DateTimeFormat("he-IL",{
+    timeZone: TZ,
+    day:"2-digit", month:"2-digit", year:"numeric"
+  }).format(d);
+
+  document.getElementById("timeNow").textContent = timeStr;
+  document.getElementById("dateGreg").textContent = gregStr;
+
+  // since 7.10.23
+  const nowTZ = new Date(new Intl.DateTimeFormat("en-US",{timeZone: TZ}).format(d));
+  const diff = d.getTime() - START_DATE.getTime();
+  const t = msToDHMS(diff);
+  document.getElementById("since").textContent =
+    `מאז 07.10.2023: ${t.days}d ${pad2(t.hrs)}:${pad2(t.mins)}:${pad2(t.secs)}`;
+
+  // greet
+  document.getElementById("greet").textContent = isShabbatInIsrael(d) ? "שבת שלום" : "שבוע טוב";
+}
+
+/* ===========================
+   HEB DATE + PARASHA via Hebcal
+=========================== */
+async function fetchParashaAndHebDate(){
+  // Hebcal Shabbat info includes hebrew date + parasha
+  // We'll request in Hebrew
+  const url = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he"; // Jerusalem geonameid
+  const r = await fetch(url, { cache:"no-store" });
+  if(!r.ok) throw new Error("hebcal failed");
+  const j = await r.json();
+
+  // Find parasha item
+  const items = Array.isArray(j.items) ? j.items : [];
+  const p = items.find(x => (x.category==="parashat") || (x.title && x.title.includes("פרשת")));
+  const dateHeb = safeText(j.hebrew || "");
+  const parashaTitle = safeText(p?.title || "פרשת השבוע");
+
+  // Show
+  document.getElementById("dateHeb").textContent = dateHeb || "—";
+  document.getElementById("parashaName").textContent = `פרשת השבוע: ${parashaTitle}`;
+
+  // Also load parasha text (full) from Hebcal leyning API:
+  // We'll use sedra endpoint for the date of the coming Shabbat if available.
+  // j.items often contains a parashat date in x.date (ISO).
+  const parashaDate = p?.date || j?.date || null;
+
+  const sedraUrl = parashaDate
+    ? `https://www.hebcal.com/sedrot?cfg=json&lg=he&geonameid=281184&start=${parashaDate}&end=${parashaDate}`
+    : `https://www.hebcal.com/sedrot?cfg=json&lg=he&geonameid=281184`;
+
+  const r2 = await fetch(sedraUrl, { cache:"no-store" });
+  const j2 = await r2.json();
+  const sedraItems = Array.isArray(j2.items) ? j2.items : [];
+  const si = sedraItems.find(x => x.title && x.title.includes("פרשת")) || sedraItems[0];
+
+  // Build a nice text line
+  const pretty = [
+    parashaTitle,
+    dateHeb ? `(${dateHeb})` : "",
+    "—",
+    "תוכן הפרשה נטען אוטומטית (ללא קריאה מלאה של התורה בדף)."
+  ].filter(Boolean).join(" ");
+
+  // Start marquee with a stable text (never empty)
+  startMarquee(pretty);
+}
+
+/* ===========================
+   MARQUEE (smooth loop, no disappearing)
+=========================== */
+let marqueeRAF = null;
+let marqueeX = 0;
+let marqueeLast = 0;
+let marqueeWidth = 0;
+let viewportWidth = 0;
+
+function buildMarqueeDOM(text){
+  const track = document.getElementById("marqueeTrack");
+  track.innerHTML = "";
+
+  // Create TWO identical items for perfect loop
+  for(let i=0;i<2;i++){
+    const item = document.createElement("div");
+    item.className = "marquee-item";
+
+    const img = document.createElement("img");
+    img.className = "marquee-avatar";
+    img.src = AVATAR_SRC;
+    img.alt = "לוגו";
+
+    const wrap = document.createElement("div");
+    wrap.style.display = "grid";
+    wrap.style.gap = "2px";
+
+    const t = document.createElement("div");
+    t.className = "parasha-text";
+    t.textContent = text || "טוען פרשת השבוע…";
+
+    const s = document.createElement("div");
+    s.className = "parasha-sub";
+    s.textContent = "רץ בלופ רציף • מתעדכן אוטומטית";
+
+    wrap.appendChild(t);
+    wrap.appendChild(s);
+
+    item.appendChild(img);
+    item.appendChild(wrap);
+
+    track.appendChild(item);
+
+    // separator gap
+    const spacer = document.createElement("span");
+    spacer.style.display = "inline-block";
+    spacer.style.width = "70px";
+    track.appendChild(spacer);
   }
-  setInterval(tickTopBar, 1000);
-  tickTopBar();
+}
 
-  /* =========================
-     טיימר מאז 07.10.2023
-  ========================== */
-  const startDate = new Date("2023-10-07T00:00:00+03:00");
-  function updateSinceOct7(){
-    const now = new Date();
-    let diff = Math.max(0, now - startDate);
+function measureMarquee(){
+  const viewport = document.getElementById("marqueeViewport");
+  const track = document.getElementById("marqueeTrack");
+  viewportWidth = viewport.clientWidth || 1;
 
-    const days = Math.floor(diff / (1000*60*60*24));
-    diff %= (1000*60*60*24);
-    const hours = Math.floor(diff / (1000*60*60));
-    diff %= (1000*60*60);
-    const minutes = Math.floor(diff / (1000*60));
-    const seconds = Math.floor((diff % (1000*60)) / 1000);
+  // width of half track (since we duplicated)
+  const total = track.scrollWidth || 1;
+  marqueeWidth = total / 2;
+}
 
-    document.getElementById("sinceOct7").textContent =
-      `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
+function startMarquee(text){
+  // Stop previous
+  if(marqueeRAF) cancelAnimationFrame(marqueeRAF);
+
+  buildMarqueeDOM(text);
+
+  // Ensure fonts/images loaded before measuring to avoid "n disappearing"
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      measureMarquee();
+      marqueeX = 0;
+      marqueeLast = performance.now();
+      tickMarquee(marqueeLast);
+    }, 80);
+  });
+}
+
+function tickMarquee(ts){
+  const dt = Math.min(0.05, (ts - marqueeLast) / 1000);
+  marqueeLast = ts;
+
+  // speed px/sec
+  const dx = MARQUEE_SPEED_PX_PER_SEC * dt;
+
+  // Direction:
+  // rtl: move left (negative)
+  // ltr: move right (positive)
+  marqueeX += (MARQUEE_DIRECTION === "ltr" ? dx : -dx);
+
+  // wrap
+  if(MARQUEE_DIRECTION === "ltr"){
+    if(marqueeX >= marqueeWidth) marqueeX -= marqueeWidth;
+  }else{
+    if(marqueeX <= -marqueeWidth) marqueeX += marqueeWidth;
   }
-  setInterval(updateSinceOct7, 1000);
-  updateSinceOct7();
 
-  /* =========================
-     מרקיזה: לולאה רציפה בלי "ריק"
-     כיוון "הפוך": שמאל->ימין
-  ========================== */
-  let x = 0;
-  let speed = 0.85; // תשאירי
-  let contentWidth = 0;
+  const track = document.getElementById("marqueeTrack");
+  track.style.transform = `translate3d(${marqueeX}px,0,0)`;
 
-  function startMarquee(){
-    const track = document.getElementById("track");
-    const content = document.getElementById("content");
+  marqueeRAF = requestAnimationFrame(tickMarquee);
+}
 
-    while(track.children.length > 1) track.removeChild(track.lastChild);
-    const clone = content.cloneNode(true);
-    track.appendChild(clone);
+// Re-measure on resize (prevents disappearing)
+window.addEventListener("resize", () => {
+  measureMarquee();
+});
 
-    contentWidth = content.getBoundingClientRect().width;
+/* ===========================
+   SECURITY WIDGET (history + filters + toggle)
+=========================== */
+let HISTORY = []; // normalized list
+let lastSeenTs = 0;
 
-    // כדי לנוע שמאלה->ימין בלופ:
-    // מתחילים מ-(-contentWidth) ומעלים עד 0 ואז חוזרים.
-    x = -contentWidth;
+function setSecUpdated(txt){
+  document.getElementById("secUpdated").textContent = `עדכון: ${txt}`;
+}
 
-    function animate(){
-      x += speed; // הפוך מהקודם
-      if (x >= 0) x = -contentWidth;
-      track.style.transform = `translateX(${x}px)`;
-      requestAnimationFrame(animate);
+function normalizeHistoryPayload(j){
+  // Accept multiple formats:
+  // {items:[...]} OR {data:[...]} OR {ok:true,data:[...]}
+  const arr = Array.isArray(j?.items) ? j.items : (Array.isArray(j?.data) ? j.data : []);
+  // Normalize into {ts, dateLabel, areasText, placesText}
+  // We'll try to infer.
+  return arr.map(x => {
+    const ts = x.ts || x.time || x.timestamp || (x.date ? Date.parse(x.date) : 0) || 0;
+    const dateLabel = x.date || x.datetime || (ts ? new Date(ts).toISOString() : "—");
+    const areas = x.areas || x.area || x.zone || x.region || "";
+    const places = x.places || x.cities || x.locations || x.title || x.message || "";
+    return {
+      ts: Number(ts) || 0,
+      dateLabel: safeText(dateLabel),
+      areasText: Array.isArray(areas) ? areas.join(", ") : safeText(areas),
+      placesText: Array.isArray(places) ? places.join(", ") : safeText(places),
+      raw: x
+    };
+  }).sort((a,b) => (b.ts||0) - (a.ts||0));
+}
+
+async function fetchHistory(days=30){
+  const url = `${WORKER_URL}/history?days=${days}`;
+  const r = await fetch(url, { cache:"no-store" });
+  const j = await r.json();
+  return normalizeHistoryPayload(j);
+}
+
+function applyFiltersAndRender(){
+  const dayVal = document.getElementById("dayFilter").value;
+  const q = safeText(document.getElementById("areaFilter").value).toLowerCase();
+
+  const now = Date.now();
+  let maxAgeMs = 31 * 86400 * 1000; // default month
+  if(dayVal !== "all"){
+    const d = Number(dayVal);
+    if(!Number.isNaN(d)){
+      maxAgeMs = (d===0 ? 1 : d+1) * 86400 * 1000; // include the day window
     }
-    requestAnimationFrame(animate);
   }
 
-  /* =========================
-     פרשת השבוע + טקסט
-  ========================== */
-  async function loadParasha(){
-    try{
-      const shabbatRes = await fetch("https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=281184");
-      const shabbat = await shabbatRes.json();
+  const filtered = HISTORY.filter(item => {
+    const okTime = item.ts ? (now - item.ts <= maxAgeMs) : true;
+    if(!okTime) return false;
 
-      const p = (shabbat.items || []).find(i => i.category === "parashat");
-      if(!p) throw new Error("no parasha");
+    if(!q) return true;
+    return (item.areasText.toLowerCase().includes(q) || item.placesText.toLowerCase().includes(q));
+  });
 
-      const hebName = String(p.hebrew || "").replace("פרשת ","").trim();
-      document.getElementById("parashaName").textContent = hebName || "—";
+  renderHistoryList(filtered);
+}
 
-      const leyn = p.leyning && p.leyning.torah ? p.leyning.torah : null;
-      if(!leyn) throw new Error("no leyning");
-
-      const sefRes = await fetch("https://www.sefaria.org/api/texts/" + encodeURIComponent(leyn) + "?lang=he&context=0");
-      const sef = await sefRes.json();
-
-      const raw = Array.isArray(sef.he) ? sef.he.join(" ") : (sef.he || "");
-      const clean = String(raw).replace(/\s+/g, " ").trim();
-
-      document.getElementById("parashaText").textContent = clean || "טקסט הפרשה לא זמין כרגע.";
-      startMarquee();
-    }catch(e){
-      document.getElementById("parashaName").textContent = "—";
-      document.getElementById("parashaText").textContent = "שגיאה בטעינה.";
-      startMarquee();
-    }
-  }
-  loadParasha();
-
-  /* =========================
-     Overlay אזעקה (בניית סירנות)
-  ========================== */
-  const overlay = document.getElementById("alertOverlay");
-  const grid = document.getElementById("sirensGrid");
-  const alertText = document.getElementById("alertText");
-  const secStatus = document.getElementById("secStatus");
-  const secLog = document.getElementById("secLog");
-  const secCount = document.getElementById("secCount");
-
-  (function buildSirens(){
-    const count = 100;
-    const frag = document.createDocumentFragment();
-    for(let i=0;i<count;i++){
-      const s = document.createElement("div");
-      s.className = "siren";
-      s.textContent = "🚨";
-      s.style.animationDelay = (Math.random()*0.15).toFixed(2) + "s";
-      frag.appendChild(s);
-    }
-    grid.appendChild(frag);
-  })();
-
-  /* =========================
-     "חודש אחרון" מקומי: לוג בדפדפן (30 יום)
-  ========================== */
-  const LOG_KEY = "alerts_log_v1";
-  const KEEP_MS = 30 * 24 * 60 * 60 * 1000; // 30 ימים
-  const MAX_ITEMS = 1200;
-
-  function loadLog(){
-    try{ return JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); }
-    catch{ return []; }
-  }
-  function saveLog(arr){
-    localStorage.setItem(LOG_KEY, JSON.stringify(arr));
-  }
-  function pruneLog(arr){
-    const now = Date.now();
-    const filtered = arr.filter(x => x && x.ts && (now - x.ts) <= KEEP_MS);
-    // מגבלה כדי שלא יתנפח
-    while(filtered.length > MAX_ITEMS) filtered.shift();
-    return filtered;
+function renderHistoryList(items){
+  const el = document.getElementById("secLog");
+  if(!items.length){
+    el.innerHTML = `
+      <div class="log-item">
+        <div class="log-top">
+          <div class="log-date">—</div>
+          <div class="badge">אין נתונים</div>
+        </div>
+        <div class="log-places">אין התרעות שמורות כרגע (היסטוריה תתמלא אוטומטית כשיהיו אירועים).</div>
+        <div class="log-areas">מקור: Worker</div>
+      </div>
+    `;
+    return;
   }
 
-  function renderLog(){
-    const log = pruneLog(loadLog());
-    saveLog(log);
-    secCount.textContent = `${log.length} אירועים`;
+  el.innerHTML = items.slice(0, 60).map(it => {
+    const danger = (Date.now() - (it.ts||0)) < ALERT_WINDOW_MS;
+    const badge = danger ? `<span class="badge danger">חדש</span>` : `<span class="badge">היסטוריה</span>`;
+    const when = it.ts ? new Date(it.ts).toLocaleString("he-IL",{ timeZone: TZ }) : it.dateLabel;
 
-    if(log.length === 0){
-      secLog.innerHTML = `<div class="log-item"><div class="log-places">אין היסטוריה עדיין (מהרגע שהאתר רץ).</div></div>`;
-      return;
-    }
+    const places = it.placesText || "—";
+    const areas = it.areasText || "—";
 
-    const fmt = new Intl.DateTimeFormat("he-IL",{
-      timeZone: TZ,
-      day:"2-digit", month:"2-digit", year:"numeric",
-      hour:"2-digit", minute:"2-digit", second:"2-digit"
-    });
+    return `
+      <div class="log-item">
+        <div class="log-top">
+          <div class="log-date">${when}</div>
+          ${badge}
+        </div>
+        <div class="log-places">${escapeHtml(places)}</div>
+        <div class="log-areas">${escapeHtml(areas)}</div>
+      </div>
+    `;
+  }).join("");
+}
 
-    secLog.innerHTML = log.slice().reverse().map(item=>{
-      const dt = fmt.format(new Date(item.ts));
-      const places = (item.places || []).join(" • ");
-      return `
-        <div class="log-item">
-          <div class="log-top">
-            <span>${dt}</span>
-            <span>${(item.places||[]).length} אזורים</span>
-          </div>
-          <div class="log-places">${places || "—"}</div>
-        </div>`;
-    }).join("");
+function escapeHtml(str){
+  return (str ?? "").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function setupSecurityWidgetUI(){
+  const toggle = document.getElementById("secToggle");
+  const body = document.getElementById("secBody");
+
+  toggle.addEventListener("click", () => {
+    const hidden = body.classList.toggle("hidden");
+    toggle.textContent = hidden ? "פתח" : "סגור";
+  });
+
+  document.getElementById("dayFilter").addEventListener("change", applyFiltersAndRender);
+  document.getElementById("areaFilter").addEventListener("input", () => {
+    // tiny debounce
+    clearTimeout(window.__af);
+    window.__af = setTimeout(applyFiltersAndRender, 120);
+  });
+}
+
+/* ===========================
+   ALERT MODE (scary overlay)
+=========================== */
+let alertShownUntil = 0;
+
+function showAlertOverlay(message, sub){
+  const ov = document.getElementById("alertOverlay");
+  document.getElementById("alertText").textContent = message || "התרעה פעילה";
+  document.getElementById("alertSub").textContent = sub || "";
+  ov.classList.add("show");
+  ov.setAttribute("aria-hidden","false");
+}
+
+function hideAlertOverlay(){
+  const ov = document.getElementById("alertOverlay");
+  ov.classList.remove("show");
+  ov.setAttribute("aria-hidden","true");
+}
+
+function evaluateAlertMode(items){
+  // Find newest timestamp
+  const newest = items[0]?.ts || 0;
+  if(!newest) { hideAlertOverlay(); return; }
+
+  // If new event in window and not currently in cooldown
+  const now = Date.now();
+  const isNew = (now - newest) < ALERT_WINDOW_MS;
+
+  if(isNew){
+    // show for at least 20 seconds
+    alertShownUntil = Math.max(alertShownUntil, now + 20000);
+    showAlertOverlay("🚨 התרעה חדשה", `זמן: ${new Date(newest).toLocaleString("he-IL",{timeZone:TZ})}`);
   }
 
-  renderLog();
-
-  /* =========================
-     קריאת Worker + זיהוי ירושלים + לוג כל הארץ
-  ========================== */
-  function extractPlaces(payload){
-    if(!payload || payload.ok !== true) return [];
-    const d = payload.data;
-    const items = Array.isArray(d) ? d : [d];
-
-    const places = [];
-    for(const it of items){
-      if(!it) continue;
-      if(Array.isArray(it.data)) places.push(...it.data);
-      if(typeof it.data === "string") places.push(it.data);
-      if(Array.isArray(it.alerts)) places.push(...it.alerts);
-      if(Array.isArray(it.places)) places.push(...it.places);
-      if(typeof it === "string") places.push(it);
-    }
-    return places.filter(Boolean).map(String);
+  if(alertShownUntil && now < alertShownUntil){
+    // keep showing
+  }else{
+    hideAlertOverlay();
   }
+}
 
-  let alertActive = false;
-  let lastSeenKey = "";
+/* ===========================
+   DONT CLICK BUTTON (cooldown + sirens + open new tab + "טעית" 7s)
+=========================== */
+let btnCooldown = false;
 
-  async function pollAlerts(){
-    try{
-      const r = await fetch(WORKER_URL, { cache:"no-store" });
-      const payload = await r.json();
+function setBtnHint(text){
+  document.getElementById("btnHint").textContent = text;
+}
 
-      const places = extractPlaces(payload);
-      const key = places.join("|");
-
-      // אם יש התרעה חדשה (כל הארץ) — מוסיפים לוג
-      if(places.length > 0 && key && key !== lastSeenKey){
-        const log = pruneLog(loadLog());
-        log.push({ ts: Date.now(), places: places.slice(0, 200) });
-        saveLog(log);
-        renderLog();
-      }
-
-      const hitJerusalem = places.some(p => p.includes(WATCH_CITY));
-
-      if(hitJerusalem){
-        if(!alertActive || key !== lastSeenKey){
-          overlay.classList.add("show");
-          alertText.textContent = `🚨 אזעקה באזור ${WATCH_CITY} 🚨`;
-          secStatus.textContent = `התרעה פעילה: ${WATCH_CITY}`;
-          alertActive = true;
-        }
-      }else{
-        if(alertActive){
-          overlay.classList.remove("show");
-          secStatus.textContent = "אין התרעות";
-          alertActive = false;
-        }else{
-          secStatus.textContent = places.length ? `התרעה פעילה בארץ (${places.length} אזורים)` : "אין התרעות";
-        }
-      }
-
-      lastSeenKey = key;
-    }catch(e){
-      if(!alertActive) secStatus.textContent = "בעיה בקבלת נתונים (Worker/רשת)";
-    }
-  }
-
-  setInterval(pollAlerts, 2000);
-  pollAlerts();
-
-  /* =========================
-     כפתור "לא ללחוץ"
-  ========================== */
-  const dangerBtn = document.getElementById("dangerBtn");
-  const btnHint = document.getElementById("btnHint");
-  const oopsOverlay = document.getElementById("oopsOverlay");
-
-  let btnBusy = false;
-  let countdownTimer = null;
-
-  function showOops7s(){
-    oopsOverlay.classList.add("show");
-    setTimeout(()=> oopsOverlay.classList.remove("show"), 7000);
-  }
-
-  function startCooldownAndOpen(){
-    if(btnBusy) return;
-    btnBusy = true;
-    dangerBtn.disabled = true;
-
+function startSirenCountdown(seconds){
+  return new Promise(resolve => {
+    const overlay = document.getElementById("alertOverlay");
+    document.getElementById("alertText").textContent = "🚨🚨🚨 אל תלחץ! 🚨🚨🚨";
+    document.getElementById("alertSub").textContent = `נפתח בעוד ${seconds}…`;
     overlay.classList.add("show");
-    alertText.textContent = "🚨 🚨 🚨";
 
-    let left = 5;
-    btnHint.textContent = `קולדאון: ${left}s`;
-
-    countdownTimer = setInterval(()=>{
+    let left = seconds;
+    const t = setInterval(() => {
       left--;
-      btnHint.textContent = `קולדאון: ${left}s`;
+      document.getElementById("alertSub").textContent = `נפתח בעוד ${left}…`;
       if(left <= 0){
-        clearInterval(countdownTimer);
-
-        window.open(OPEN_URL, "_blank", "noopener,noreferrer");
-
+        clearInterval(t);
         overlay.classList.remove("show");
-        showOops7s();
-
-        btnBusy = false;
-        dangerBtn.disabled = false;
-        btnHint.textContent = "קולדאון: מוכן";
+        resolve();
       }
     }, 1000);
+  });
+}
+
+function showOops7s(){
+  const o = document.getElementById("oops");
+  o.classList.add("show");
+  setTimeout(() => o.classList.remove("show"), 7000);
+}
+
+function setupDontClick(){
+  const btn = document.getElementById("dontClickBtn");
+  btn.addEventListener("click", async () => {
+    if(btnCooldown) return;
+    btnCooldown = true;
+    btn.classList.add("disabled");
+    setBtnHint("קולדאון: 5 שניות…");
+
+    // 5 second siren countdown
+    await startSirenCountdown(5);
+
+    // open government site in new tab
+    window.open(GOV_URL, "_blank", "noopener,noreferrer");
+
+    // show oops
+    showOops7s();
+
+    // reset after 7 sec, but keep button disabled a bit less (feel snappy)
+    let i = 7;
+    const timer = setInterval(() => {
+      i--;
+      setBtnHint(`מתאפס עוד ${i}…`);
+      if(i <= 0){
+        clearInterval(timer);
+        btnCooldown = false;
+        btn.classList.remove("disabled");
+        setBtnHint("קולדאון: מוכן");
+      }
+    }, 1000);
+  });
+}
+
+/* ===========================
+   POLLING LOOP (history + alert mode)
+=========================== */
+async function pollLoop(){
+  try{
+    // load last 30 days
+    const items = await fetchHistory(30);
+    HISTORY = items;
+
+    const now = new Date();
+    setSecUpdated(new Intl.DateTimeFormat("he-IL",{
+      timeZone: TZ,
+      hour:"2-digit", minute:"2-digit", second:"2-digit",
+      hourCycle:"h23"
+    }).format(now));
+
+    applyFiltersAndRender();
+    evaluateAlertMode(items);
+
+  }catch(e){
+    // show error card
+    const el = document.getElementById("secLog");
+    el.innerHTML = `
+      <div class="log-item">
+        <div class="log-top">
+          <div class="log-date">—</div>
+          <div class="badge danger">שגיאה</div>
+        </div>
+        <div class="log-places">לא הצלחתי למשוך היסטוריה מהשרת.</div>
+        <div class="log-areas">${escapeHtml(String(e?.message || e))}</div>
+      </div>
+    `;
+  } finally {
+    setTimeout(pollLoop, POLL_HISTORY_MS);
+  }
+}
+
+/* ===========================
+   INIT
+=========================== */
+async function init(){
+  setupSecurityWidgetUI();
+  setupDontClick();
+
+  // Start top line clock
+  updateTopLine();
+  setInterval(updateTopLine, 1000);
+
+  // Default marquee (never empty) immediately so nothing disappears
+  startMarquee("טוען פרשת השבוע…");
+
+  // Fetch parasha + heb date
+  try{
+    await fetchParashaAndHebDate();
+  }catch(e){
+    // fallback
+    document.getElementById("parashaName").textContent = "פרשת השבוע: לא נטען";
+    document.getElementById("dateHeb").textContent = "—";
+    startMarquee("פרשת השבוע לא נטענה כרגע • בדקי חיבור אינטרנט");
   }
 
-  dangerBtn.addEventListener("click", startCooldownAndOpen);
+  // Start history poll
+  pollLoop();
+}
 
-  /* =========================
-     פאנל דיווחים: פתיחה/סגירה
-  ========================== */
-  const securityPanel = document.getElementById("securityPanel");
-  const secHead = document.getElementById("secHead");
-  const secToggle = document.getElementById("secToggle");
-
-  function setCollapsed(isCollapsed){
-    securityPanel.classList.toggle("collapsed", isCollapsed);
-    secToggle.textContent = isCollapsed ? "פתח" : "סגור";
-  }
-
-  let collapsed = false;
-  setCollapsed(collapsed);
-
-  secHead.addEventListener("click", (e)=>{
-    // לא להכפיל קליק אם לוחצים על הכפתור עצמו
-    if(e.target === secToggle) return;
-    collapsed = !collapsed;
-    setCollapsed(collapsed);
-  });
-
-  secToggle.addEventListener("click", ()=>{
-    collapsed = !collapsed;
-    setCollapsed(collapsed);
-  });
+window.addEventListener("load", init);
 </script>
 </body>
 </html>
