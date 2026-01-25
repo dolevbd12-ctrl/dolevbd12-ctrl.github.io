@@ -568,53 +568,51 @@
 
 async function fetchParashaAndHebDate(){
   try{
+    // --- שלב 1: שם הפרשה + תאריך עברי (Hebcal)
     const r = await fetch(HEBCAL_URL, { cache:"no-store" });
-    if(!r.ok) throw new Error("Hebcal failed");
     const j = await r.json();
 
-    // תאריך עברי
-    const heb = safeText(j.hebrew || "");
+    const heb = (j.hebrew || "").trim();
     if(heb) document.getElementById("dateHeb").textContent = heb;
 
-    // פרשה
-    const items = Array.isArray(j.items) ? j.items : [];
-    let p = items.find(x => x && x.category === "parashat");
-    if(!p) p = items.find(x => safeText(x?.title).includes("פרשת"));
-    let parashaTitle = safeText(p?.title) || safeText(j.parasha) || "פרשת השבוע";
-    parashaTitle = parashaTitle.replace(/^Parashat\s+/i,"").trim();
+    const item = (j.items || []).find(x => x.category === "parashat");
+    const parashaName = item?.title || "פרשת השבוע";
 
-    document.getElementById("parashaName").textContent = parashaTitle;
+    document.getElementById("parashaName").textContent = parashaName;
 
-    // בונוס: מוסיף עוד מידע שיש ב-Hebcal (אם קיים)
-    const cand = items
-      .filter(x => x && (x.category === "parashat" || x.category === "holiday"))
-      .slice(0, 4)
-      .map(x => safeText(x.title))
-      .filter(Boolean);
+    // --- שלב 2: טקסט מלא של הפרשה (Sefaria)
+    const slug = parashaName.replace("פרשת ", "").trim();
+    const sefariaURL = `https://www.sefaria.org/api/parashah/${encodeURIComponent(slug)}`;
 
-    // לפעמים Hebcal מוסיף גם readings בתוך item (לא תמיד)
-    let extra = "";
-    if (p && p.readings) {
-      const ali = p.readings?.aliyot ? "עליות" : "";
-      const torah = p.readings?.torah ? "תורה" : "";
-      const haft = p.readings?.haftara ? "הפטרה" : "";
-      const parts = [torah, ali, haft].filter(Boolean).join(" • ");
-      if (parts) extra = ` | ${parts}`;
+    const sr = await fetch(sefariaURL);
+    const sj = await sr.json();
+
+    let fullText = "";
+
+    sj?.aliyot?.forEach(a=>{
+      if(Array.isArray(a.text)){
+        a.text.forEach(t=>{
+          if(typeof t === "string"){
+            fullText += " " + t.replace(/<[^>]+>/g,"");
+          }
+        });
+      }
+    });
+
+    // גיבוי אם אין טקסט
+    if(!fullText || fullText.length < 50){
+      fullText = `פרשת השבוע: ${parashaName}`;
     }
 
-    // טקסט רץ מלא יותר (אבל עדיין לא “פסוקים”)
-    const marqueeText =
-      `• פרשת השבוע: ${parashaTitle}${extra} • תאריך עברי: ${heb || "—"} • ${cand.join(" • ")} • `;
-
-    // לופ אינסופי + בלי “ריק”
-    startMarquee(marqueeText);
+    // --- שלב 3: לולאה אינסופית אמיתית
+    const loopText = `• ${parashaName} • ${fullText} `;
+    startMarquee(loopText);
 
   }catch(e){
-    document.getElementById("parashaName").textContent = "פרשת השבוע";
-    document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
-    startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
+    startMarquee("• פרשת השבוע •");
   }
 }
+
 
     function mapAreaToQuery(val){ return val; }
 
