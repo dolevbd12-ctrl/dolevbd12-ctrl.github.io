@@ -782,6 +782,46 @@
     // News
     loadNews();
     setInterval(loadNews, 10*60*1000);
-  </script>
+// ===== פרשת השבוע + תאריך עברי + טקסט רץ =====
+async function fetchParashaAndHebDate(){
+  try{
+    const url = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he";
+    const r = await fetch(url, { cache: "no-store" });
+    const j = await r.json();
+
+    // תאריך עברי
+    if(j.hebrew && document.getElementById("dateHeb")){
+      document.getElementById("dateHeb").textContent = j.hebrew;
+    }
+
+    // שם הפרשה
+    let parasha = "פרשת השבוע";
+    if(Array.isArray(j.items)){
+      const p = j.items.find(x => x.category === "parashat");
+      if(p?.title){
+        parasha = p.title.replace("פרשת ", "");
+      }
+    }
+
+    // למעלה
+    if(document.getElementById("parashaName")){
+      document.getElementById("parashaName").textContent = parasha;
+    }
+
+    // טקסט רץ – לולאה אינסופית
+    const text =
+      `• פרשת השבוע: ${parasha} • עדכון אוטומטי • פרשת השבוע: ${parasha} • עדכון אוטומטי •`;
+
+    startMarquee(text);
+
+  }catch(e){
+    startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
+  }
+}
+fetchParashaAndHebDate();
+setInterval(fetchParashaAndHebDate, 6*60*60*1000);
+</script>
+
+
 </body>
 </html>
