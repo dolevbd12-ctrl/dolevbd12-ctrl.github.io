@@ -1,135 +1,683 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>לוח מצב</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>לוח מצב</title>
 
-<style>
-body {
-  margin: 0;
-  background: #0b1f0b;
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  color: #fff;
-  overflow: hidden;
-}
+  <!-- פונטים: תנ"כי לתוכן + מודרני לממשק -->
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 
-/* שורה עליונה */
-#topBar {
-  background: #1f3d1f;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-}
+  <style>
+    /* =========================
+       בסיס
+    ========================== */
+    :root{
+      --bg1:#0f5a27;
+      --bg2:#073216;
+      --bg3:#03180a;
 
-#marqueeWrap {
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-}
+      --glass: rgba(0,0,0,.22);
+      --stroke: rgba(255,255,255,.14);
 
-#parasha {
-  display: inline-block;
-  padding-right: 100%;
-  animation: scrollRTL 18s linear infinite;
-  font-weight: bold;
-  color: #00ff66;
-}
+      --greenGlow1: rgba(0,255,140,.94);
+      --greenGlow2: rgba(0,190,95,.92);
 
-@keyframes scrollRTL {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
-}
+      --dangerBg: rgba(0,0,0,.78);
+      --dangerRed: rgba(160,0,0,.86);
 
-/* ווידג׳ט ביטחוני */
-#securityBox {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  background: #2b0000;
-  border: 2px solid #ff0000;
-  padding: 12px 14px;
-  width: 260px;
-  font-size: 13px;
-}
+      --cardShadow: 0 12px 34px rgba(0,0,0,.35);
+      --mono: "Roboto Mono", monospace;
+      --ui: "IBM Plex Sans Hebrew", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      --tanach: "Frank Ruhl Libre", serif;
 
-/* אזעקה */
-#alarm {
-  position: fixed;
-  inset: 0;
-  background: rgba(120,0,0,0.95);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 120px;
-  animation: blink 0.5s infinite;
-  z-index: 999;
-}
+      --radius: 12px;
+    }
 
-@keyframes blink {
-  50% { opacity: 0.3; }
-}
-</style>
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: radial-gradient(circle at top, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+      font-family: var(--ui);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* =========================
+       שורה עליונה (Header)
+    ========================== */
+    .header{
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 12px 14px;
+      background: var(--glass);
+      border-bottom: 1px solid var(--stroke);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+
+    .headerRow{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge{
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-shadow: 0 8px 18px rgba(0,0,0,.22);
+      font-size: 13px;
+    }
+
+    .clock { font-family: var(--mono); }
+    .muted { opacity: .92; }
+
+    /* =========================
+       אזור מרקיזה (הפרשה רצה)
+       - כיוון: מימין לשמאל
+       - בלי "ריק" ארוך: משכפלים תוכן
+    ========================== */
+    .marquee-wrap{
+      position: fixed;
+      top: 64px;               /* מתחת לשורה העליונה */
+      left: 0; right: 0;
+      height: 170px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding-inline: 16px;
+      box-sizing: border-box;
+      z-index: 20;
+      pointer-events: none;    /* שלא יתנגש עם כפתורים */
+    }
+
+    .marquee-track{
+      display: flex;
+      align-items: center;
+      will-change: transform;
+      transform: translateX(0);
+    }
+
+    .marquee-content{
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .marquee-content img{
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 12px 34px rgba(0,0,0,.45);
+      margin-inline: 18px;
+      flex: 0 0 auto;
+    }
+
+    .parasha-text{
+      font-family: var(--tanach);
+      font-size: 20px;
+      line-height: 1.35;
+
+      color: #001b0c; /* ביקשת שחור/כהה */
+      background: linear-gradient(180deg, var(--greenGlow1), var(--greenGlow2));
+      padding: 12px 18px;
+
+      border-radius: 14px;
+      border: 1px solid rgba(0,255,140,.55);
+      box-shadow: 0 0 22px rgba(0,255,140,.55), 0 12px 34px rgba(0,0,0,.25);
+      white-space: nowrap;
+    }
+
+    /* =========================
+       פינת דיווחים בטחוניים (שמאל למטה)
+    ========================== */
+    .security{
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      width: 300px;
+      background: rgba(120,0,0,.85);
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      box-shadow: var(--cardShadow);
+      z-index: 40;
+    }
+
+    .security strong{
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      letter-spacing: .2px;
+    }
+
+    .sec-row{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .sec-pill{
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .sec-status{
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.35;
+      opacity: .98;
+    }
+
+    /* =========================
+       Overlay אזעקה (אוטומטי מירושלים)
+    ========================== */
+    .alert-overlay{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      background: var(--dangerBg);
+      backdrop-filter: blur(2px);
+    }
+    .alert-overlay.show{
+      display: flex;
+      animation: overlayPulse .14s infinite;
+    }
+    @keyframes overlayPulse{
+      0%   { background: var(--dangerBg); }
+      50%  { background: var(--dangerRed); }
+      100% { background: var(--dangerBg); }
+    }
+
+    .sirens-grid{
+      width: min(1050px, 94vw);
+      height: min(560px, 76vh);
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      align-content: center;
+      justify-items: center;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      border-radius: 16px;
+      box-shadow: 0 0 90px rgba(255,0,0,.30);
+    }
+
+    .siren{
+      font-size: clamp(26px, 3vw, 44px);
+      filter: drop-shadow(0 0 10px rgba(255,0,0,.55));
+      animation: sirenWobble .22s infinite;
+    }
+    @keyframes sirenWobble{
+      0%   { transform: translateY(0) rotate(-3deg) scale(1); }
+      50%  { transform: translateY(-2px) rotate(3deg) scale(1.06); }
+      100% { transform: translateY(0) rotate(-3deg) scale(1); }
+    }
+
+    .alert-text{
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      box-shadow: 0 0 30px rgba(255,0,0,.25);
+      text-align: center;
+      max-width: min(92vw, 900px);
+    }
+
+    /* =========================
+       Overlay "טעית" (כפתור)
+    ========================== */
+    .oops-overlay{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 998;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(2px);
+    }
+    .oops-overlay.show{ display:flex; }
+
+    .oops-box{
+      text-align:center;
+      padding: 20px 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.35);
+      box-shadow: 0 0 80px rgba(255,0,0,.25);
+      font-family: var(--mono);
+    }
+    .oops-title{
+      font-size: clamp(34px, 6vw, 80px);
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #ff2a2a;
+      animation: oopsBlink .18s infinite;
+      margin: 0 0 8px 0;
+    }
+    @keyframes oopsBlink{
+      0%{ opacity: 1; transform: scale(1); }
+      50%{ opacity: .25; transform: scale(1.03); }
+      100%{ opacity: 1; transform: scale(1); }
+    }
+    .oops-sub{
+      font-size: 14px;
+      opacity: .92;
+      margin: 0;
+    }
+
+    /* =========================
+       כפתור גדול (ימין למעלה, קצת נמוך)
+    ========================== */
+    .danger-btn{
+      position: fixed;
+      top: 118px;          /* "להוריד למטה קצת" */
+      right: 16px;
+      z-index: 60;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      box-shadow: 0 12px 34px rgba(0,0,0,.45), 0 0 28px rgba(255,0,0,.18);
+      color: #fff;
+      font-family: var(--mono);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: .6px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .danger-btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.08); }
+    .danger-btn:active{ transform: translateY(0) scale(.99); }
+
+    .danger-btn[disabled]{
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    .btn-small{
+      display:block;
+      font-size: 12px;
+      opacity: .85;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    /* Responsive קטן */
+    @media (max-width: 520px){
+      .security{ width: 265px; }
+      .danger-btn{ left: 16px; right: auto; top: 118px; } /* אם צפוף - יעבור לצד שמאל */
+      .marquee-wrap{ height: 160px; }
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="topBar">
-  <div id="greeting">שבוע טוב</div>
-  <div id="marqueeWrap">
-    <div id="parasha">טוען פרשת השבוע…</div>
+  <!-- Overlay אזעקה אמיתית -->
+  <div class="alert-overlay" id="alertOverlay" aria-hidden="true">
+    <div class="sirens-grid" id="sirensGrid"></div>
+    <div class="alert-text" id="alertText">🚨 אזעקה בירושלים 🚨</div>
   </div>
-</div>
 
-<div id="securityBox">
-  <div><b>פינת דיווחים ביטחוניים</b></div>
-  <div id="securityStatus">בודק התרעות…</div>
-</div>
+  <!-- Overlay "טעית" -->
+  <div class="oops-overlay" id="oopsOverlay" aria-hidden="true">
+    <div class="oops-box">
+      <div class="oops-title">טעית</div>
+      <p class="oops-sub">המסך יתאפס אוטומטית בעוד כמה שניות…</p>
+    </div>
+  </div>
 
-<div id="alarm">🚨</div>
+  <!-- Header -->
+  <div class="header">
+    <div class="headerRow">
+      <span class="badge" id="greeting">טוען…</span>
+      <span class="badge muted">פרשת השבוע: <span id="parashaName">טוען…</span></span>
+      <span class="badge clock" id="clock">--:--:--</span>
+      <span class="badge muted" id="dates">טוען תאריך…</span>
+      <span class="badge clock" id="sinceOct7">מאז 07.10.2023: —</span>
+    </div>
+  </div>
 
-<script>
-/* ====== URL של ה-Worker שלך ====== */
-const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev/";
+  <!-- כפתור גדול -->
+  <button class="danger-btn" id="dangerBtn" type="button">
+    לא ללחוץ
+    <span class="btn-small" id="btnHint">קולדאון: מוכן</span>
+  </button>
 
-/* ====== פרשת השבוע (דוגמה – כבר עובד אצלך) ====== */
-document.getElementById("parasha").textContent =
-"פרשת השבוע: וארא – וַיְדַבֵּר אֱלֹהִים אֶל מֹשֶׁה";
+  <!-- מרקיזה -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="track">
+      <div class="marquee-content" id="content">
+        <img src="aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg" alt="תמונה">
+        <div class="parasha-text" id="parashaText">טוען פרשה…</div>
+      </div>
+    </div>
+  </div>
 
-/* ====== בדיקת התרעות ====== */
-async function checkAlerts() {
-  try {
-    const res = await fetch(WORKER_URL, { cache: "no-store" });
-    const data = await res.json();
+  <!-- פינה בטחונית -->
+  <div class="security">
+    <strong>פינת דיווחים ביטחוניים</strong>
+    <div class="sec-row">
+      <span>ירושלים</span>
+      <span class="sec-pill" id="secClock">--:--:--</span>
+    </div>
+    <div class="sec-status" id="secStatus">בודק התרעות…</div>
+  </div>
 
-    if (!data.data || data.data.length === 0) {
-      document.getElementById("securityStatus").textContent = "אין התרעות";
-      document.getElementById("alarm").style.display = "none";
-      return;
+  <script>
+    /* =========================
+       הגדרות
+    ========================== */
+    const WORKER_URL = "https://jolly-mode-0a2a.dolevbd12.workers.dev/"; // <-- ה-URL שלך
+    const TZ = "Asia/Jerusalem";
+    const WATCH_CITY = "ירושלים";
+
+    // יעד פתיחה בכפתור
+    const OPEN_URL = "https://www.gov.il/he/departments/prime_ministers_office/govil-landing-page";
+
+    /* =========================
+       שעון + תאריכים + ברכה
+    ========================== */
+    function tickTopBar(){
+      const now = new Date();
+
+      const timeStr = new Intl.DateTimeFormat("he-IL",{
+        timeZone: TZ,
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+      }).format(now);
+
+      document.getElementById("clock").textContent = timeStr;
+      document.getElementById("secClock").textContent = timeStr;
+
+      // תאריך עברי (אם הדפדפן תומך)
+      let heb = "";
+      try{
+        heb = new Intl.DateTimeFormat("he-IL-u-ca-hebrew",{
+          timeZone: TZ,
+          day:"numeric", month:"long", year:"numeric"
+        }).format(now);
+      }catch(e){}
+
+      // תאריך לועזי
+      const greg = new Intl.DateTimeFormat("he-IL",{
+        timeZone: TZ,
+        weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
+      }).format(now);
+
+      document.getElementById("dates").textContent = heb ? (heb + " • " + greg) : greg;
+
+      // שבת/שבוע
+      const isSat = new Intl.DateTimeFormat("en-US",{ timeZone: TZ, weekday:"short" }).format(now) === "Sat";
+      document.getElementById("greeting").textContent = isSat ? "שבת שלום" : "שבוע טוב";
+    }
+    setInterval(tickTopBar, 1000);
+    tickTopBar();
+
+    /* =========================
+       טיימר מאז 07.10.2023
+    ========================== */
+    const startDate = new Date("2023-10-07T00:00:00+03:00");
+    function updateSinceOct7(){
+      const now = new Date();
+      let diff = Math.max(0, now - startDate);
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff %= (1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff %= (1000*60*60);
+      const minutes = Math.floor(diff / (1000*60));
+      const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+      document.getElementById("sinceOct7").textContent =
+        `מאז 07.10.2023: ${days} ימים ${hours} שעות ${minutes} דקות ${seconds} שנ׳`;
+    }
+    setInterval(updateSinceOct7, 1000);
+    updateSinceOct7();
+
+    /* =========================
+       מרקיזה: לולאה רציפה בלי "ריק"
+       כיוון: מימין לשמאל => translateX יורד
+    ========================== */
+    let x = 0;
+    let speed = 0.85; // תשאירי כמו שאהבת - אפשר לשנות פה אם צריך
+    let contentWidth = 0;
+
+    function startMarquee(){
+      const track = document.getElementById("track");
+      const content = document.getElementById("content");
+
+      // מנקים שכפולים אם רעננו
+      while(track.children.length > 1) track.removeChild(track.lastChild);
+
+      // משכפלים כדי שלא יהיה ריק
+      const clone = content.cloneNode(true);
+      track.appendChild(clone);
+
+      // מודדים רוחב תוכן אחד
+      contentWidth = content.getBoundingClientRect().width;
+
+      // מתחילים מאפס
+      x = 0;
+
+      function animate(){
+        x -= speed; // מימין לשמאל
+        if (Math.abs(x) >= contentWidth) x = 0;
+        track.style.transform = `translateX(${x}px)`;
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
     }
 
-    const jerusalemAlert = data.data.find(a =>
-      JSON.stringify(a).includes("ירושלים")
-    );
+    /* =========================
+       פרשת השבוע (Hebcal) + טקסט (Sefaria)
+    ========================== */
+    async function loadParasha(){
+      try{
+        // Jerusalem geonameid=281184
+        const shabbatRes = await fetch("https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=281184");
+        const shabbat = await shabbatRes.json();
 
-    if (jerusalemAlert) {
-      document.getElementById("securityStatus").textContent = "🚨 אזעקה בירושלים!";
-      document.getElementById("alarm").style.display = "flex";
-    } else {
-      document.getElementById("securityStatus").textContent = "אין התרעה בירושלים";
-      document.getElementById("alarm").style.display = "none";
+        const p = (shabbat.items || []).find(i => i.category === "parashat");
+        if(!p) throw new Error("no parasha");
+
+        // שם הפרשה לשורה העליונה
+        const hebName = String(p.hebrew || "").replace("פרשת ","").trim();
+        document.getElementById("parashaName").textContent = hebName || "—";
+
+        // טקסט הקריאה
+        const leyn = p.leyning && p.leyning.torah ? p.leyning.torah : null;
+        if(!leyn) throw new Error("no leyning");
+
+        const sefRes = await fetch("https://www.sefaria.org/api/texts/" + encodeURIComponent(leyn) + "?lang=he&context=0");
+        const sef = await sefRes.json();
+
+        // טקסט ארוך: מאחדים בלי שבירת שורות, כדי שירוץ רציף
+        const raw = Array.isArray(sef.he) ? sef.he.join(" ") : (sef.he || "");
+        const clean = String(raw)
+          .replace(/\s+/g, " ")
+          .trim();
+
+        document.getElementById("parashaText").textContent = clean || "טקסט הפרשה לא זמין כרגע.";
+        startMarquee();
+      }catch(e){
+        document.getElementById("parashaName").textContent = "—";
+        document.getElementById("parashaText").textContent = "שגיאה בטעינה.";
+        startMarquee();
+      }
+    }
+    loadParasha();
+
+    /* =========================
+       Overlay אזעקה - בניית סירנות פעם אחת
+    ========================== */
+    const overlay = document.getElementById("alertOverlay");
+    const grid = document.getElementById("sirensGrid");
+    const alertText = document.getElementById("alertText");
+    const secStatus = document.getElementById("secStatus");
+
+    (function buildSirens(){
+      const count = 100;
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<count;i++){
+        const s = document.createElement("div");
+        s.className = "siren";
+        s.textContent = "🚨";
+        s.style.animationDelay = (Math.random()*0.15).toFixed(2) + "s";
+        frag.appendChild(s);
+      }
+      grid.appendChild(frag);
+    })();
+
+    /* =========================
+       קריאת Worker + זיהוי ירושלים
+       Worker מחזיר: { ok:true, data: ... }
+    ========================== */
+    function extractPlaces(payload){
+      if(!payload || payload.ok !== true) return [];
+      const d = payload.data;
+      const items = Array.isArray(d) ? d : [d];
+
+      const places = [];
+      for(const it of items){
+        if(!it) continue;
+
+        // פורמטים נפוצים
+        if(Array.isArray(it.data)) places.push(...it.data);
+        if(typeof it.data === "string") places.push(it.data);
+        if(Array.isArray(it.alerts)) places.push(...it.alerts);
+        if(Array.isArray(it.places)) places.push(...it.places);
+
+        // fallback: אם יש מחרוזת כללית
+        if(typeof it === "string") places.push(it);
+      }
+
+      return places.filter(Boolean).map(String);
     }
 
-  } catch (e) {
-    document.getElementById("securityStatus").textContent = "בעיה בקבלת נתונים";
-  }
-}
+    let alertActive = false;
+    let lastSeenKey = "";
 
-checkAlerts();
-setInterval(checkAlerts, 15000);
-</script>
+    async function pollAlerts(){
+      try{
+        const r = await fetch(WORKER_URL, { cache:"no-store" });
+        const payload = await r.json();
 
+        const places = extractPlaces(payload);
+        const hit = places.some(p => p.includes(WATCH_CITY));
+        const key = places.join("|");
+
+        if(hit){
+          if(!alertActive || key !== lastSeenKey){
+            overlay.classList.add("show");
+            alertText.textContent = `🚨 אזעקה באזור ${WATCH_CITY} 🚨`;
+            secStatus.textContent = `התרעה פעילה: ${WATCH_CITY}`;
+            alertActive = true;
+            lastSeenKey = key;
+          }
+        }else{
+          if(alertActive){
+            overlay.classList.remove("show");
+            secStatus.textContent = "אין התרעות";
+            alertActive = false;
+            lastSeenKey = "";
+          }else{
+            secStatus.textContent = "אין התרעות";
+          }
+        }
+      }catch(e){
+        if(!alertActive) secStatus.textContent = "בעיה בקבלת נתונים (Worker/רשת)";
+      }
+    }
+
+    // כל 2 שניות – לייב יחסית
+    setInterval(pollAlerts, 2000);
+    pollAlerts();
+
+    /* =========================
+       כפתור "לא ללחוץ"
+       - קולדאון 5 שניות: בזמן הזה מציג סירנות (overlay)
+       - ואז פותח יעד בחלון חדש
+       - מציג "טעית" 7 שניות ומתאפס
+    ========================== */
+    const dangerBtn = document.getElementById("dangerBtn");
+    const btnHint = document.getElementById("btnHint");
+    const oopsOverlay = document.getElementById("oopsOverlay");
+
+    let btnBusy = false;
+    let countdownTimer = null;
+
+    function showOops7s(){
+      oopsOverlay.classList.add("show");
+      setTimeout(()=> oopsOverlay.classList.remove("show"), 7000);
+    }
+
+    function startCooldownAndOpen(){
+      if(btnBusy) return;
+      btnBusy = true;
+      dangerBtn.disabled = true;
+
+      // מציג overlay של סירנות ל-5 שניות (אפקט "מאיים")
+      overlay.classList.add("show");
+      alertText.textContent = "🚨 🚨 🚨";
+
+      let left = 5;
+      btnHint.textContent = `קולדאון: ${left}s`;
+
+      countdownTimer = setInterval(()=>{
+        left--;
+        btnHint.textContent = `קולדאון: ${left}s`;
+        if(left <= 0){
+          clearInterval(countdownTimer);
+
+          // פותח חלון חדש
+          window.open(OPEN_URL, "_blank", "noopener,noreferrer");
+
+          // מוריד סירנות (אם אין אזעקה אמיתית, pollAlerts ינהל; אבל לא נרצה לדרוס)
+          overlay.classList.remove("show");
+
+          // "טעית" 7 שניות
+          showOops7s();
+
+          // Reset
+          btnBusy = false;
+          dangerBtn.disabled = false;
+          btnHint.textContent = "קולדאון: מוכן";
+        }
+      }, 1000);
+    }
+
+    dangerBtn.addEventListener("click", startCooldownAndOpen);
+  </script>
 </body>
 </html>
