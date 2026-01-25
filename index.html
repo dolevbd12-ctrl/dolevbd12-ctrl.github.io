@@ -147,16 +147,15 @@
     .marquee{
       width:100%;
       overflow:hidden;
-      padding-right: 56px; /* שלא ייכנס מתחת לאווטאר */
+      padding-right: 56px;
     }
 
-    /* TRACK אמיתי ללופ חלק:
-       יש לנו 2 עותקים זהים, מזיזים -50% ואז חוזר אוטומטית */
+    /* לופ חלק אמיתי: 2 עותקים זהים, זזים -50% */
     .track{
       display:flex;
       width: max-content;
       will-change: transform;
-      animation: scroll 26s linear infinite;
+      animation: scroll 28s linear infinite;
       gap: 48px;
       align-items:center;
     }
@@ -165,16 +164,17 @@
       font-family: "Frank Ruhl Libre", "David", serif;
       font-size: 28px;
       font-weight: 900;
-      color: rgba(255,255,255,0.92); /* ✅ לבן */
+      color: rgba(255,255,255,0.92);
       text-shadow: 0 2px 12px rgba(0,0,0,0.45);
       white-space: nowrap;
       letter-spacing: 0.3px;
       direction: rtl;
     }
 
+    /* ✅ כיוון: אם זה “רץ הפוך” אצלך — מחליפים בין from/to */
     @keyframes scroll{
-      from { transform: translateX(50%); }
-      to   { transform: translateX(0%); } /* ✅ לופ אינסופי חלק */
+      from { transform: translateX(0%); }
+      to   { transform: translateX(-50%); }
     }
 
     /* ====== Main ====== */
@@ -401,8 +401,8 @@
   <!-- MAIN -->
   <div class="stage">
     <div class="centerCard">
-      <h1>ברוכים הבאים לאתר של דולב ורועי צדיקים</h1>
-      <p>הפרשה רצה בלולאה אינסופית (שם + טקסט מלא, בחתיכות). פינה ביטחונית + חדשות.</p>
+      <h1>מערכת תצוגה</h1>
+      <p>פרשת השבוע (שם + טקסט מלא בחתיכות) + פינה ביטחונית + חדשות.</p>
     </div>
   </div>
 
@@ -514,25 +514,23 @@
       let t = safeText(text);
       if(!t) t = "• פרשת השבוע •";
 
-      // חשוב: כדי שלא יהיו “חורים”, מייצרים מחרוזת ארוכה מספיק
-      while (t.length < 450) {
-        t += "     " + t;
-      }
+      // חייב להיות ארוך + שני עותקים זהים כדי שהלופ יהיה “בלי חור”
+      while (t.length < 650) t += "     " + t;
 
       A.textContent = t;
       B.textContent = t;
 
-      // משך לפי אורך - לא מקרטע
-      const seconds = Math.min(70, Math.max(20, Math.floor(t.length / 12)));
+      // מהירות לפי אורך
+      const seconds = Math.min(80, Math.max(22, Math.floor(t.length / 18)));
       track.style.animationDuration = seconds + "s";
     }
 
-    // “טקסט מלא” של פרשה הוא ענק, לכן אנחנו מריצים אותו בחלקים:
-    // כל X שניות מחליפים לקטע הבא, ועדיין זה מרגיש אותו עיצוב + לופ.
+    /* ===== פרשה מלאה בחתיכות ===== */
     let PARASHA_CHUNKS = [];
     let chunkIndex = 0;
+    let __parashaIv = null;
 
-    function splitToChunks(text, maxLen=280){
+    function splitToChunks(text, maxLen=320){
       const clean = safeText(text);
       if(!clean) return [];
       const words = clean.split(" ");
@@ -551,22 +549,20 @@
     }
 
     function tickParashaMarquee(parashaName){
+      const name = safeText(parashaName) || "פרשת השבוע";
+
       if(!PARASHA_CHUNKS.length){
-        setMarqueeText(`• פרשת השבוע: ${parashaName} • עדכון אוטומטי •`);
+        setMarqueeText(`• פרשת השבוע: ${name} • עדכון אוטומטי •`);
         return;
       }
 
       const part = PARASHA_CHUNKS[chunkIndex % PARASHA_CHUNKS.length];
       chunkIndex++;
 
-      // כאן אתה מקבל: שם הפרשה + “כל הטקסט” לאורך זמן (קטע אחרי קטע)
-      const line =
-        `• פרשת השבוע: ${parashaName} • ${part} • פרשת השבוע: ${parashaName} •`;
-
-      setMarqueeText(line);
+      setMarqueeText(`• פרשת השבוע: ${name} • ${part} • פרשת השבוע: ${name} •`);
     }
 
-    /* ===== PARASHA LOAD (מה-WORKER) ===== */
+    /* ===== LOAD PARASHA מה-WORKER ===== */
     async function loadParasha(){
       try{
         const r = await fetch(`${WORKER_BASE}/parasha`, { cache:"no-store" });
@@ -576,31 +572,25 @@
         const name = safeText(j.parashaName) || "פרשת השבוע";
         document.getElementById("parashaName").textContent = name;
 
-        // תאריך עברי
         const heb = safeText(j.hebDate);
-        if(heb){
-          // hebcal מחזיר כבר “כ”ה טבת תשפ״ו” וכו’
-          document.getElementById("dateHeb").textContent = heb.includes("תאריך") ? heb : ("תאריך עברי: " + heb);
-        } else {
-          document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
-        }
+        document.getElementById("dateHeb").textContent = heb ? (heb.includes("תאריך") ? heb : ("תאריך עברי: " + heb)) : "תאריך עברי: לא זמין";
 
-        // טקסט פרשה מלא (מ-Sefaria) -> מחלקים לחתיכות
         const fullText = safeText(j.parashaText);
         PARASHA_CHUNKS = splitToChunks(fullText, 320);
         chunkIndex = 0;
 
-        // מציג ישר
+        // ישר להציג
         tickParashaMarquee(name);
 
-        // כל 14 שניות עוברים לחתיכה הבאה (תוריד/תעלה אם בא לך)
-        clearInterval(window.__parashaIv);
-        window.__parashaIv = setInterval(()=>tickParashaMarquee(name), 14000);
+        // כל 14 שניות קטע חדש (כך בסוף זה “מראה את כל הפרשה”)
+        if(__parashaIv) clearInterval(__parashaIv);
+        __parashaIv = setInterval(()=>tickParashaMarquee(name), 14000);
 
       }catch(e){
-        // fallback: לא משאיר ריק
         document.getElementById("parashaName").textContent = "פרשת השבוע";
         document.getElementById("dateHeb").textContent = "תאריך עברי: לא זמין";
+        PARASHA_CHUNKS = [];
+        chunkIndex = 0;
         setMarqueeText("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
       }
     }
@@ -660,7 +650,7 @@
       }
     }
 
-    /* ===== NEWS (Ynet RSS דרך WORKER) ===== */
+    /* ===== NEWS (Ynet) ===== */
     async function loadNews(){
       const list = document.getElementById("newsList");
       document.getElementById("newsUpdated").textContent = "עודכן: " + formatClock(new Date());
@@ -668,7 +658,6 @@
       list.innerHTML = `<div class="secItem"><div class="msg">טוען כותרות…</div><div class="meta">RSS</div></div>`;
 
       try{
-        // אפשר לשנות feed אם תרצה אחר
         const r = await fetch(`${WORKER_BASE}/news`, { cache:"no-store" });
         const j = await r.json();
         const items = Array.isArray(j?.items) ? j.items : [];
@@ -771,57 +760,15 @@
     tickTop();
     setInterval(tickTop, 1000);
 
-    // Parasha + Hebrew date (דרך ה-worker)
     loadParasha();
     setInterval(loadParasha, 6*60*60*1000);
 
-    // Security
     loadSecurityHistory();
     setInterval(loadSecurityHistory, 60*1000);
 
-    // News
     loadNews();
     setInterval(loadNews, 10*60*1000);
-// ===== פרשת השבוע + תאריך עברי + טקסט רץ =====
-async function fetchParashaAndHebDate(){
-  try{
-    const url = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he";
-    const r = await fetch(url, { cache: "no-store" });
-    const j = await r.json();
-
-    // תאריך עברי
-    if(j.hebrew && document.getElementById("dateHeb")){
-      document.getElementById("dateHeb").textContent = j.hebrew;
-    }
-
-    // שם הפרשה
-    let parasha = "פרשת השבוע";
-    if(Array.isArray(j.items)){
-      const p = j.items.find(x => x.category === "parashat");
-      if(p?.title){
-        parasha = p.title.replace("פרשת ", "");
-      }
-    }
-
-    // למעלה
-    if(document.getElementById("parashaName")){
-      document.getElementById("parashaName").textContent = parasha;
-    }
-
-    // טקסט רץ – לולאה אינסופית
-    const text =
-      `• פרשת השבוע: ${parasha} • עדכון אוטומטי • פרשת השבוע: ${parasha} • עדכון אוטומטי •`;
-
-    startMarquee(text);
-
-  }catch(e){
-    startMarquee("• פרשת השבוע • עדכון אוטומטי • פרשת השבוע •");
-  }
-}
-fetchParashaAndHebDate();
-setInterval(fetchParashaAndHebDate, 6*60*60*1000);
-</script>
-
+  </script>
 
 </body>
 </html>
