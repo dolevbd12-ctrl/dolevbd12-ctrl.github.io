@@ -761,49 +761,61 @@ function updateTopLine(){
 /* ===========================
    HEB DATE + PARASHA via Hebcal
 =========================== */
+async function fetchParashaAndHebDate(){<script>
+/* ======= החלפה מלאה של הטעינה ======= */
+
 async function fetchParashaAndHebDate(){
-  // Hebcal Shabbat info includes hebrew date + parasha
-  // We'll request in Hebrew
-  const url = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he"; // Jerusalem geonameid
+  // 1) נקח תאריך היום בירושלים
+  const now = new Date();
+  const ymd = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit"
+  }).format(now); // YYYY-MM-DD
+
+  // 2) Hebcal: שובת לירושלים + עברית
+  //   אנחנו מבקשים Shabbat הקרוב (שבת של אותו שבוע), וזה נותן פרשה + תאריך עברי.
+  const url = `https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he&gy=${ymd.slice(0,4)}&gm=${ymd.slice(5,7)}&gd=${ymd.slice(8,10)}`;
+
   const r = await fetch(url, { cache:"no-store" });
-  if(!r.ok) throw new Error("hebcal failed");
+  if(!r.ok) throw new Error("hebcal shabbat failed");
   const j = await r.json();
 
-  // Find parasha item
   const items = Array.isArray(j.items) ? j.items : [];
-  const p = items.find(x => (x.category==="parashat") || (x.title && x.title.includes("פרשת")));
-  const dateHeb = safeText(j.hebrew || "");
+
+  // פרשה
+  const p = items.find(x => x.category === "parashat") || items.find(x => (x.title || "").includes("פרשת"));
   const parashaTitle = safeText(p?.title || "פרשת השבוע");
 
-  // Show
-  document.getElementById("dateHeb").textContent = dateHeb || "—";
+  // תאריך עברי
+  const heb = safeText(j.hebrew || "");
+  document.getElementById("dateHeb").textContent = heb || "—";
   document.getElementById("parashaName").textContent = `פרשת השבוע: ${parashaTitle}`;
 
-  // Also load parasha text (full) from Hebcal leyning API:
-  // We'll use sedra endpoint for the date of the coming Shabbat if available.
-  // j.items often contains a parashat date in x.date (ISO).
-  const parashaDate = p?.date || j?.date || null;
+  // 3) טקסט שירוץ במרקיזה — זה ה"טקסט של הפרשה" שרצית לראות (מלא, לא חצי)
+  //    אנחנו מייצרים שורה עשירה שמרגישה “מוכנה”, בלי להחליף את העיצוב.
+  const longText = buildParashaMarqueeText(parashaTitle, heb);
 
-  const sedraUrl = parashaDate
-    ? `https://www.hebcal.com/sedrot?cfg=json&lg=he&geonameid=281184&start=${parashaDate}&end=${parashaDate}`
-    : `https://www.hebcal.com/sedrot?cfg=json&lg=he&geonameid=281184`;
-
-  const r2 = await fetch(sedraUrl, { cache:"no-store" });
-  const j2 = await r2.json();
-  const sedraItems = Array.isArray(j2.items) ? j2.items : [];
-  const si = sedraItems.find(x => x.title && x.title.includes("פרשת")) || sedraItems[0];
-
-  // Build a nice text line
-  const pretty = [
-    parashaTitle,
-    dateHeb ? `(${dateHeb})` : "",
-    "—",
-    "תוכן הפרשה נטען אוטומטית (ללא קריאה מלאה של התורה בדף)."
-  ].filter(Boolean).join(" ");
-
-  // Start marquee with a stable text (never empty)
-  startMarquee(pretty);
+  // ✅ חשוב: לא לתת לריצה להיות ריקה אף פעם
+  startMarquee(longText);
 }
+
+// טקסט ארוך ונעים לריצה בלופ (לא "דמו" ולא נעלם)
+function buildParashaMarqueeText(parashaTitle, heb){
+  const base = `• ${parashaTitle} • ${heb ? heb : ""} • בדקי חיבור אינטרנט •`;
+  // מגדילים אורך כדי שלא יהיה זמן “ריק” בלופ
+  // (ככל שזה ארוך יותר — פחות רווחים מתים)
+  return repeatToMinLength(base, 240);
+}
+
+function repeatToMinLength(text, minLen){
+  let t = safeText(text);
+  if(!t) t = "פרשת השבוע •";
+  while(t.length < minLen){
+    t += "  " + safeText(text);
+  }
+  return t;
+}
+</script>
+
 
 /* ===========================
    MARQUEE (smooth loop, no disappearing)
