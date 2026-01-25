@@ -185,7 +185,7 @@
       font-family: "Frank Ruhl Libre", "David", serif;
       font-size: 28px;
       font-weight: 900;
-      color: rgba(255,255,255,0.95); /* ✅ לבן */
+      color: rgba(255,255,255,0.88); /* ✅ לבן */
       text-shadow: 0 1px 0 rgba(0,0,0,0.35);
       white-space: nowrap;
       letter-spacing: 0.3px;
@@ -194,9 +194,10 @@
 
     /* ✅ לופ אינסופי אמיתי */
     @keyframes scroll{
-      from { transform: translateX(0%); }
-      to   { transform: translateX(-50%); }
-    }
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-50%); }
+}
+
 
     /* ====== Main ====== */
     .stage{
@@ -545,26 +546,24 @@
     }
 
     // ✅ מרקיז: לופ אינסופי אמיתי בלי ריקים
-    function startMarquee(text){
-      const A = document.getElementById("marqueeA");
-      const B = document.getElementById("marqueeB");
-      const track = document.getElementById("marqueeTrack");
+   function startMarquee(parashaName){
+  const A = document.getElementById("marqueeA");
+  const B = document.getElementById("marqueeB");
+  const track = document.getElementById("marqueeTrack");
 
-      let t = safeText(text);
-      if(!t) t = "• פרשת השבוע •";
+  const name = safeText(parashaName) || "פרשת השבוע";
 
-      // מאריכים שלא יהיו "חללים" בזמן ריצה
-      while(t.length < 240){
-        t += "   " + t;
-      }
+  // משפט אחד “שמן” כדי שתמיד יראו את שם הפרשה בבירור
+  const t =
+    `• פרשת השבוע: ${name} • עידכון אוטומטי • פרשת השבוע: ${name} • עידכון אוטומטי •`;
 
-      A.textContent = t;
-      B.textContent = t;
+  A.textContent = t;
+  B.textContent = t;
 
-      // קצב יציב לפי אורך
-      const seconds = Math.min(70, Math.max(18, Math.floor(t.length / 10)));
-      track.style.animationDuration = seconds + "s";
-    }
+  // זמן ריצה קבוע ונעים (לא “מקפץ”)
+  track.style.animationDuration = "26s";
+}
+
 
 async function fetchParashaAndHebDate(){
   try{
