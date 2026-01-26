@@ -151,14 +151,19 @@
     }
 
     /* לופ חלק אמיתי: 2 עותקים זהים, זזים -50% */
-    .track{
-      display:flex;
-      width: max-content;
-      will-change: transform;
-      animation: scroll 28s linear infinite;
-      gap: 48px;
-      align-items:center;
-    }
+   .track{
+  display:flex;
+  width: max-content;
+  will-change: transform;
+  animation: scroll 26s linear infinite;
+  gap: 48px;
+  align-items:center;
+}
+
+@keyframes scroll{
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 
     .marqueeText{
       font-family: "Frank Ruhl Libre", "David", serif;
