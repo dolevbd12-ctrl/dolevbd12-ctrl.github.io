@@ -511,29 +511,35 @@
       return {days,hours,mins,secs};
     }
 
-    /* ===== MARQUEE (לופ חלק אמיתי) ===== */
-   function setMarqueeText(text){
+    /* ===== MARQUEE (לופ חלק אמיתי) ===== */function setMarqueeText(text){
   const A = document.getElementById("marqueeA");
-  const A2 = document.getElementById("marqueeA2");
+  const B = document.getElementById("marqueeB");
   const track = document.getElementById("marqueeTrack");
 
   let t = safeText(text);
-  if(!t) t = "• טוען פרשת השבוע… •";
+  if(!t) t = "• פרשת השבוע •";
 
-  // מספיק ארוך
-  while (t.length < 700) t += "     " + t;
+  // מאריכים כדי שלא יהיו חורים אף פעם
+  const base = ` ${t} `;
+  let long = base;
+  while(long.length < 800){
+    long += " • " + base;
+  }
 
-  // שני עותקים זהים כדי שהלולאה תהיה חלקה
-  A.textContent = t;
-  A2.textContent = t;
-
-  // חשוב: ה-track צריך להיות בדיוק שני עותקים
-  // אז נותנים לו מינימום רוחב של 200% (שני חצאים)
-  track.style.minWidth = "200%";
+  // שני עותקים זהים ללופ חלק
+  A.textContent = long;
+  B.textContent = long;
 
   // מהירות לפי אורך
-  const seconds = Math.min(90, Math.max(24, Math.floor(t.length / 18)));
+  const seconds = Math.min(90, Math.max(22, Math.floor(long.length / 18)));
   track.style.animationDuration = seconds + "s";
+
+  // Reset אנימציה כדי שזה יתעדכן מיד ולא "יתקע"
+  track.style.animation = "none";
+  // force reflow
+  void track.offsetHeight;
+  track.style.animation = `scroll ${seconds}s linear infinite`;
+}
 }
 
 
