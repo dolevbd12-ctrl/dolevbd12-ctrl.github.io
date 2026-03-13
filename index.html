@@ -3,128 +3,136 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>היכל הרנסנס | דולב ורועי</title>
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@300;600&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <title>היכל העוצמה | דולב ורועי</title>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@300;400;600&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --gold: #c5a059;
-      --gold-bright: #f1d592;
       --bg-dark: #050505;
     }
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; }
 
-    /* ====== Header ====== */
+    /* ====== Header מעל התמונה (Overlay) ====== */
     .header {
-      position: fixed; top: 0; left: 0; right: 0; height: 85px;
-      background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+      position: fixed; top: 0; left: 0; right: 0; height: 90px;
+      background: rgba(0, 0, 0, 0.4); /* שקיפות עדינה */
+      backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 50px; z-index: 1000; border-bottom: 2px solid var(--gold);
+      padding: 0 50px; z-index: 1000; border-bottom: 1px solid rgba(197, 160, 89, 0.3);
     }
-    .header-center { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.8rem; letter-spacing: 2px; }
+    .header-left { display: flex; flex-direction: column; line-height: 1.2; }
+    #clock { font-size: 22px; color: var(--gold); font-weight: 600; font-family: 'Cinzel', serif; }
+    #full-date { font-size: 13px; color: white; opacity: 0.8; }
+    
+    .header-center { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.8rem; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    
+    .nav-btn {
+      color: white; font-family: 'Cinzel', serif; padding: 10px 20px; border: 1px solid var(--gold);
+      background: rgba(0,0,0,0.5); cursor: pointer; transition: 0.3s; margin-left: 10px; border-radius: 2px;
+    }
+    .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== דף הבית ====== */
+    /* ====== Hero Section - התמונה המלאה ללא חיתוך ====== */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
+
     #main-hero {
-      height: 60vh;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png');
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url('./image_2026-03-13_222345060.png');
       background-size: cover; background-position: center;
-      display: flex; justify-content: center; align-items: center;
-      padding-top: 85px;
-    }
-
-    .royal-frame {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 40px; border: 2px solid var(--gold);
-      box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
-      text-align: center; max-width: 800px;
-    }
-    .quote-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.2rem; color: var(--gold); }
-
-    /* ====== גלריית הקלפים המתהפכים ====== */
-    .gallery-section {
-      padding: 80px 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      max-width: 1300px;
-      margin: 0 auto;
-      perspective: 1000px; /* עומק לאנימציית ההיפוך */
-    }
-
-    .card {
-      width: 100%;
-      height: 400px;
-      cursor: pointer;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
       position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .card.flipped {
-      transform: rotateY(180deg);
+    /* מלבן הציטוט */
+    .royal-frame {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 50px 70px; border: 2px solid var(--gold);
+      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+      text-align: center; max-width: 850px;
+      backdrop-filter: blur(10px);
+    }
+    .quote-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.6rem; color: var(--gold); margin-bottom: 20px; }
+    .engine-text { font-size: 1.3rem; color: #eee; font-style: italic; margin-bottom: 30px; }
+
+    .medieval-btn {
+      font-family: 'Cinzel', serif; background: linear-gradient(135deg, #c5a059, #8a6d3b);
+      color: black; padding: 15px 45px; border: 2px solid #5e4d2b; font-weight: 700;
+      font-size: 1.2rem; cursor: pointer; border-radius: 4px; transition: 0.3s;
+    }
+    .medieval-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+    /* ====== גלריית קלפי הרנסנס ====== */
+    .gallery-container { background: #080808; padding: 100px 20px; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 50px; max-width: 1300px; margin: 0 auto; perspective: 1000px;
     }
 
-    /* הצד הקדמי והאחורי */
+    .card { width: 100%; height: 450px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.8s ease; }
+    .card.flipped { transform: rotateY(180deg); }
+
     .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 5px;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      /* מסגרת רנסנס דקורטיבית */
-      border: 15px solid transparent;
-      border-image: url('https://www.transparenttextures.com/patterns/gold-plaster.png') 30 stretch;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(197, 160, 89, 0.5);
-      outline: 2px solid var(--gold);
-      outline-offset: -10px;
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+      border: 15px solid #222; border-image: url('https://www.transparenttextures.com/patterns/gold-plaster.png') 30 stretch;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7); outline: 2px solid var(--gold); outline-offset: -10px;
     }
 
-    /* הצד הקדמי - התמונה */
-    .card-front {
-      background-size: cover;
-      background-position: center;
-    }
-
-    /* הצד האחורי - הטקסט והספרה */
+    .card-front { background-size: cover; background-position: center; }
     .card-back {
       background: linear-gradient(135deg, #1a0a00 0%, #3d2b1f 100%);
-      transform: rotateY(180deg);
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
+      transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
+    .card-back .number { font-size: 6rem; font-weight: 900; color: white; text-shadow: 0 0 15px var(--gold); }
 
-    .card-back h3 { font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px; }
-    .card-back .number { font-size: 5rem; font-weight: 900; color: white; text-shadow: 0 0 10px var(--gold); }
+    .welcome-msg { text-align: center; font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; color: var(--gold); padding: 50px 0 10px; background: #080808; }
+    .truth-text { text-align: center; font-family: 'Cinzel', serif; color: var(--gold); opacity: 0.7; background: #080808; margin: 0; padding-bottom: 40px; }
 
-    .welcome-msg { text-align: center; font-family: 'Frank Ruhl Libre', serif; font-size: 2.5rem; color: var(--gold); margin-top: 50px; }
-    .truth-text { text-align: center; font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.1rem; opacity: 0.8; }
-
+    /* ====== דפי משנה ====== */
+    .royal-title { font-family: 'Cinzel', serif; font-size: 5rem; color: var(--gold); text-shadow: 0 0 20px rgba(197,160,89,0.5); text-align: center; padding-top: 150px; }
+    #history { background: linear-gradient(to bottom, #000, #1a0a2e); }
+    #about { background: linear-gradient(to bottom, #000, #0a142e); }
   </style>
 </head>
 <body>
 
   <header class="header">
-    <div id="clock">00:00:00</div>
-    <div class="header-center">היכל הרנסנס</div>
-    <div style="width: 100px;"></div> </header>
-
-  <section id="main-hero">
-    <div class="royal-frame">
-      <div class="quote-text">"העוצמה אינה נמדדת במה שיש לך, אלא במה שאתה בונה עבור אלו שאחריך."</div>
+    <div class="header-left">
+      <div id="clock">00:00:00</div>
+      <div id="full-date">טוען תאריך...</div>
     </div>
-  </section>
+    <div class="header-center">היכל העוצמה</div>
+    <div class="header-right">
+      <button class="nav-btn" onclick="nav('main')">דף הבית</button>
+      <button class="nav-btn" onclick="nav('history')">היסטוריה מלכותית</button>
+      <button class="nav-btn" onclick="nav('about')">אודות המותג</button>
+    </div>
+  </header>
 
-  <div class="welcome-msg">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
-  <p class="truth-text">כל האמת בפנים, לחצו על התמונות בשבילה</p>
-
-  <section class="gallery-section" id="gallery">
+  <div id="main" class="page active">
+    <section id="main-hero">
+      <div class="royal-frame">
+        <div class="quote-text">"העוצמה אינה נמדדת במה שיש לך, אלא במה שאתה בונה עבור אלו שאחריך."</div>
+        <div class="engine-text">"האיכות היא המצפן שלנו, והעוצמה היא המנוע."</div>
+        <button class="medieval-btn" onclick="document.getElementById('gallery-start').scrollIntoView();">לצלול לכיף</button>
+      </div>
     </section>
+
+    <div id="gallery-start">
+      <div class="welcome-msg">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
+      <p class="truth-text">כל האמת בפנים, לחצו על התמונות בשבילה</p>
+      
+      <div class="gallery-container">
+        <div class="gallery-grid" id="gallery">
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="history" class="page"><h1 class="royal-title">היסטוריה מלכותית</h1></div>
+  <div id="about" class="page"><h1 class="royal-title">אודות המותג</h1></div>
 
   <script>
     const images = [
@@ -135,40 +143,31 @@
     ];
 
     const gallery = document.getElementById('gallery');
-
-    images.forEach((src, index) => {
-      // יצירת קונטיינר הקלף
+    images.forEach(src => {
       const card = document.createElement('div');
       card.className = 'card';
-      
-      // יצירת צד קדמי
-      const front = document.createElement('div');
-      front.className = 'card-face card-front';
-      front.style.backgroundImage = `url('${src}')`;
-
-      // יצירת צד אחורי
-      const back = document.createElement('div');
-      back.className = 'card-face card-back';
       const randomNum = Math.floor(Math.random() * 10) + 1;
-      back.innerHTML = `
-        <h3>הגורל שלך:</h3>
-        <div class="number">${randomNum}</div>
-        <p style="font-family:'Cinzel'; color:var(--gold); font-size:12px;">ממלכת דולב ורועי</p>
+      card.innerHTML = `
+        <div class="card-face card-front" style="background-image: url('${src}')"></div>
+        <div class="card-face card-back">
+          <span style="font-family:'Cinzel'; color:var(--gold)">הגורל שלך</span>
+          <div class="number">${randomNum}</div>
+        </div>
       `;
-
-      card.appendChild(front);
-      card.appendChild(back);
-
-      // אירוע לחיצה להיפוך
-      card.onclick = () => {
-        card.classList.toggle('flipped');
-      };
-
+      card.onclick = () => card.classList.toggle('flipped');
       gallery.appendChild(card);
     });
 
+    function nav(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
     setInterval(() => {
-      document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12: false});
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL', {hour12: false});
+      document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day:'numeric', month:'long', year:'numeric'});
     }, 1000);
   </script>
 </body>
