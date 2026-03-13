@@ -21,34 +21,20 @@
       overflow-x: hidden;
     }
 
-    /* ====== מסך טעינה (Loading) ====== */
+    /* ====== Loader ====== */
     #loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #000; display: flex; flex-direction: column;
       justify-content: center; align-items: center; z-index: 9999;
-      transition: opacity 0.8s ease, visibility 0.8s;
     }
     .loader-logo {
       font-size: 4rem; font-weight: 900; color: var(--accent);
-      font-family: 'Inter', sans-serif; letter-spacing: -2px;
       animation: bounceRotate 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     }
-    .loader-bar {
-      width: 200px; height: 2px; background: rgba(255,255,255,0.1);
-      margin-top: 30px; position: relative; overflow: hidden;
-    }
-    .loader-progress {
-      position: absolute; width: 0%; height: 100%;
-      background: var(--accent); animation: loadProgress 2.5s ease-in-out forwards;
-    }
-
     @keyframes bounceRotate {
-      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-      25% { transform: translateY(-30px) rotate(90deg) scale(1.1); }
-      50% { transform: translateY(0) rotate(180deg) scale(1); }
-      75% { transform: translateY(-30px) rotate(270deg) scale(1.1); }
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
     }
-    @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
 
     /* ====== Navigation ====== */
     nav {
@@ -56,40 +42,57 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 4%; z-index: 1000; mix-blend-mode: difference; color: white;
     }
-    .logo { font-weight: 900; letter-spacing: -1px; font-size: 1.5rem; cursor: pointer; }
+    .logo { font-weight: 900; font-size: 1.5rem; cursor: pointer; }
     .nav-links { display: flex; gap: 30px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+    .nav-links div { cursor: pointer; }
 
     /* ====== Hero Section ====== */
+    .page { display: none; min-height: 100vh; width: 100%; }
+    .page.active { display: block; }
+
     .hero {
-      height: 100vh; width: 100%; position: relative;
-      background: url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      display: flex; align-items: center; justify-content: center;
-      color: white; overflow: hidden;
+      height: 100vh; width: 100%;
+      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      display: flex; align-items: center; justify-content: center; color: white;
     }
-    .hero-content { text-align: center; z-index: 2; opacity: 0; transform: translateY(30px); transition: 1.5s ease 2.7s; }
+    .hero-content { text-align: center; opacity: 0; transform: translateY(30px); transition: 1.5s ease; }
     .hero.loaded .hero-content { opacity: 1; transform: translateY(0); }
     
     .hero-content h1 { 
-      font-size: 12vw; margin: 0; line-height: 0.8; font-weight: 900; 
+      font-size: 11vw; margin: 0; line-height: 0.8; font-weight: 900; 
       text-transform: uppercase; letter-spacing: -5px; 
     }
-    .hero-content p { font-size: 1.2rem; letter-spacing: 5px; text-transform: uppercase; margin-top: 20px; }
 
-    /* ====== Quote Section ====== */
-    .section-quote { padding: 150px 10%; background: #f9f9f9; text-align: center; }
-    .large-quote { font-family: 'Playfair Display', serif; font-size: 3.5rem; line-height: 1.2; font-style: italic; }
+    /* כפתור צלילה לבן מתחת לשם */
+    .dive-btn {
+      margin-top: 40px; display: inline-block;
+      padding: 15px 40px; border: 1px solid white;
+      color: white; text-transform: uppercase; letter-spacing: 4px;
+      font-size: 12px; cursor: pointer; transition: 0.4s;
+      background: transparent;
+    }
+    .dive-btn:hover { background: white; color: black; }
 
-    /* ====== Grid ====== */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 100px; }
-    .grid-item { position: relative; height: 80vh; overflow: hidden; cursor: pointer; }
-    .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); }
-    .grid-item:hover img { transform: scale(1.08); }
+    /* ====== Grid Gallery ====== */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+    .grid-item { position: relative; height: 85vh; overflow: hidden; cursor: pointer; }
+    .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1); }
+    .grid-item:hover img { transform: scale(1.05); }
     .grid-overlay { position: absolute; bottom: 40px; left: 40px; color: white; }
+
+    /* ====== History & About (Leclerc Style) ====== */
+    .subpage-content { padding: 150px 4%; max-width: 1400px; margin: 0 auto; }
+    .subpage-header { font-size: 8vw; font-weight: 900; text-transform: uppercase; letter-spacing: -3px; line-height: 0.9; margin-bottom: 60px; }
+    .subpage-body { 
+        display: grid; grid-template-columns: 1fr 1fr; gap: 100px;
+        font-family: 'Playfair Display', serif; font-size: 2rem; line-height: 1.4;
+    }
+    .subpage-detail { font-family: 'Inter', sans-serif; font-size: 1rem; color: #666; letter-spacing: 1px; line-height: 2; }
 
     /* ====== Modal ====== */
     .modal {
       display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-      background: white; color: black; transition: 0.5s;
+      background: white; color: black;
     }
     .modal-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
     .modal-num { font-size: 15vw; font-weight: 900; }
@@ -99,53 +102,74 @@
 
   <div id="loader">
     <div class="loader-logo">D&R</div>
-    <div class="loader-bar"><div class="loader-progress"></div></div>
-    <p style="color: white; margin-top: 15px; font-size: 10px; letter-spacing: 3px;">INITIALIZING EXCELLENCE</p>
   </div>
 
   <nav>
-    <div class="logo">D&R</div>
+    <div class="logo" onclick="nav('main')">D&R</div>
     <div id="clock" style="font-family: monospace; font-size: 14px;">00:00:00</div>
     <div class="nav-links">
-      <div onclick="scrollToZone('grid-start')">לצלול לכיף</div>
-      <div onclick="alert('היסטוריה מלכותית בבנייה')">היסטוריה</div>
+      <div onclick="nav('main', 'grid-start')">לצלול לכיף</div>
+      <div onclick="nav('history')">היסטוריה</div>
+      <div onclick="nav('about')">אודות</div>
     </div>
   </nav>
 
-  <section class="hero" id="hero-sec">
-    <div class="hero-content">
-      <p id="parasha-display">Official Website</p>
-      <h1>DOLEV & ROEE</h1>
+  <div id="main" class="page active">
+    <section class="hero" id="hero-sec">
+      <div class="hero-content">
+        <p id="parasha-display" style="letter-spacing: 5px;">EST. 2026</p>
+        <h1>DOLEV & ROEE</h1>
+        <div class="dive-btn" onclick="scrollToZone('grid-start')">לצלול לכיף</div>
+      </div>
+    </section>
+
+    <div id="grid-start" style="padding: 100px 4% 20px; font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: #999; text-align: center;">
+        "העוצמה אינה נמדדת במה שיש לך, אלא במה שאתה בונה עבור אלו שאחריך."
     </div>
-  </section>
-
-  <section class="section-quote">
-    <div class="large-quote">"העוצמה אינה נמדדת במה שיש לך, אלא במה שאתה בונה עבור אלו שאחריך."</div>
-  </section>
-
-  <div id="grid-start" style="padding: 100px 4% 20px; font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: #999;">
-    רועי ודולב מברכים אתכם על היוולדותכם לעולם
+    <div class="grid" id="main-grid"></div>
   </div>
-  
-  <div class="grid" id="main-grid"></div>
+
+  <div id="history" class="page">
+    <div class="subpage-content">
+        <div class="subpage-header">THE<br>LEGACY</div>
+        <div class="subpage-body">
+            <div>המורשת של דולב ורועי נכתבה בדם, יזע וקוד מקור.</div>
+            <div class="subpage-detail">
+                האתר נוסד כהצהרה של עוצמה בעולם הדיגיטלי. דולב ורועי הבינו שאיכות היא לא יעד, היא דרך חיים. 
+                כל אלמנט כאן, מהמסגרות ועד האנימציות, נוצר כדי להעביר מסר אחד: אנחנו כאן כדי להוביל.
+                ההיסטוריה שלנו היא העתיד שלכם.
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="about" class="page">
+    <div class="subpage-content">
+        <div class="subpage-header">ABOUT<br>THE BRAND</div>
+        <div class="subpage-body">
+            <div>אנחנו המנוע מאחורי האיכות.</div>
+            <div class="subpage-detail">
+                מותג D&R מייצג את החיבור המושלם בין אסתטיקה של עולם ישן לטכנולוגיה של המחר. 
+                אנחנו לא בונים אתרים, אנחנו בונים היכלים. רועי ודולב מזמינים אתכם להיות חלק מהיוולדותו של עידן חדש.
+            </div>
+        </div>
+    </div>
+  </div>
 
   <div id="surpriseModal" class="modal">
     <span style="position: absolute; top: 40px; right: 40px; font-size: 2rem; cursor: pointer;" onclick="closeModal()">×</span>
     <div class="modal-content">
-      <p style="letter-spacing: 5px; text-transform: uppercase;">הגורל שלך</p>
+      <p style="letter-spacing: 5px; text-transform: uppercase;">LUCKY NUMBER</p>
       <div class="modal-num" id="luckyNumber"></div>
     </div>
   </div>
 
   <script>
     function initSite() {
-      // מחכה שהאנימציה של הבר תסתיים
       setTimeout(() => {
-        const loader = document.getElementById('loader');
-        loader.style.opacity = '0';
-        loader.style.visibility = 'hidden';
+        document.getElementById('loader').style.display = 'none';
         document.getElementById('hero-sec').classList.add('loaded');
-      }, 2500);
+      }, 2000);
     }
 
     const images = [
@@ -160,27 +184,27 @@
     images.forEach((src, idx) => {
       const item = document.createElement('div');
       item.className = 'grid-item';
-      item.innerHTML = `
-        <img src="${src}" alt="Gallery image">
-        <div class="grid-overlay">
-          <p>0${idx + 1}</p>
-          <h2>VIEW TRUTH</h2>
-        </div>
-      `;
-      item.onclick = openModal;
+      item.innerHTML = `<img src="${src}"><div class="grid-overlay"><p>0${idx + 1}</p><h2>OPEN</h2></div>`;
+      item.onclick = () => {
+        document.getElementById('luckyNumber').textContent = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('surpriseModal').style.display = "block";
+      };
       grid.appendChild(item);
     });
 
-    function openModal() {
-      document.getElementById('luckyNumber').textContent = Math.floor(Math.random() * 10) + 1;
-      document.getElementById('surpriseModal').style.display = "block";
+    function nav(id, anchor = null) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(id);
+      target.classList.add('active');
+      if (id === 'main') document.getElementById('hero-sec').classList.add('loaded');
+      if (anchor) setTimeout(() => scrollToZone(anchor), 100);
+      else window.scrollTo(0,0);
     }
+
     function closeModal() { document.getElementById('surpriseModal').style.display = "none"; }
     function scrollToZone(id) { document.getElementById(id).scrollIntoView({behavior: 'smooth'}); }
 
-    setInterval(() => {
-      document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL');
-    }, 1000);
+    setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL'); }, 1000);
 
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
       .then(r => r.json()).then(j => {
