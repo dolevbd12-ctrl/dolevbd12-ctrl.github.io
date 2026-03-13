@@ -40,11 +40,10 @@
     }
     .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== דפי תוכן ====== */
+    /* ====== ניהול דפים ====== */
     .page { display: none; min-height: 100vh; padding-top: 80px; text-align: center; }
     .page.active { display: block; }
 
-    /* דף הבית */
     #main-hero {
       height: 100vh;
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png');
@@ -52,52 +51,31 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    #history { background: radial-gradient(circle, var(--purple-page) 0%, #0c0c0c 100%); }
-    #about { background: radial-gradient(circle, var(--blue-page) 0%, #0c0c0c 100%); }
-
-    .quote-box { border: 1px solid rgba(197, 160, 89, 0.4); padding: 40px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
-    .big-num { font-size: 8rem; font-weight: 900; color: var(--gold); opacity: 0.5; margin-top: 50px; }
-
-    /* ====== קרוסלה אינסופית אמיתית ====== */
+    /* ====== קרוסלה אינסופית - זוגות זוגות ====== */
     .carousel-container {
-      width: 100%;
-      overflow: hidden;
-      background: #000;
-      padding: 60px 0;
-      border-top: 1px solid var(--gold);
-      border-bottom: 1px solid var(--gold);
+      width: 100%; overflow: hidden; background: #000; padding: 60px 0;
+      border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
       position: relative;
     }
 
     .carousel-track {
       display: flex;
-      width: fit-content; /* מתאים את עצמו לכמות התמונות */
-      animation: scroll-left 30s linear infinite; /* מהירות אחידה */
+      width: fit-content;
+      animation: scroll-left 40s linear infinite; /* מהירות מותאמת ל-16 תמונות */
     }
 
     .carousel-track img {
-      width: 450px; /* תמונות גדולות ומרשימות */
-      height: 320px;
-      object-fit: cover;
-      margin: 0 15px;
-      border: 2px solid var(--gold);
-      border-radius: 8px;
-      filter: brightness(0.9);
-      transition: 0.5s;
+      width: 400px; height: 300px; object-fit: cover;
+      margin: 0 15px; border: 2px solid var(--gold); border-radius: 8px;
+      transition: 0.4s;
     }
 
-    .carousel-track img:hover {
-      filter: brightness(1.1);
-      transform: scale(1.02);
-    }
-
-    /* האנימציה שמייצרת את הלולאה */
     @keyframes scroll-left {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); } /* זז בדיוק חצי דרך כי השכפלנו את התמונות */
+      100% { transform: translateX(-50%); }
     }
 
-    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.8rem; color: var(--gold); margin: 50px 0; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.8rem; color: var(--gold); margin: 50px 0; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -119,40 +97,45 @@
     <section id="main-hero">
       <div class="quote-box">
         <div style="font-family: 'Frank Ruhl Libre', serif; font-size: 3.5rem; margin-bottom: 20px;">"העוצמה היא המפתח לקיום."</div>
-        <button class="nav-btn" style="padding: 18px 45px; font-size: 1.2rem;" onclick="document.getElementById('welcome-zone').scrollIntoView();">מוכנים לצלול לכיף?</button>
+        <button class="nav-btn" style="padding: 18px 45px;" onclick="document.getElementById('welcome-zone').scrollIntoView();">מוכנים לצלול לכיף?</button>
       </div>
     </section>
 
-    <section id="welcome-zone" style="padding-bottom: 120px; background: #0c0c0c;">
+    <section id="welcome-zone" style="padding-bottom: 100px; background: #0c0c0c;">
       <div class="welcome-text">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
       
       <div class="carousel-container">
         <div class="carousel-track">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
-          <img src="./aifaceswap-e73ebc78a59843d9ea88bf64b9636a3d.jpg">
+          <img src="./image_2026-03-13_230619314.png">
+          <img src="./image_2026-03-13_230636882.png">
+          <img src="./image_2026-03-13_230654112.png">
+          <img src="./image_2026-03-13_230706432.png">
+          <img src="./image_2026-03-13_230721055.png">
+          <img src="./image_2026-03-13_230733426.png">
+          <img src="./image_2026-03-13_230748568.png">
+          <img src="./image_2026-03-13_230759616.png">
+          
+          <img src="./image_2026-03-13_230619314.png">
+          <img src="./image_2026-03-13_230636882.png">
+          <img src="./image_2026-03-13_230654112.png">
+          <img src="./image_2026-03-13_230706432.png">
+          <img src="./image_2026-03-13_230721055.png">
+          <img src="./image_2026-03-13_230733426.png">
+          <img src="./image_2026-03-13_230748568.png">
+          <img src="./image_2026-03-13_230759616.png">
         </div>
       </div>
     </section>
   </div>
 
-  <div id="history" class="page">
-    <div class="big-num">6767</div>
+  <div id="history" class="page" style="background: radial-gradient(circle, var(--purple-page) 0%, #0c0c0c 100%);">
+    <div style="font-size: 8rem; color: var(--gold); opacity: 0.5; margin-top: 50px;">6767</div>
     <h1>היסטוריה</h1>
-    <p>עמוד ההיסטוריה המלא של דולב ורועי</p>
   </div>
 
-  <div id="about" class="page">
-    <div class="big-num">55655</div>
+  <div id="about" class="page" style="background: radial-gradient(circle, var(--blue-page) 0%, #0c0c0c 100%);">
+    <div style="font-size: 8rem; color: var(--gold); opacity: 0.5; margin-top: 50px;">55655</div>
     <h1>אודותינו</h1>
-    <p>החזון והעוצמה שמאחורי הפרויקט</p>
   </div>
 
   <script>
@@ -162,14 +145,12 @@
       window.scrollTo(0,0);
     }
 
-    // עדכון זמן ותאריך
     setInterval(() => {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL');
       document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day:'numeric', month:'long', year:'numeric'});
     }, 1000);
 
-    // פרשה
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
       .then(r => r.json()).then(j => {
         const p = j.items.find(x => x.category === "parashat")?.title || "השבוע";
