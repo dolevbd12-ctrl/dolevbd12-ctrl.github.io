@@ -1,51 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>אתר ההיסטוריה שלנו</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>מערכת תצוגה - דולב ורועי</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Rubik:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg1:#052617;
+      --bg2:#06301c;
+      --bg3:#041f12;
+      --stroke: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --pill: rgba(0,0,0,0.18);
+      --ok: #24d18a;
+      --danger: #ff3b3b;
+    }
+
+    * { box-sizing:border-box; }
+    html, body { height: 100%; margin: 0; scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg3);
+      color: var(--text);
+      font-family: "Rubik", sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ====== שורה עליונה מאוחדת (Header) ====== */
+    .unified-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--stroke);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+    .header-center { font-family: "Frank Ruhl Libre", serif; font-size: 1.2rem; font-weight: 700; color: var(--ok); }
+    .header-right { display: flex; gap: 20px; }
+    .header-right a { color: var(--text); text-decoration: none; font-weight: 600; transition: 0.3s; }
+    .header-right a:hover { color: var(--ok); }
+
+    /* ====== אזור התמונה המרכזית (Hero) ====== */
+    .hero-container {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      /* החליפו את הכתובת כאן בתמונה שלכם */
+      background: url('https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop') no-repeat center center/cover;
+    }
+
+    /* השחרה מגניבה */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.85));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .bibi-quote {
+      max-width: 800px;
+      font-family: "Frank Ruhl Libre", serif;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 15px rgba(0,0,0,0.8);
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 1.2s forwards ease-out;
+    }
+
+    .scroll-down-btn {
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: white;
+      background: transparent;
+      border: 2px solid white;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+
+    .scroll-down-btn:hover {
+      background: white;
+      color: black;
+      transform: scale(1.05);
+    }
+
+    /* ====== תוכן האתר (המקורי שלכם) ====== */
+    .main-content {
+      padding-top: 50px;
+      background: 
+        radial-gradient(circle at 50% 30%, var(--bg2) 0%, var(--bg1) 45%, var(--bg3) 100%);
+      min-height: 100vh;
+    }
+
+    /* התאמות לווידג'טים שלכם שיישארו למטה */
+    .secWidget, .newsWidget { z-index: 100; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .header-center { display: none; } /* במובייל נסתיר את האמצע כדי שלא יצטופף */
+    }
+  </style>
 </head>
 <body>
 
-    <header class="top-bar">
-        <div class="live-time" id="clock">טוען זמן...</div>
-        <div class="weekly-torah">פרשת השבוע: ויקרא</div>
-        <nav class="nav-links">
-            <a href="#">היסטוריה על האתר</a>
-            <span> | </span>
-            <a href="#">אודות מי אנחנו</a>
-        </nav>
-    </header>
-
-    <section class="hero-section">
-        <div class="hero-overlay">
-            <div class="hero-content">
-                <blockquote class="bibi-quote">
-                    "הדבר החשוב ביותר הוא לטפח את העוצמה של מדינת ישראל"
-                </blockquote>
-                <button class="scroll-btn" onclick="scrollToContent()">תגללו לעוד</button>
-            </div>
-        </div>
-    </section>
-
-    <div id="next-section" style="height: 100vh; background: #f4f4f4; text-align: center; padding-top: 50px;">
-        <h2>המשך האתר יופיע כאן...</h2>
+  <header class="unified-header">
+    <div class="header-left">
+      <span id="liveClock">00:00:00</span>
+      <span style="opacity: 0.5;">|</span>
+      <span id="gregDate">--.--.----</span>
     </div>
 
-    <script>
-        // פונקציה לעדכון זמן ותאריך בלייב
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('he-IL');
-            const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').innerText = dateStr + " | " + timeStr;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+    <div class="header-center">
+       <span id="parashaHeader">טוען פרשה...</span>
+    </div>
 
-        function scrollToContent() {
-            document.getElementById('next-section').scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+    <div class="header-right">
+      <a href="#history">היסטוריה על האתר</a>
+      <a href="#about">אודות מי אנחנו</a>
+    </div>
+  </header>
+
+  <section class="hero-container">
+    <div class="hero-overlay">
+      <blockquote class="bibi-quote">
+        "העוצמה היא המפתח לקיום, והעוצמה היא המפתח לשלום."
+        <div style="font-size: 1.2rem; margin-top: 10px; font-weight: 400;">- בנימין נתניהו</div>
+      </blockquote>
+      <button class="scroll-down-btn" onclick="document.getElementById('site-start').scrollIntoView()">תגללו לעוד</button>
+    </div>
+  </section>
+
+  <main class="main-content" id="site-start">
+    <div class="stage">
+      <div class="centerCard">
+        <h1>ברוכים הבאים לאתר של דולב ורועי צדיקים</h1>
+        <p id="parashaName">טוען פרשה...</p>
+        <div class="pill hebrew" style="display:inline-block; margin-top:10px;">
+            <b id="dateHeb">תאריך עברי: --</b>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="secWidget" id="secWidget">
+      <div class="secHeader">
+          <h3><span class="dot"></span>דיווחים ביטחוניים</h3>
+          <div class="secBtns"><button class="miniBtn" id="secToggleBtn">סגור</button></div>
+      </div>
+      <div class="secBody" id="secBody">
+          <div class="secList" id="secList"></div>
+      </div>
+  </div>
+
+  <div class="newsWidget" id="newsWidget">
+      <div class="secHeader">
+          <h3><span class="dot"></span>חדשות Ynet</h3>
+          <div class="secBtns"><button class="miniBtn" id="newsToggleBtn">סגור</button></div>
+      </div>
+      <div class="secBody" id="newsBody">
+          <div class="secList" id="newsList"></div>
+      </div>
+  </div>
+
+  <script>
+    /* הלוגיקה המקורית שלכם עם התאמות קלות */
+    const WORKER_BASE = "https://jolly-mode-0a2a.dolevbd12.workers.dev";
+    const HEBCAL_URL = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he";
+
+    function pad(n){ return String(n).padStart(2,"0"); }
+
+    function updateTopClock() {
+      const now = new Date();
+      document.getElementById("liveClock").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      document.getElementById("gregDate").textContent = `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${now.getFullYear()}`;
+    }
+
+    async function loadParasha() {
+      try {
+        const r = await fetch(HEBCAL_URL);
+        const j = await r.json();
+        const hebDate = j.hebrew;
+        const items = j.items || [];
+        const p = items.find(x => x.category === "parashat")?.title || "פרשת השבוע";
+        
+        document.getElementById("parashaHeader").textContent = "פרשת " + p;
+        document.getElementById("parashaName").textContent = "פרשת " + p;
+        document.getElementById("dateHeb").textContent = "תאריך עברי: " + hebDate;
+      } catch(e) { console.log("Error loading parasha"); }
+    }
+
+    // הפעלת פונקציות
+    setInterval(updateTopClock, 1000);
+    updateTopClock();
+    loadParasha();
+
+    // כאן תוכלו להוסיף את שאר הפונקציות של ה-News וה-Security שרשמתם קודם
+  </script>
+
 </body>
 </html>
