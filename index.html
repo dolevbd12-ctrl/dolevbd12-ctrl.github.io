@@ -10,32 +10,34 @@
     :root {
       --bg-dark: #041f12;
       --ok: #24d18a;
+      --warning: #ff9800; /* כתום פיקוד העורף */
       --text: #ffffff;
     }
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Rubik', sans-serif; background: var(--bg-dark); color: var(--text); overflow-x: hidden; }
 
-    /* ====== האוטומציה של צבע אדום ====== */
-    /* יצרנו חלון שקוף שיושב מעל התמונה שלכם ומחכה להתראות */
-    .alerts-container {
+    /* ====== באנר אזעקה אוטומטי ====== */
+    #alert-banner {
+      display: none; /* נשאר חבוי וקופץ רק כשיש אזעקה */
       position: fixed;
-      top: 100px;
-      right: 20px;
-      width: 320px;
-      height: 450px;
+      top: 70px;
+      left: 0;
+      right: 0;
+      background-color: var(--warning);
+      color: black;
+      padding: 15px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.2rem;
       z-index: 2000;
-      pointer-events: none; /* מאפשר ללחוץ על האתר "מתחת" להתראות */
-      overflow: hidden;
-      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      animation: pulse 1s infinite;
     }
 
-    .alerts-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      /* כאן הקסם: אנחנו מסננים את הכחול ומשאירים רק את הכתום/אדום שיבלוט */
-      mix-blend-mode: screen; 
-      filter: brightness(1.2) contrast(1.5);
+    @keyframes pulse {
+      0% { background-color: #ff9800; }
+      50% { background-color: #ff5722; }
+      100% { background-color: #ff9800; }
     }
 
     /* Header */
@@ -54,7 +56,6 @@
 
     .header-right { order: 3; display: flex; gap: 20px; min-width: 150px; justify-content: flex-end; }
     .header-right a { color: white; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .header-right a:hover { color: var(--ok); }
 
     /* Hero Section */
     .hero {
@@ -63,10 +64,10 @@
       background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png');
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
+      text-align: center;
     }
 
-    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
     .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
     /* Pages */
@@ -77,8 +78,8 @@
 </head>
 <body>
 
-  <div class="alerts-container">
-    <iframe src="https://www.tzevaadom.co.il/livestream/"></iframe>
+  <div id="alert-banner">
+    ⚠️ צבע אדום באזורים: <span id="alert-locations">טוען...</span>
   </div>
 
   <header class="header">
@@ -90,7 +91,7 @@
     <div class="header-right">
       <a onclick="show('history')">היסטוריה</a>
       <a onclick="show('about')">אודות</a>
-      <a onclick="show('main')">דף הבית</a>
+      <a onclick="show('main')">בית</a>
     </div>
   </header>
 
@@ -98,7 +99,6 @@
     <section class="hero">
       <div class="quote-box">
         <div style="font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2rem, 5vw, 3.5rem);">"העוצמה היא המפתח לקיום."</div>
-        <div style="margin-top:10px; opacity: 0.8;">- בנימין נתניהו</div>
         <button class="btn" onclick="show('fun')">מוכנים לצלול לכיף?</button>
       </div>
     </section>
@@ -117,7 +117,32 @@
       document.getElementById(id).classList.add('active');
     }
 
-    // עדכון זמן
+    // --- מערכת התראות אוטומטית ---
+    async function checkPikudHaoref() {
+      try {
+        // אנחנו משתמשים בשירות שמנגיש את נתוני פיקוד העורף
+        const response = await fetch('https://www.oref.org.il/WarningMessages/alert/alerts.json');
+        const data = await response.json();
+
+        const banner = document.getElementById('alert-banner');
+        const locSpan = document.getElementById('alert-locations');
+
+        if (data && data.data && data.data.length > 0) {
+          locSpan.textContent = data.data.join(', ');
+          banner.style.display = 'block';
+        } else {
+          banner.style.display = 'none';
+        }
+      } catch (err) {
+        // אם אין התראות או שיש שגיאה, הבאנר נשאר חבוי
+        document.getElementById('alert-banner').style.display = 'none';
+      }
+    }
+
+    // בדיקה כל 3 שניות
+    setInterval(checkPikudHaoref, 3000);
+
+    // עדכון זמן ותאריך
     setInterval(() => {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL');
