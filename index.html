@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R | Official Elite</title>
+  <title>D&R STUDIO | Official</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
   <style>
@@ -19,14 +19,15 @@
       background-color: var(--bg); overflow-x: hidden;
     }
 
-    /* ====== לודרים ייחודיים ====== */
+    /* ====== לודר D&R STUDIO ====== */
     .loader-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: none; justify-content: center; align-items: center; z-index: 9999;
-      background: #fff; transition: opacity 0.6s ease;
+      background: #000; transition: opacity 0.6s ease;
     }
-    .loader-logo { font-size: 5rem; font-weight: 900; color: var(--accent-blue); animation: bounce 1.5s infinite; }
-    @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .loader-content { text-align: center; color: white; }
+    .studio-text { font-size: 4rem; font-weight: 900; letter-spacing: 15px; text-transform: uppercase; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; letter-spacing: 15px; } 50% { opacity: 1; letter-spacing: 25px; } }
 
     /* ====== Navigation ====== */
     nav {
@@ -37,85 +38,65 @@
     .logo { font-weight: 900; font-size: 2.8rem; cursor: pointer; letter-spacing: -2px; }
     .nav-links { display: flex; gap: 40px; font-size: 15px; text-transform: uppercase; font-weight: 700; }
     .nav-links div { cursor: pointer; transition: 0.3s; }
-    .nav-links div:hover { color: var(--accent-blue); }
 
-    /* ====== Hero Section עם הרקע שלכם ====== */
+    /* ====== Hero Section ====== */
     .page { display: none; min-height: 100vh; width: 100%; }
     .page.active { display: block; }
 
     .hero {
-      height: 200vh; /* גובה כפול לאפקט הגלילה של הטקסט */
-      width: 100%; position: relative;
+      height: 200vh; width: 100%; position: relative;
       background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      background-attachment: fixed; /* תמונת הרקע נשארת יציבה */
+      background-attachment: fixed;
     }
-
-    .sticky-wrap {
-      position: sticky; top: 0; height: 100vh;
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
-    }
-
-    /* הטקסט הראשי שזז מצד לצד */
-    .scrolling-name {
-      font-size: 12vw; font-weight: 900; white-space: nowrap;
-      color: white; text-transform: uppercase; letter-spacing: -5px;
-      transform: translateX(100%); /* מתחיל מחוץ למסך מימין */
-      will-change: transform;
-    }
-
-    /* טקסטים שצצים מהצדדים */
-    .side-text {
-      position: absolute; font-family: 'Playfair Display'; font-style: italic;
-      font-size: 3rem; color: rgba(255,255,255,0.8); opacity: 0;
-      transition: 0.5s ease; pointer-events: none;
-    }
-
-    /* ====== כפתורים בדף הבית ====== */
-    .hero-ui {
-      position: absolute; bottom: 10%; width: 100%; text-align: center; color: white; z-index: 10;
-    }
-    .dive-btn {
-      display: inline-block; padding: 20px 60px; border: 2px solid white;
-      color: white; text-transform: uppercase; letter-spacing: 5px; font-weight: 900;
-      cursor: pointer; transition: 0.4s; background: transparent; margin-top: 20px;
-    }
-    .dive-btn:hover { background: white; color: black; }
+    .sticky-wrap { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .scrolling-name { font-size: 12vw; font-weight: 900; white-space: nowrap; color: white; text-transform: uppercase; transform: translateX(100%); will-change: transform; }
 
     /* ====== גלריה ====== */
-    .reveal-section { position: relative; z-index: 20; background: white; padding: 100px 0; }
+    .reveal-section { position: relative; z-index: 20; background: white; padding-top: 100px; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-    .grid-item { height: 90vh; overflow: hidden; }
-    .grid-item img { width: 100%; height: 100%; object-fit: cover; }
+    .grid-item { height: 90vh; overflow: hidden; background: #000; }
+    .grid-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.8s; }
+    .grid-item:hover img { opacity: 1; transform: scale(1.03); }
 
-    /* ====== תתי דפים ====== */
+    /* ====== Footer: הכירו את דולב ורועי ====== */
+    .meet-us {
+      padding: 150px 5%; background: #000; color: white;
+      display: flex; justify-content: space-around; text-align: center;
+    }
+    .person-card { flex: 1; transition: 0.5s; cursor: pointer; }
+    .person-card:hover { color: var(--accent-blue); }
+    .person-card h3 { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin: 0; }
+    .person-card p { font-family: 'Playfair Display'; font-style: italic; font-size: 1.2rem; opacity: 0.7; }
+
+    /* ====== דפי תוכן ====== */
     .subpage-container { padding: 180px 8%; background: white; min-height: 100vh; }
-    .subpage-title { font-size: 10vw; font-weight: 900; line-height: 0.8; }
+    .studio-header { font-size: 10vw; font-weight: 900; color: #000; line-height: 0.8; margin-bottom: 50px; }
   </style>
 </head>
 <body onload="showInitialLoader()">
 
-  <div id="loader-main" class="loader-overlay"><div class="loader-logo">D&R</div></div>
+  <div id="loader-main" class="loader-overlay">
+    <div class="loader-content">
+        <div class="studio-text">D&R STUDIO</div>
+        <p style="letter-spacing: 5px; margin-top: 20px;">PRODUCTION START</p>
+    </div>
+  </div>
 
   <nav>
     <div class="logo" onclick="goToPage('main')">D&R</div>
     <div class="nav-links">
       <div onclick="diveToFun()">לצלול לכיף</div>
       <div onclick="goToPage('history')">היסטוריה</div>
-      <div onclick="goToPage('about')">אודות</div>
+      <div onclick="goToPage('films')">סרטים</div>
     </div>
   </nav>
 
   <div id="main" class="page active">
     <section class="hero">
       <div class="sticky-wrap">
-        <div id="welcome-l" class="side-text" style="left: 10%; top: 20%;">ברוכים הבאים</div>
-        <div id="welcome-r" class="side-text" style="right: 10%; bottom: 20%;">שלום שלום</div>
-        
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
-
-        <div class="hero-ui">
-            <p style="letter-spacing: 8px;">EST. 2026</p>
-            <div class="dive-btn" onclick="diveToFun()">לצלול לכיף</div>
+        <div style="position: absolute; bottom: 10%; width: 100%; text-align: center;">
+            <div style="border: 1px solid white; display: inline-block; padding: 15px 40px; color: white; cursor: pointer; letter-spacing: 5px; font-weight: 900;" onclick="diveToFun()">DIVE IN</div>
         </div>
       </div>
     </section>
@@ -123,19 +104,34 @@
     <div id="grid-start" class="reveal-section">
       <div class="grid" id="main-grid"></div>
     </div>
+
+    <section class="meet-us">
+        <div class="person-card">
+            <p>Creative Director</p>
+            <h3>הכירו את דולב</h3>
+        </div>
+        <div style="width: 1px; background: rgba(255,255,255,0.2); height: 100px; align-self: center;"></div>
+        <div class="person-card">
+            <p>Visionary Artist</p>
+            <h3>הכירו את רועי</h3>
+        </div>
+    </section>
   </div>
 
   <div id="history" class="page">
     <div class="subpage-container">
-      <div class="subpage-title">THE<br>LEGACY</div>
-      <p style="font-size: 2rem; font-family: 'Playfair Display'; margin-top: 40px;">היסטוריה של איכות.</p>
+      <div class="studio-header">OUR<br>LEGACY</div>
+      <p style="font-size: 2rem; font-family: 'Playfair Display';">המורשת של הסטודיו נבנית בכל פריים מחדש.</p>
     </div>
   </div>
 
-  <div id="about" class="page">
+  <div id="films" class="page">
     <div class="subpage-container">
-      <div class="subpage-title">D&R<br>FILMS</div>
-      <p style="font-size: 2rem; font-family: 'Playfair Display'; margin-top: 40px;">אודות המותג.</p>
+      <div class="studio-header" style="color: var(--accent-blue);">D&R STUDIO<br>FILMS</div>
+      <div style="display: grid; gap: 40px; margin-top: 50px;">
+          <div style="height: 500px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem;">COMING SOON: FILM 01</div>
+          <div style="height: 500px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem;">COMING SOON: FILM 02</div>
+      </div>
     </div>
   </div>
 
@@ -146,29 +142,16 @@
       setTimeout(() => { 
         l.style.opacity = '0'; 
         setTimeout(() => l.style.display = 'none', 600); 
-      }, 1500);
+      }, 2000);
     }
 
-    // אנימציית גלילה מורכבת
     window.addEventListener('scroll', () => {
       const scrollPos = window.scrollY;
       const winHeight = window.innerHeight;
       const progress = Math.min(scrollPos / winHeight, 1);
-
-      // השם מחליק מימין לשמאל (מ-100% ל--100%)
       const name = document.getElementById('main-name');
       const xPos = 100 - (progress * 200); 
       name.style.transform = `translateX(${xPos}%)`;
-
-      // טקסטים צצים מהצדדים
-      const wl = document.getElementById('welcome-l');
-      const wr = document.getElementById('welcome-r');
-      if(progress > 0.2 && progress < 0.8) {
-          wl.style.opacity = "1"; wl.style.transform = "translateY(-20px)";
-          wr.style.opacity = "1"; wr.style.transform = "translateY(20px)";
-      } else {
-          wl.style.opacity = "0"; wr.style.opacity = "0";
-      }
     });
 
     function goToPage(pageId) {
@@ -178,14 +161,14 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         window.scrollTo(0,0);
-        setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => loader.style.display='none', 600); }, 600);
-      }, 800);
+        setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => loader.style.display='none', 600); }, 1000);
+      }, 1200);
     }
 
     function diveToFun() {
       if (!document.getElementById('main').classList.contains('active')) {
         goToPage('main');
-        setTimeout(() => document.getElementById('grid-start').scrollIntoView({behavior: 'smooth'}), 1500);
+        setTimeout(() => document.getElementById('grid-start').scrollIntoView({behavior: 'smooth'}), 2000);
       } else {
         document.getElementById('grid-start').scrollIntoView({behavior: 'smooth'});
       }
