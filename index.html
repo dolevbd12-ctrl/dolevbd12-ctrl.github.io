@@ -8,7 +8,7 @@
 
   <style>
     :root {
-      --accent-blue: #0047ab; /* כחול רויאל יוקרתי */
+      --accent-blue: #0047ab;
       --bg: #ffffff;
       --text: #000000;
     }
@@ -21,7 +21,7 @@
       overflow-x: hidden;
     }
 
-    /* ====== מסך טעינה לבן עם כחול ====== */
+    /* ====== Loader ====== */
     #loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #ffffff; display: flex; flex-direction: column;
@@ -30,70 +30,68 @@
     }
     .loader-logo {
       font-size: 5rem; font-weight: 900; color: var(--accent-blue);
-      letter-spacing: -3px;
       animation: bounceRotate 1.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    }
-    .loader-line {
-      width: 150px; height: 3px; background: #eee;
-      margin-top: 20px; position: relative; overflow: hidden;
-    }
-    .loader-line::after {
-      content: ''; position: absolute; left: 0; width: 0%; height: 100%;
-      background: var(--accent-blue); animation: loadBar 1.5s ease-in-out infinite;
     }
 
     @keyframes bounceRotate {
       0%, 100% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.1) rotate(180deg); color: #002d6b; }
+      50% { transform: scale(1.1) rotate(180deg); }
     }
-    @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
 
-    /* ====== Navigation (הגדלת אלמנטים) ====== */
+    /* ====== Navigation ====== */
     nav {
       position: fixed; top: 0; width: 100%; height: 100px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 5%; z-index: 1000; mix-blend-mode: difference; color: white;
     }
-    .logo { font-weight: 900; font-size: 2.2rem; cursor: pointer; letter-spacing: -1.5px; }
-    #clock { font-family: monospace; font-size: 1.2rem; font-weight: bold; }
-    .nav-links { display: flex; gap: 40px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-    .nav-links div { cursor: pointer; transition: 0.3s; }
-    .nav-links div:hover { color: var(--accent-blue); }
+    .logo { font-weight: 900; font-size: 2.2rem; cursor: pointer; }
+    #clock { font-size: 1.2rem; font-weight: bold; }
+    .nav-links { display: flex; gap: 40px; font-size: 14px; text-transform: uppercase; font-weight: 700; }
+    .nav-links div { cursor: pointer; }
 
-    /* ====== דפים ====== */
-    .page { display: none; min-height: 100vh; width: 100%; }
-    .page.active { display: block; }
-
-    /* Hero */
+    /* ====== Hero Section (Fixed Scroll) ====== */
     .hero {
-      height: 100vh; width: 100%;
-      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      height: 100vh; width: 100%; position: sticky; top: 0;
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       display: flex; align-items: center; justify-content: center; color: white;
+      z-index: 1;
     }
-    .hero-content { text-align: center; opacity: 0; transform: translateY(30px); transition: 1.5s ease; }
-    .hero.loaded .hero-content { opacity: 1; transform: translateY(0); }
+    .hero-content { text-align: center; }
     .hero-content h1 { font-size: 12vw; margin: 0; line-height: 0.8; font-weight: 900; letter-spacing: -6px; }
     
-    .dive-btn {
-      margin-top: 50px; display: inline-block; padding: 18px 50px; border: 2px solid white;
-      color: white; text-transform: uppercase; letter-spacing: 5px; font-weight: 900;
-      font-size: 14px; cursor: pointer; transition: 0.4s; background: transparent;
+    .welcome-text {
+      margin-top: 20px; font-size: 1.5rem; letter-spacing: 2px;
+      font-weight: 400; font-family: 'Playfair Display', serif; font-style: italic;
     }
-    .dive-btn:hover { background: white; color: black; transform: scale(1.05); }
 
-    /* Grid Gallery */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
-    .grid-item { position: relative; height: 90vh; overflow: hidden; cursor: pointer; background: #000; }
-    .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0.9; }
-    .grid-item:hover img { transform: scale(1.1); opacity: 1; }
-    .grid-overlay { position: absolute; bottom: 50px; left: 50px; color: white; }
-    .grid-overlay h2 { font-size: 2.5rem; margin: 0; font-weight: 900; }
+    .dive-btn {
+      margin-top: 40px; display: inline-block; padding: 18px 50px; border: 2px solid white;
+      color: white; text-transform: uppercase; letter-spacing: 5px; font-weight: 900;
+      cursor: pointer; transition: 0.4s; background: transparent;
+    }
 
-    /* Video Sections (אודות) */
-    .video-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
-    .video-item { height: 80vh; width: 100%; background: #eee; position: relative; overflow: hidden; }
-    .video-item video { width: 100%; height: 100%; object-fit: cover; }
-    .video-caption { position: absolute; top: 40px; left: 40px; font-size: 3rem; font-weight: 900; text-transform: uppercase; mix-blend-mode: difference; color: white; }
+    /* ====== ה-Scroll Reveal (האפקט של לקלר) ====== */
+    .reveal-section {
+      position: relative; z-index: 2; background: white;
+      box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
+    }
+
+    /* ====== Grid Gallery ====== */
+    .grid { 
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; 
+      background: white;
+    }
+    .grid-item { 
+      position: relative; height: 95vh; overflow: hidden; cursor: pointer; 
+      clip-path: inset(0 0 0 0); /* בסיס לאפקט החיתוך */
+    }
+    .grid-item img { 
+      width: 100%; height: 100%; object-fit: cover; 
+      transition: transform 1.5s ease;
+      position: sticky; top: 0; /* אפקט הפאראלאקס הפנימי */
+    }
+    .grid-item:hover img { transform: scale(1.1); }
+    .grid-overlay { position: absolute; bottom: 50px; left: 50px; color: white; z-index: 3; }
 
     /* ====== Modal ====== */
     .modal {
@@ -101,27 +99,23 @@
       background: #ffffff; color: var(--accent-blue);
     }
     .modal-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-    .modal-num { font-size: 20vw; font-weight: 900; animation: numAppear 0.8s ease; }
-    @keyframes numAppear { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-num { font-size: 20vw; font-weight: 900; }
 
-    /* דפי תוכן */
-    .subpage-content { padding: 180px 6% 100px; max-width: 1600px; margin: 0 auto; }
-    .subpage-header { font-size: 10vw; font-weight: 900; letter-spacing: -5px; line-height: 0.85; margin-bottom: 80px; }
+    .page { display: none; }
+    .page.active { display: block; }
   </style>
 </head>
 <body onload="runLoader(2000)">
 
   <div id="loader">
     <div class="loader-logo">D&R</div>
-    <div class="loader-line"></div>
-    <p style="margin-top: 20px; font-size: 12px; letter-spacing: 5px; color: #aaa; font-weight: 700;">D&R ELITE INTERFACE</p>
   </div>
 
   <nav>
     <div class="logo" onclick="transitionTo('main')">D&R</div>
     <div id="clock">00:00:00</div>
     <div class="nav-links">
-      <div onclick="transitionTo('main', 'grid-start')">לצלול לכיף</div>
+      <div onclick="scrollToZone('grid-start')">לצלול לכיף</div>
       <div onclick="transitionTo('history')">היסטוריה</div>
       <div onclick="transitionTo('about')">אודות</div>
     </div>
@@ -130,44 +124,27 @@
   <div id="main" class="page active">
     <section class="hero" id="hero-sec">
       <div class="hero-content">
-        <p id="parasha-display" style="letter-spacing: 8px; font-weight: 700;">EST. 2026</p>
+        <p id="parasha-display" style="letter-spacing: 8px; font-weight: 700;">OFFICIAL SITE</p>
         <h1>DOLEV & ROEE</h1>
+        <div class="welcome-text">היי, אנחנו דולב ורועי, ברוכים הבאים לאתר</div>
+        <br>
         <div class="dive-btn" onclick="scrollToZone('grid-start')">לצלול לכיף</div>
       </div>
     </section>
-    <div id="grid-start" class="grid" id="main-grid"></div>
-  </div>
 
-  <div id="history" class="page">
-    <div class="subpage-content">
-        <div class="subpage-header" style="color: var(--accent-blue);">THE<br>JOURNEY</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; font-family: 'Playfair Display', serif; font-size: 2.5rem;">
-            <div>הכל התחיל בחזון של איכות בלתי מתפשרת.</div>
-            <div style="font-family: 'Inter'; font-size: 1.1rem; line-height: 2; color: #555;">
-                היסטוריה היא לא מה שקרה, אלא מה שאנחנו בונים עכשיו. דולב ורועי יצרו את המרחב הזה כפסגת הטכנולוגיה והעיצוב המודרני.
-            </div>
-        </div>
+    <div id="grid-start" class="reveal-section">
+      <div class="grid" id="main-grid"></div>
     </div>
   </div>
 
-  <div id="about" class="page">
-    <div class="subpage-content">
-        <div class="subpage-header">COLLECTION<br>FILMS</div>
-        <div class="video-grid">
-            <div class="video-item">
-                <div class="video-caption">Film 01</div>
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#ccc;">Video Coming Soon...</div>
-            </div>
-            <div class="video-item">
-                <div class="video-caption">Film 02</div>
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#ccc;">Video Coming Soon...</div>
-            </div>
-            <div class="video-item">
-                <div class="video-caption">Film 03</div>
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#ccc;">Video Coming Soon...</div>
-            </div>
-        </div>
-    </div>
+  <div id="history" class="page" style="padding: 180px 6%; background: white; position: relative; z-index: 10;">
+    <h1 style="font-size: 10vw; font-weight: 900;">THE LEGACY</h1>
+    <p style="font-size: 2rem; font-family: 'Playfair Display';">המורשת של דולב ורועי...</p>
+  </div>
+
+  <div id="about" class="page" style="padding: 180px 6%; background: white; position: relative; z-index: 10;">
+    <h1 style="font-size: 10vw; font-weight: 900;">ABOUT US</h1>
+    <p style="font-size: 2rem; font-family: 'Playfair Display';">סרטים ומידע בקרוב...</p>
   </div>
 
   <div id="surpriseModal" class="modal">
@@ -185,20 +162,16 @@
       loader.style.opacity = '1';
       setTimeout(() => {
         loader.style.opacity = '0';
-        setTimeout(() => { 
-            loader.style.display = 'none'; 
-            document.getElementById('hero-sec').classList.add('loaded');
-        }, 600);
+        setTimeout(() => { loader.style.display = 'none'; }, 600);
       }, ms);
     }
 
-    function transitionTo(pageId, anchor = null) {
-      runLoader(1200); // מעבר טעינה בין דפים
+    function transitionTo(pageId) {
+      runLoader(1000);
       setTimeout(() => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        if (anchor) scrollToZone(anchor);
-        else window.scrollTo(0,0);
+        window.scrollTo(0,0);
       }, 800);
     }
 
@@ -210,17 +183,14 @@
       './image_2026-03-13_222345060.png'
     ];
 
-    const grid = document.getElementById('grid-start');
+    const grid = document.getElementById('main-grid');
     images.forEach((src, idx) => {
       const item = document.createElement('div');
       item.className = 'grid-item';
-      item.innerHTML = `<img src="${src}"><div class="grid-overlay"><p>SCENE 0${idx + 1}</p><h2>DISCOVER</h2></div>`;
+      item.innerHTML = `<img src="${src}"><div class="grid-overlay"><h2>VIEW 0${idx + 1}</h2></div>`;
       item.onclick = () => {
-          runLoader(800); // מעבר טעינה בלחיצה על תמונה
-          setTimeout(() => {
-            document.getElementById('luckyNumber').textContent = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('surpriseModal').style.display = "block";
-          }, 600);
+        document.getElementById('luckyNumber').textContent = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('surpriseModal').style.display = "block";
       };
       grid.appendChild(item);
     });
@@ -229,12 +199,6 @@
     function scrollToZone(id) { document.getElementById(id).scrollIntoView({behavior: 'smooth'}); }
 
     setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL'); }, 1000);
-
-    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
-      .then(r => r.json()).then(j => {
-        const p = j.items.find(x => x.category === "parashat")?.title || "OFFICIAL";
-        document.getElementById('parasha-display').textContent = "פרשת " + p;
-      });
   </script>
 </body>
 </html>
