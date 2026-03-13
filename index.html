@@ -15,6 +15,30 @@
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Rubik', sans-serif; background: var(--bg-dark); color: var(--text); overflow-x: hidden; }
 
+    /* ====== Overlay צבע אדום ====== */
+    /* השכבה הזו יושבת מעל הכל אבל שקופה למגע כדי שתוכלו ללחוץ על כפתורים */
+    .alerts-overlay {
+      position: fixed;
+      top: 80px; /* מתחת ל-Header */
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      z-index: 9999;
+      pointer-events: none; /* מאפשר ללחוץ "דרך" החלונית */
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 1px solid rgba(36, 209, 138, 0.2);
+    }
+
+    .alerts-overlay iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      /* הפיכת הרקע של השרת החיצוני לקצת יותר מתאים לאתר שלכם */
+      filter: brightness(0.8) contrast(1.2) hue-rotate(100deg);
+    }
+
     /* Header */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 70px;
@@ -44,7 +68,7 @@
       text-align: center;
     }
 
-    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 10; }
     .quote { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.5rem, 5vw, 3.5rem); line-height: 1.2; }
     .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
     .btn:hover { background: transparent; color: var(--ok); transform: scale(1.05); }
@@ -58,6 +82,10 @@
   </style>
 </head>
 <body>
+
+  <div class="alerts-overlay">
+    <iframe src="https://www.tzevaadom.co.il/livestream/"></iframe>
+  </div>
 
   <header class="header">
     <div class="header-left">
@@ -108,10 +136,6 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       window.scrollTo(0,0);
-      
-      // עדכון הכתובת בשורת הדפדפן
-      const paths = { 'main': '/', 'history': '/history', 'about': '/about-us', 'fun': '/fun' };
-      window.history.pushState({}, '', paths[id] || '/');
     }
 
     function updateDateTime() {
