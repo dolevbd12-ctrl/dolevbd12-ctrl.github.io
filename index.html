@@ -29,9 +29,7 @@
     .header-left { display: flex; flex-direction: column; align-items: flex-start; }
     #clock { font-weight: 700; font-size: 18px; color: var(--gold); }
     #full-date { font-size: 12px; opacity: 0.7; }
-
     .header-center { font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.6rem; font-weight: 700; text-align: center; }
-
     .header-right { display: flex; gap: 10px; justify-content: flex-end; }
 
     .nav-btn {
@@ -40,7 +38,7 @@
     }
     .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== ניהול דפים ====== */
+    /* ====== Pages ====== */
     .page { display: none; min-height: 100vh; padding-top: 80px; text-align: center; }
     .page.active { display: block; }
 
@@ -51,28 +49,44 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* ====== קרוסלה אינסופית - זוגות זוגות ====== */
+    .quote-box { border: 1px solid rgba(197, 160, 89, 0.4); padding: 40px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
+
+    /* ====== קרוסלה אינסופית אמיתית - ללא רווחים ====== */
     .carousel-container {
-      width: 100%; overflow: hidden; background: #000; padding: 60px 0;
-      border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
+      width: 100%;
+      overflow: hidden;
+      background: #000;
+      padding: 40px 0;
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
       position: relative;
     }
 
     .carousel-track {
       display: flex;
-      width: fit-content;
-      animation: scroll-left 40s linear infinite; /* מהירות מותאמת ל-16 תמונות */
+      width: max-content; /* חשוב מאוד - נותן למסילה להיפרס לפי כמות התמונות */
+      animation: scroll-left 25s linear infinite;
     }
 
     .carousel-track img {
-      width: 400px; height: 300px; object-fit: cover;
-      margin: 0 15px; border: 2px solid var(--gold); border-radius: 8px;
-      transition: 0.4s;
+      width: 400px;
+      height: 300px;
+      object-fit: cover;
+      margin-right: 20px; /* רווח קבוע בין התמונות */
+      border: 2px solid var(--gold);
+      border-radius: 8px;
+      flex-shrink: 0;
     }
 
+    /* אנימציה חלקה ללא קפיצות */
     @keyframes scroll-left {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      100% { transform: translateX(-50%); } /* זז בדיוק חצי מהרוחב הכולל */
+    }
+
+    /* מונע מהאנימציה להיעצר כשעוברים עם העכבר (אופציונלי) */
+    .carousel-container:hover .carousel-track {
+      animation-play-state: running;
     }
 
     .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.8rem; color: var(--gold); margin: 50px 0; font-weight: 700; }
