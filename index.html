@@ -10,33 +10,69 @@
     :root {
       --bg-dark: #041f12;
       --ok: #24d18a;
+      --warning: #ff9800; /* כתום פיקוד העורף */
       --text: #ffffff;
     }
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Rubik', sans-serif; background: var(--bg-dark); color: var(--text); overflow-x: hidden; }
 
-    /* ====== Overlay צבע אדום ====== */
-    /* השכבה הזו יושבת מעל הכל אבל שקופה למגע כדי שתוכלו ללחוץ על כפתורים */
-    .alerts-overlay {
+    /* ====== באנר אזעקה כתום (קופץ רק שיש אירוע) ====== */
+    #alarm-banner {
+      display: none; /* מוסתר כברירת מחדל */
       position: fixed;
-      top: 80px; /* מתחת ל-Header */
-      right: 20px;
-      width: 350px;
-      height: 500px;
-      z-index: 9999;
-      pointer-events: none; /* מאפשר ללחוץ "דרך" החלונית */
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      border: 1px solid rgba(36, 209, 138, 0.2);
+      top: 70px;
+      left: 0;
+      right: 0;
+      background: var(--warning);
+      color: black;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      z-index: 2000;
+      animation: flash 1s infinite;
     }
 
-    .alerts-overlay iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      /* הפיכת הרקע של השרת החיצוני לקצת יותר מתאים לאתר שלכם */
-      filter: brightness(0.8) contrast(1.2) hue-rotate(100deg);
+    @keyframes flash {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    /* ====== חלונית הסטרימינג (מוסתרת בפינה) ====== */
+    .alerts-sidebar {
+      position: fixed;
+      top: 80px;
+      left: -340px; /* מוסתר מחוץ למסך משמאל */
+      width: 350px;
+      height: 500px;
+      z-index: 1500;
+      transition: 0.5s; /* אפקט החלקה */
+      border-radius: 0 15px 15px 0;
+      overflow: hidden;
+      background: black;
+      border: 2px solid var(--warning);
+    }
+
+    /* כשעומדים עם העכבר בצד שמאל של המסך, החלונית יוצאת */
+    .alerts-sidebar:hover {
+      left: 0;
+    }
+
+    .alerts-sidebar iframe { width: 100%; height: 100%; border: none; }
+
+    /* כפתור עזרה קטן שיזכיר לכם איפה זה */
+    .side-tab {
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      background: var(--warning);
+      color: black;
+      padding: 5px 15px;
+      border-radius: 10px 10px 0 0;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     /* Header */
@@ -65,26 +101,24 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      text-align: center;
     }
 
-    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 10; }
-    .quote { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.5rem, 5vw, 3.5rem); line-height: 1.2; }
-    .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
-    .btn:hover { background: transparent; color: var(--ok); transform: scale(1.05); }
+    .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+    .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
     /* Pages */
     .page { display: none; min-height: 100vh; padding-top: 100px; text-align: center; background: radial-gradient(circle at center, #06301c, #041f12); }
     .page.active { display: block; }
-    .big-num { font-size: clamp(5rem, 15vw, 10rem); font-weight: 900; color: var(--ok); text-shadow: 0 0 30px rgba(36,209,138,0.4); margin: 20px 0; }
-    
-    .prime-list { font-size: 3rem; color: #fff; letter-spacing: 15px; margin-top: 20px; }
+    .big-num { font-size: 8rem; font-weight: 900; color: var(--ok); }
   </style>
 </head>
 <body>
 
-  <div class="alerts-overlay">
+  <div id="alarm-banner">⚠️ התראת צבע אדום: <span id="location-list"></span></div>
+
+  <div class="alerts-sidebar">
     <iframe src="https://www.tzevaadom.co.il/livestream/"></iframe>
+    <div class="side-tab">מפת התראות</div>
   </div>
 
   <header class="header">
@@ -92,9 +126,7 @@
       <div id="clock">00:00:00</div>
       <div id="full-date">טוען תאריך...</div>
     </div>
-    
     <div class="header-center" id="parasha">טוען פרשה...</div>
-    
     <div class="header-right">
       <a onclick="show('history')">היסטוריה</a>
       <a onclick="show('about')">אודות</a>
@@ -105,55 +137,54 @@
   <div id="main" class="page active" style="padding-top:0;">
     <section class="hero">
       <div class="quote-box">
-        <div class="quote">"העוצמה היא המפתח לקיום,<br>והעוצמה היא המפתח לשלום."</div>
-        <div style="margin-top:15px; font-size: 1.2rem; opacity: 0.9;">- בנימין נתניהו</div>
+        <div style="font-family: 'Frank Ruhl Libre', serif; font-size: 3rem;">"העוצמה היא המפתח לקיום."</div>
         <button class="btn" onclick="show('fun')">מוכנים לצלול לכיף?</button>
       </div>
     </section>
   </div>
 
-  <div id="history" class="page">
-    <div class="big-num">6767</div>
-    <h1 style="color:var(--ok)">היסטוריה</h1>
-    <p>דף ההיסטוריה של האתר</p>
-  </div>
-
-  <div id="about" class="page">
-    <div class="big-num">55655</div>
-    <h1 style="color:var(--ok)">אודותנו</h1>
-    <p>כאן המידע על דולב ורועי</p>
-  </div>
-
+  <div id="history" class="page"><div class="big-num">6767</div></div>
+  <div id="about" class="page"><div class="big-num">55655</div></div>
   <div id="fun" class="page">
-    <h1 style="color:var(--ok); margin-top: 50px;">צוללים לכיף!</h1>
-    <p>המספרים הראשוניים מאחד עד חמש הם:</p>
-    <div class="prime-list">2, 3, 5</div>
-    <button class="btn" style="margin-top: 50px;" onclick="show('main')">חזרה לבית</button>
+    <h1 style="color:var(--ok)">צוללים לכיף!</h1>
+    <div style="font-size: 3rem;">2, 3, 5</div>
   </div>
 
   <script>
     function show(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      window.scrollTo(0,0);
     }
 
-    function updateDateTime() {
+    // פונקציה לבדיקת אזעקות (סימולציה של התראה כתומה)
+    // הערה: בגלל אבטחת דפדפנים, קשה למשוך ישירות מפיקוד העורף ללא שרת,
+    // אבל הקוד הזה מכין את התשתית להצגת הבאנר הכתום.
+    function checkAlerts() {
+      // כאן בעתיד אפשר לחבר API אמיתי. 
+      // כרגע זה ישאיר את הבאנר מוסתר אלא אם כן נגדיר אחרת.
+      const hasAlert = false; 
+      const banner = document.getElementById('alarm-banner');
+      if (hasAlert) {
+        banner.style.display = 'block';
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+    setInterval(checkAlerts, 5000);
+
+    // עדכון זמן
+    setInterval(() => {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL');
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', options);
-    }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
+      document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {weekday: 'long', day: 'numeric', month: 'long'});
+    }, 1000);
 
+    // פרשה
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
-      .then(r => r.json())
-      .then(j => {
+      .then(r => r.json()).then(j => {
         const p = j.items.find(x => x.category === "parashat")?.title || "השבוע";
         document.getElementById('parasha').textContent = "פרשת " + p;
-      })
-      .catch(() => { document.getElementById('parasha').textContent = "פרשת השבוע"; });
+      });
   </script>
 </body>
 </html>
