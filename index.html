@@ -10,69 +10,32 @@
     :root {
       --bg-dark: #041f12;
       --ok: #24d18a;
-      --warning: #ff9800; /* כתום פיקוד העורף */
       --text: #ffffff;
     }
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Rubik', sans-serif; background: var(--bg-dark); color: var(--text); overflow-x: hidden; }
 
-    /* ====== באנר אזעקה כתום (קופץ רק שיש אירוע) ====== */
-    #alarm-banner {
-      display: none; /* מוסתר כברירת מחדל */
+    /* ====== האוטומציה של צבע אדום ====== */
+    /* יצרנו חלון שקוף שיושב מעל התמונה שלכם ומחכה להתראות */
+    .alerts-container {
       position: fixed;
-      top: 70px;
-      left: 0;
-      right: 0;
-      background: var(--warning);
-      color: black;
-      text-align: center;
-      padding: 10px;
-      font-weight: bold;
+      top: 100px;
+      right: 20px;
+      width: 320px;
+      height: 450px;
       z-index: 2000;
-      animation: flash 1s infinite;
-    }
-
-    @keyframes flash {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
-    }
-
-    /* ====== חלונית הסטרימינג (מוסתרת בפינה) ====== */
-    .alerts-sidebar {
-      position: fixed;
-      top: 80px;
-      left: -340px; /* מוסתר מחוץ למסך משמאל */
-      width: 350px;
-      height: 500px;
-      z-index: 1500;
-      transition: 0.5s; /* אפקט החלקה */
-      border-radius: 0 15px 15px 0;
+      pointer-events: none; /* מאפשר ללחוץ על האתר "מתחת" להתראות */
       overflow: hidden;
-      background: black;
-      border: 2px solid var(--warning);
+      border-radius: 15px;
     }
 
-    /* כשעומדים עם העכבר בצד שמאל של המסך, החלונית יוצאת */
-    .alerts-sidebar:hover {
-      left: 0;
-    }
-
-    .alerts-sidebar iframe { width: 100%; height: 100%; border: none; }
-
-    /* כפתור עזרה קטן שיזכיר לכם איפה זה */
-    .side-tab {
-      position: absolute;
-      right: -40px;
-      top: 50%;
-      transform: translateY(-50%) rotate(-90deg);
-      background: var(--warning);
-      color: black;
-      padding: 5px 15px;
-      border-radius: 10px 10px 0 0;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
+    .alerts-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      /* כאן הקסם: אנחנו מסננים את הכחול ומשאירים רק את הכתום/אדום שיבלוט */
+      mix-blend-mode: screen; 
+      filter: brightness(1.2) contrast(1.5);
     }
 
     /* Header */
@@ -114,11 +77,8 @@
 </head>
 <body>
 
-  <div id="alarm-banner">⚠️ התראת צבע אדום: <span id="location-list"></span></div>
-
-  <div class="alerts-sidebar">
+  <div class="alerts-container">
     <iframe src="https://www.tzevaadom.co.il/livestream/"></iframe>
-    <div class="side-tab">מפת התראות</div>
   </div>
 
   <header class="header">
@@ -137,7 +97,8 @@
   <div id="main" class="page active" style="padding-top:0;">
     <section class="hero">
       <div class="quote-box">
-        <div style="font-family: 'Frank Ruhl Libre', serif; font-size: 3rem;">"העוצמה היא המפתח לקיום."</div>
+        <div style="font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2rem, 5vw, 3.5rem);">"העוצמה היא המפתח לקיום."</div>
+        <div style="margin-top:10px; opacity: 0.8;">- בנימין נתניהו</div>
         <button class="btn" onclick="show('fun')">מוכנים לצלול לכיף?</button>
       </div>
     </section>
@@ -155,22 +116,6 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
-
-    // פונקציה לבדיקת אזעקות (סימולציה של התראה כתומה)
-    // הערה: בגלל אבטחת דפדפנים, קשה למשוך ישירות מפיקוד העורף ללא שרת,
-    // אבל הקוד הזה מכין את התשתית להצגת הבאנר הכתום.
-    function checkAlerts() {
-      // כאן בעתיד אפשר לחבר API אמיתי. 
-      // כרגע זה ישאיר את הבאנר מוסתר אלא אם כן נגדיר אחרת.
-      const hasAlert = false; 
-      const banner = document.getElementById('alarm-banner');
-      if (hasAlert) {
-        banner.style.display = 'block';
-      } else {
-        banner.style.display = 'none';
-      }
-    }
-    setInterval(checkAlerts, 5000);
 
     // עדכון זמן
     setInterval(() => {
