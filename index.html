@@ -3,113 +3,154 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>האתר של דולב ורועי</title>
+  <title>האתר המלכותי של דולב ורועי</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --gold: #c5a059;
+      --gold-light: #e0c38c;
       --text-main: #f8f8f8;
-      --bg-dark: #121212;
+      --bg-dark: #0a0a0a;
     }
 
     html { scroll-behavior: smooth; }
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-    /* ====== באנר אזעקות אדום בולט ====== */
+    /* ====== באנר אזעקות ====== */
     #alert-banner {
       display: none; position: fixed; top: 0; left: 0; right: 0;
-      background: #ff0000; color: white; padding: 25px; text-align: center;
-      font-weight: 900; z-index: 9999; border-bottom: 5px solid #fff;
-      font-size: 1.8rem; box-shadow: 0 5px 20px rgba(255,0,0,0.5);
+      background: #ff0000; color: white; padding: 20px; text-align: center;
+      font-weight: 900; z-index: 9999; border-bottom: 4px solid #fff;
+      font-size: 1.5rem; animation: alertPulse 1s infinite;
     }
+    @keyframes alertPulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
     /* ====== Header ====== */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 80px;
-      background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; z-index: 1000; border-bottom: 1px solid var(--gold);
+      padding: 0 40px; z-index: 1000; border-bottom: 2px solid var(--gold);
     }
-    .header-left { display: flex; flex-direction: column; min-width: 150px; }
+    .header-left { display: flex; flex-direction: column; }
     #clock { font-weight: 700; font-size: 18px; color: var(--gold); }
-    .header-center { font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.6rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); }
-    .header-right { display: flex; gap: 10px; }
+    .header-center { font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.8rem; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); text-shadow: 0 0 10px rgba(197,160,89,0.3); }
+    .header-right { display: flex; gap: 15px; }
 
     .nav-btn {
       color: var(--text-main); text-decoration: none; font-weight: 600; cursor: pointer;
-      padding: 8px 16px; border: 1px solid var(--gold); border-radius: 4px; background: transparent; transition: 0.3s;
+      padding: 10px 20px; border: 1px solid var(--gold); border-radius: 50px; background: transparent; transition: 0.4s;
     }
-    .nav-btn:hover { background: var(--gold); color: black; }
+    .nav-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 15px var(--gold); }
 
-    /* ====== ניהול דפים ====== */
-    .page { display: none; min-height: 100vh; padding-top: 80px; text-align: center; }
+    /* ====== Hero Section - המלבן החדש ====== */
+    .page { display: none; min-height: 100vh; text-align: center; }
     .page.active { display: block; }
     
     #main-hero {
-      height: 90vh;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png');
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./image_2026-03-13_230748568.png'); /* שיניתי לתמונה מרשימה יותר */
       background-size: cover; background-position: center;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* ====== קרוסלה אינסופית אמיתית ====== */
-    .carousel-wrap {
-      width: 100%; overflow: hidden; background: #000; padding: 60px 0;
-      border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
+    .royal-box {
+      background: rgba(10, 10, 10, 0.75);
+      padding: 60px;
+      border: 2px solid var(--gold);
+      border-radius: 0 50px 0 50px; /* צורה מעניינת */
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 0 30px rgba(197, 160, 89, 0.2), 0 20px 50px rgba(0,0,0,0.8);
+      max-width: 800px;
       position: relative;
     }
 
+    .royal-box::before {
+        content: '"';
+        position: absolute; top: -20px; right: 40px;
+        font-family: 'Frank Ruhl Libre'; font-size: 8rem; color: var(--gold); opacity: 0.4;
+    }
+
+    /* ====== הכפתור המלכותי ביותר ====== */
+    .btn-dive {
+      margin-top: 40px;
+      padding: 20px 60px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #000;
+      background: linear-gradient(45deg, var(--gold), var(--gold-light));
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.5s;
+      box-shadow: 0 10px 20px rgba(197, 160, 89, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-dive:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(197, 160, 89, 0.6);
+      filter: brightness(1.1);
+    }
+
+    /* ====== קרוסלה ====== */
+    .carousel-wrap {
+      width: 100%; overflow: hidden; background: #000; padding: 60px 0;
+      border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
+    }
+
     .carousel-track {
-      display: flex;
-      width: max-content;
-      animation: linearLoop 50s linear infinite; /* קצב אחיד ומתוקן */
+      display: flex; width: max-content; animation: scrollLoop 40s linear infinite;
     }
 
     .carousel-track img {
-      height: 400px; /* החזרתי לעובי ולגובה המקורי המרשים */
-      width: auto;   /* מונע מתיחה של התמונה */
-      margin: 0 20px;
-      border: 3px solid var(--gold);
-      border-radius: 12px;
-      flex-shrink: 0;
+      height: 400px; width: auto; margin: 0 15px;
+      border: 3px solid var(--gold); border-radius: 15px;
+      transition: 0.5s; cursor: pointer;
     }
 
-    @keyframes linearLoop {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .carousel-track img:hover {
+      transform: scale(1.05) rotate(2deg);
+      border-color: #fff;
     }
 
-    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; color: var(--gold); margin: 60px 0; font-weight: 900; }
+    @keyframes scrollLoop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; color: var(--gold); margin-top: 60px; font-weight: 900; }
+    .hint-text { color: var(--gold); font-size: 1.2rem; margin-bottom: 40px; opacity: 0.8; }
   </style>
 </head>
 <body>
 
   <div id="alert-banner">🚨 צבע אדום: <span id="alert-loc"></span></div>
 
-  <header class="header" id="main-header">
+  <header class="header">
     <div class="header-left">
-      <div id="clock">00:00:00</div>
-      <div id="full-date" style="font-size:12px; opacity:0.8;"></div>
+        <div id="clock">00:00:00</div>
+        <div id="full-date" style="font-size:12px; opacity:0.8;"></div>
     </div>
-    <div class="header-center" id="parasha">טוען פרשה...</div>
+    <div class="header-center" id="parasha">טוען...</div>
     <div class="header-right">
-      <button class="nav-btn" onclick="showP('history')">היסטוריה</button>
-      <button class="nav-btn" onclick="showP('about')">אודות</button>
-      <button class="nav-btn" onclick="showP('main')">דף הבית</button>
+      <button class="nav-btn" onclick="goTo('history')">היסטוריה</button>
+      <button class="nav-btn" onclick="goTo('about')">אודות</button>
+      <button class="nav-btn" onclick="goTo('main')">דף הבית</button>
     </div>
   </header>
 
-  <div id="main" class="page active" style="padding-top:0;">
+  <div id="main" class="page active">
     <section id="main-hero">
-      <div style="background: rgba(0,0,0,0.75); padding: 50px; border: 2px solid var(--gold); border-radius: 10px;">
-        <h1 style="font-family: 'Frank Ruhl Libre', serif; font-size: 3.5rem; margin: 0;">"העוצמה היא המפתח לקיום."</h1>
-        <button class="nav-btn" style="padding: 20px 50px; margin-top: 30px; font-size: 1.3rem;" onclick="document.getElementById('welcome-zone').scrollIntoView();">מוכנים לצלול לכיף?</button>
+      <div class="royal-box">
+        <h1 style="font-family: 'Frank Ruhl Libre', serif; font-size: 3.5rem; margin: 0; color: var(--gold);">חזון ושלמות</h1>
+        <p style="font-size: 1.5rem; line-height: 1.6; margin-top: 20px;">"בעולם שבו כולם רצים, אנחנו בונים את הדרך. האיכות היא המצפן שלנו, והעוצמה היא המנוע."</p>
+        <button class="btn-dive" onclick="document.getElementById('welcome-zone').scrollIntoView();">לצלול לכיף</button>
       </div>
     </section>
 
-    <section id="welcome-zone" style="background: #0c0c0c; padding-bottom: 120px;">
+    <section id="welcome-zone" style="background: #050505; padding-bottom: 120px;">
       <div class="welcome-text">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
+      <div class="hint-text">לחץ על תמונה תקבל הפתעה בלצלול לכיף</div>
       
       <div class="carousel-wrap">
         <div class="carousel-track" id="track">
@@ -118,36 +159,35 @@
     </section>
   </div>
 
-  <div id="history" class="page" style="background: #1a0a2a;">
-    <div style="font-size: 10rem; color: var(--gold); opacity: 0.2; margin-top: 100px;">6767</div>
-    <h1>היסטוריה</h1>
+  <div id="history" class="page" style="background: #1a0a2a; padding-top: 150px;">
+      <h1 style="color: var(--gold); font-size: 5rem;">היסטוריה מלכותית</h1>
   </div>
 
-  <div id="about" class="page" style="background: #0a1a2a;">
-    <div style="font-size: 10rem; color: var(--gold); opacity: 0.2; margin-top: 100px;">55655</div>
-    <h1>אודות</h1>
+  <div id="about" class="page" style="background: #0a1a2a; padding-top: 150px;">
+      <h1 style="color: var(--gold); font-size: 5rem;">אודות המותג</h1>
   </div>
 
   <script>
-    const imgs = [
-      './image_2026-03-13_222345060.png', './image_2026-03-13_230619314.png',
-      './image_2026-03-13_230636882.png', './image_2026-03-13_230654112.png',
-      './image_2026-03-13_230706432.png', './image_2026-03-13_230721055.png',
-      './image_2026-03-13_230733426.png', './image_2026-03-13_230748568.png',
-      './image_2026-03-13_230759616.png'
+    const images = [
+      './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
+      './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
+      './image_2026-03-13_230721055.png', './image_2026-03-13_230733426.png',
+      './image_2026-03-13_230748568.png', './image_2026-03-13_230759616.png',
+      './image_2026-03-13_222345060.png'
     ];
 
     const track = document.getElementById('track');
-    // שכפול פי 10 כדי להבטיח תנועה אינסופית חלקה בלי קפיצות
+    // שכפול פי 10 לזרימה אינסופית
     for(let i=0; i < 10; i++) {
-        imgs.forEach(src => {
+        images.forEach(src => {
             const img = document.createElement('img');
             img.src = src;
+            img.onclick = () => alert("הפתעה! ברוכים הבאים לעולם של דולב ורועי 👑");
             track.appendChild(img);
         });
     }
 
-    function showP(id) {
+    function goTo(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       window.scrollTo(0,0);
@@ -165,7 +205,19 @@
         document.getElementById('parasha').textContent = "פרשת " + p;
       });
 
-    // בדיקת אזעקות חזקה יותר
     async function checkAlerts() {
       try {
-        const res = await fetch(`
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.oref.org.il/WarningMessages/alert/alerts.json')}`);
+        const obj = await res.json();
+        const data = JSON.parse(obj.contents);
+        const banner = document.getElementById('alert-banner');
+        if (data && data.data) {
+          document.getElementById('alert-loc').textContent = data.data.join(', ');
+          banner.style.display = 'block';
+        } else { banner.style.display = 'none'; }
+      } catch(e) {}
+    }
+    setInterval(checkAlerts, 4000);
+  </script>
+</body>
+</html>
