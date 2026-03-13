@@ -14,10 +14,10 @@
 
     body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; }
 
-    /* ====== Header מעל התמונה (Overlay) ====== */
+    /* ====== Header מעל התמונה ====== */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 90px;
-      background: rgba(0, 0, 0, 0.4); /* שקיפות עדינה */
+      background: rgba(0, 0, 0, 0.4); 
       backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 50px; z-index: 1000; border-bottom: 1px solid rgba(197, 160, 89, 0.3);
@@ -26,6 +26,7 @@
     #clock { font-size: 22px; color: var(--gold); font-weight: 600; font-family: 'Cinzel', serif; }
     #full-date { font-size: 13px; color: white; opacity: 0.8; }
     
+    /* שינוי להיכל העוצמה -> פרשת השבוע */
     .header-center { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.8rem; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     
     .nav-btn {
@@ -34,7 +35,7 @@
     }
     .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== Hero Section - התמונה המלאה ללא חיתוך ====== */
+    /* ====== Hero Section ====== */
     .page { display: none; min-height: 100vh; }
     .page.active { display: block; }
 
@@ -43,10 +44,8 @@
       background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url('./image_2026-03-13_222345060.png');
       background-size: cover; background-position: center;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      position: relative;
     }
 
-    /* מלבן הציטוט */
     .royal-frame {
       background: rgba(0, 0, 0, 0.75);
       padding: 50px 70px; border: 2px solid var(--gold);
@@ -62,33 +61,40 @@
       color: black; padding: 15px 45px; border: 2px solid #5e4d2b; font-weight: 700;
       font-size: 1.2rem; cursor: pointer; border-radius: 4px; transition: 0.3s;
     }
-    .medieval-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
 
-    /* ====== גלריית קלפי הרנסנס ====== */
+    /* ====== גלריית קלפים (סטטיים עם מסגרת) ====== */
     .gallery-container { background: #080808; padding: 100px 20px; }
     .gallery-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 50px; max-width: 1300px; margin: 0 auto; perspective: 1000px;
+      gap: 50px; max-width: 1300px; margin: 0 auto;
     }
 
-    .card { width: 100%; height: 450px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.8s ease; }
-    .card.flipped { transform: rotateY(180deg); }
-
-    .card-face {
-      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    .card { 
+      width: 100%; height: 450px; cursor: pointer; 
       border: 15px solid #222; border-image: url('https://www.transparenttextures.com/patterns/gold-plaster.png') 30 stretch;
       box-shadow: 0 15px 35px rgba(0,0,0,0.7); outline: 2px solid var(--gold); outline-offset: -10px;
+      background-size: cover; background-position: center;
+      transition: transform 0.3s ease;
     }
-
-    .card-front { background-size: cover; background-position: center; }
-    .card-back {
-      background: linear-gradient(135deg, #1a0a00 0%, #3d2b1f 100%);
-      transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .card-back .number { font-size: 6rem; font-weight: 900; color: white; text-shadow: 0 0 15px var(--gold); }
+    .card:hover { transform: scale(1.02); filter: brightness(1.2); }
 
     .welcome-msg { text-align: center; font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; color: var(--gold); padding: 50px 0 10px; background: #080808; }
     .truth-text { text-align: center; font-family: 'Cinzel', serif; color: var(--gold); opacity: 0.7; background: #080808; margin: 0; padding-bottom: 40px; }
+
+    /* ====== חלונית הפתעה (Modal) ====== */
+    .modal {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+    }
+    .modal-content {
+      background: linear-gradient(135deg, #1a0a00 0%, #3d2b1f 100%);
+      margin: 10% auto; padding: 60px; border: 3px solid var(--gold); width: 300px;
+      text-align: center; border-radius: 10px; box-shadow: 0 0 50px var(--gold);
+      animation: modalFade 0.5s;
+    }
+    @keyframes modalFade { from {opacity: 0; transform: scale(0.8);} to {opacity: 1; transform: scale(1);} }
+    .modal-number { font-size: 8rem; font-weight: 900; color: white; text-shadow: 0 0 20px var(--gold); display: block; margin: 20px 0; }
+    .close-modal { color: var(--gold); font-size: 2rem; cursor: pointer; float: left; font-weight: bold; }
 
     /* ====== דפי משנה ====== */
     .royal-title { font-family: 'Cinzel', serif; font-size: 5rem; color: var(--gold); text-shadow: 0 0 20px rgba(197,160,89,0.5); text-align: center; padding-top: 150px; }
@@ -103,7 +109,7 @@
       <div id="clock">00:00:00</div>
       <div id="full-date">טוען תאריך...</div>
     </div>
-    <div class="header-center">היכל העוצמה</div>
+    <div class="header-center" id="parasha-title">פרשת השבוע</div>
     <div class="header-right">
       <button class="nav-btn" onclick="nav('main')">דף הבית</button>
       <button class="nav-btn" onclick="nav('history')">היסטוריה מלכותית</button>
@@ -131,32 +137,51 @@
     </div>
   </div>
 
+  <div id="surpriseModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2 style="font-family:'Cinzel'; color:var(--gold)">הגורל שלך:</h2>
+      <span id="luckyNumber" class="modal-number"></span>
+      <p style="color:var(--gold)">ממלכת דולב ורועי</p>
+    </div>
+  </div>
+
   <div id="history" class="page"><h1 class="royal-title">היסטוריה מלכותית</h1></div>
   <div id="about" class="page"><h1 class="royal-title">אודות המותג</h1></div>
 
   <script>
+    // הוספת התמונה התשיעית (סה"כ 9)
     const images = [
       './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
       './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
       './image_2026-03-13_230721055.png', './image_2026-03-13_230733426.png',
-      './image_2026-03-13_230748568.png', './image_2026-03-13_230759616.png'
+      './image_2026-03-13_230748568.png', './image_2026-03-13_230759616.png',
+      './image_2026-03-13_222345060.png' 
     ];
 
     const gallery = document.getElementById('gallery');
     images.forEach(src => {
       const card = document.createElement('div');
       card.className = 'card';
-      const randomNum = Math.floor(Math.random() * 10) + 1;
-      card.innerHTML = `
-        <div class="card-face card-front" style="background-image: url('${src}')"></div>
-        <div class="card-face card-back">
-          <span style="font-family:'Cinzel'; color:var(--gold)">הגורל שלך</span>
-          <div class="number">${randomNum}</div>
-        </div>
-      `;
-      card.onclick = () => card.classList.toggle('flipped');
+      card.style.backgroundImage = `url('${src}')`;
+      card.onclick = () => openModal();
       gallery.appendChild(card);
     });
+
+    function openModal() {
+      const num = Math.floor(Math.random() * 10) + 1;
+      document.getElementById('luckyNumber').textContent = num;
+      document.getElementById('surpriseModal').style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById('surpriseModal').style.display = "none";
+    }
+
+    // סגירה בלחיצה מחוץ לחלונית
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('surpriseModal')) closeModal();
+    }
 
     function nav(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -169,6 +194,13 @@
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL', {hour12: false});
       document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day:'numeric', month:'long', year:'numeric'});
     }, 1000);
+
+    // עדכון שם הפרשה בכותרת באופן דינמי (אופציונלי, שומר על השם שביקשת)
+    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
+      .then(r => r.json()).then(j => {
+        const p = j.items.find(x => x.category === "parashat")?.title || "";
+        if(p) document.getElementById('parasha-title').textContent = "פרשת " + p;
+      });
   </script>
 </body>
 </html>
