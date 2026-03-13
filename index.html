@@ -8,58 +8,62 @@
 
   <style>
     :root {
-      --gold: #c5a059; /* צבע זהב אלגנטי במקום ירוק */
+      --gold: #c5a059;
       --text-main: #f8f8f8;
       --bg-dark: #121212;
-      --purple-page: #2e1a47; /* סגול להיסטוריה */
-      --blue-page: #1a2a47;   /* כחול לאודות */
+      --purple-page: #2e1a47;
+      --blue-page: #1a2a47;
     }
 
-    body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: var(--text-main); transition: background 0.5s ease; }
+    body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: var(--text-main); }
 
-    /* ====== Header אלגנטי עם מסגרות ====== */
+    /* ====== Header מתוקן עם פרשה במרכז ====== */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 80px;
       background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr; /* יוצר חלוקה שווה ל-3 חלקים */
+      align-items: center;
       padding: 0 40px; z-index: 1000; border-bottom: 1px solid var(--gold);
     }
 
-    .header-left { order: 1; font-size: 13px; letter-spacing: 1px; }
-    #clock { font-weight: 700; font-size: 18px; color: var(--gold); display: block; }
+    .header-left { text-align: right; } /* תאריך ושעה בצד אחד */
+    #clock { font-weight: 700; font-size: 18px; color: var(--gold); }
 
-    .header-center { order: 2; font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.5rem; font-weight: 700; }
+    .header-center { 
+      font-family: 'Frank Ruhl Libre', serif; 
+      color: var(--gold); 
+      font-size: 1.6rem; 
+      font-weight: 700;
+      text-align: center; /* מרכז אמיתי */
+    }
 
-    .header-right { order: 3; display: flex; gap: 15px; }
+    .header-right { 
+      display: flex; 
+      gap: 12px; 
+      justify-content: flex-start; /* כפתורים בצד השני */
+    }
 
-    /* מסגרות על כפתורי הניווט */
     .nav-btn {
       color: var(--text-main);
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
-      padding: 8px 18px;
-      border: 1px solid var(--gold); /* המסגרת שביקשת */
+      padding: 8px 16px;
+      border: 1px solid var(--gold);
       border-radius: 4px;
-      transition: all 0.3s ease;
+      transition: 0.3s;
       font-size: 14px;
+      background: transparent;
     }
 
-    .nav-btn:hover {
-      background: var(--gold);
-      color: black;
-    }
+    .nav-btn:hover { background: var(--gold); color: black; }
 
     /* ====== דפי תוכן ====== */
-    .page { display: none; min-height: 100vh; padding-top: 120px; text-align: center; animation: fadeIn 0.6s ease; }
+    .page { display: none; min-height: 100vh; padding-top: 100px; text-align: center; box-sizing: border-box; }
     .page.active { display: block; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* דף הבית עם התמונה */
+    /* דף הבית */
     #main {
       padding-top: 0;
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png');
@@ -68,34 +72,28 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* דף היסטוריה - סגול */
-    #history { background: radial-gradient(circle, var(--purple-page) 0%, #121212 100%); }
-    
-    /* דף אודות - כחול */
-    #about { background: radial-gradient(circle, var(--blue-page) 0%, #121212 100%); }
-
-    /* דף כיף */
-    #fun { background: radial-gradient(circle, #1a3a2a 0%, #121212 100%); }
+    /* צבעים ייחודיים לכל עמוד */
+    #history { background: radial-gradient(circle, var(--purple-page) 0%, #0c0c0c 100%); }
+    #about { background: radial-gradient(circle, var(--blue-page) 0%, #0c0c0c 100%); }
+    #fun { background: radial-gradient(circle, #1a3a2a 0%, #0c0c0c 100%); }
 
     .quote-box {
       max-width: 700px;
-      border: 1px solid rgba(197, 160, 89, 0.3);
+      border: 1px solid rgba(197, 160, 89, 0.4);
       padding: 40px;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(5px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
     }
 
-    .quote { font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; margin-bottom: 20px; line-height: 1.2; }
+    .quote { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px; color: white; }
     
-    .big-num { font-size: 10rem; font-weight: 900; color: var(--gold); opacity: 0.6; margin: 20px 0; font-family: 'Frank Ruhl Libre', serif; }
+    .big-num { font-size: clamp(5rem, 15vw, 10rem); font-weight: 900; color: var(--gold); opacity: 0.7; margin-top: 50px; }
 
-    /* התראות פיקוד העורף - עכשיו מעוצבות באלגנטיות */
+    /* באנר התראות */
     #alert-banner {
       display: none;
       position: fixed; top: 80px; left: 0; right: 0;
-      background: #8b0000; color: white;
-      padding: 12px; text-align: center; font-weight: 700; z-index: 2000;
-      border-bottom: 2px solid white;
+      background: #8b0000; color: white; padding: 10px; text-align: center; z-index: 2000;
     }
   </style>
 </head>
@@ -105,60 +103,77 @@
 
   <header class="header">
     <div class="header-left">
-      <span id="clock">00:00:00</span>
-      <span id="full-date" style="opacity: 0.6;"></span>
+      <div id="clock">00:00:00</div>
+      <div id="full-date" style="font-size: 12px; opacity: 0.7;"></div>
     </div>
     
     <div class="header-center" id="parasha">טוען פרשה...</div>
     
     <div class="header-right">
-      <a class="nav-btn" onclick="show('history')">היסטוריה</a>
-      <a class="nav-btn" onclick="show('about')">אודות</a>
-      <a class="nav-btn" onclick="show('main')">דף הבית</a>
+      <button class="nav-btn" onclick="show('history')">היסטוריה</button>
+      <button class="nav-btn" onclick="show('about')">אודות</button>
+      <button class="nav-btn" onclick="show('main')">דף הבית</button>
     </div>
   </header>
 
   <div id="main" class="page active">
     <div class="quote-box">
       <div class="quote">"העוצמה היא המפתח לקיום."</div>
-      <div style="font-size: 1.2rem; font-style: italic; color: var(--gold);">- בנימין נתניהו</div>
-      <button class="nav-btn" style="margin-top: 30px; padding: 15px 40px;" onclick="show('fun')">מוכנים לצלול לכיף?</button>
+      <div style="font-size: 1.2rem; color: var(--gold); margin-bottom: 30px;">- בנימין נתניהו</div>
+      <button class="nav-btn" style="padding: 15px 35px; font-size: 1.1rem;" onclick="show('fun')">מוכנים לצלול לכיף?</button>
     </div>
   </div>
 
   <div id="history" class="page">
     <div class="big-num">6767</div>
-    <h1 style="font-family: 'Frank Ruhl Libre', serif;">היסטוריה</h1>
-    <p style="font-size: 1.2rem; opacity: 0.8;">כרונולוגיה של עוצמה ואלגנטיות</p>
+    <h1>היסטוריה</h1>
+    <p>ברוכים הבאים לעמוד ההיסטוריה המלכותי</p>
   </div>
 
   <div id="about" class="page">
     <div class="big-num">55655</div>
-    <h1 style="font-family: 'Frank Ruhl Libre', serif;">אודותינו</h1>
-    <p style="font-size: 1.2rem; opacity: 0.8;">דולב ורועי - החזון שמאחורי האתר</p>
+    <h1>אודותינו</h1>
+    <p>כאן תוכלו לקרוא על החזון של דולב ורועי</p>
   </div>
 
   <div id="fun" class="page">
-    <h1 style="color: var(--gold); font-size: 3rem;">צוללים לכיף</h1>
-    <div style="font-size: 5rem; font-family: 'Frank Ruhl Libre', serif; letter-spacing: 20px; margin-top: 50px;">2, 3, 5</div>
-    <button class="nav-btn" style="margin-top: 50px;" onclick="show('main')">חזרה למסך הראשי</button>
+    <h1 style="color: var(--gold); font-size: 3rem; margin-top: 50px;">צוללים לכיף</h1>
+    <div style="font-size: 6rem; letter-spacing: 20px;">2, 3, 5</div>
+    <br>
+    <button class="nav-btn" onclick="show('main')">חזרה לבית</button>
   </div>
 
   <script>
-    function show(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      window.scrollTo({top: 0, behavior: 'smooth'});
+    // פונקציית ניווט מתוקנת
+    function show(pageId) {
+      console.log("Navigating to:", pageId); // לבדיקה בקונסול
+      // מסתיר את כל הדפים
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      // מציג את הדף המבוקש
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+        window.scrollTo(0, 0);
+      }
     }
 
-    // עדכון זמן
+    // זמן ותאריך
     setInterval(() => {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL');
-      document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day: 'numeric', month: 'long', year: 'numeric'});
+      document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day:'numeric', month:'long'});
     }, 1000);
 
-    // פיקוד העורף - נשאר אוטומטי
+    // פרשה במרכז
+    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
+      .then(r => r.json()).then(j => {
+        const p = j.items.find(x => x.category === "parashat")?.title || "השבוע";
+        document.getElementById('parasha').textContent = "פרשת " + p;
+      });
+
+    // פיקוד העורף
     async function checkAlerts() {
       try {
         const r = await fetch('https://www.oref.org.il/WarningMessages/alert/alerts.json');
@@ -171,13 +186,6 @@
       } catch(e) {}
     }
     setInterval(checkAlerts, 4000);
-
-    // פרשה
-    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
-      .then(r => r.json()).then(j => {
-        const p = j.items.find(x => x.category === "parashat")?.title || "השבוע";
-        document.getElementById('parasha').textContent = "פרשת " + p;
-      });
   </script>
 </body>
 </html>
