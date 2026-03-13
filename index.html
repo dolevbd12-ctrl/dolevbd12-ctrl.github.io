@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dolev & Roei | Official</title>
+  <title>Dolev & Roee | Official</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --accent: #c5a059; /* זהב עדין */
+      --accent: #c5a059;
       --bg: #ffffff;
       --text: #000000;
     }
@@ -21,17 +21,43 @@
       overflow-x: hidden;
     }
 
-    /* ====== Navigation (Leclerc Style) ====== */
+    /* ====== מסך טעינה (Loading) ====== */
+    #loader {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    .loader-logo {
+      font-size: 4rem; font-weight: 900; color: var(--accent);
+      font-family: 'Inter', sans-serif; letter-spacing: -2px;
+      animation: bounceRotate 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+    .loader-bar {
+      width: 200px; height: 2px; background: rgba(255,255,255,0.1);
+      margin-top: 30px; position: relative; overflow: hidden;
+    }
+    .loader-progress {
+      position: absolute; width: 0%; height: 100%;
+      background: var(--accent); animation: loadProgress 2.5s ease-in-out forwards;
+    }
+
+    @keyframes bounceRotate {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      25% { transform: translateY(-30px) rotate(90deg) scale(1.1); }
+      50% { transform: translateY(0) rotate(180deg) scale(1); }
+      75% { transform: translateY(-30px) rotate(270deg) scale(1.1); }
+    }
+    @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+
+    /* ====== Navigation ====== */
     nav {
       position: fixed; top: 0; width: 100%; height: 80px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4%; z-index: 1000; mix-blend-mode: difference; /* צבע משתנה לפי הרקע */
-      color: white;
+      padding: 0 4%; z-index: 1000; mix-blend-mode: difference; color: white;
     }
     .logo { font-weight: 900; letter-spacing: -1px; font-size: 1.5rem; cursor: pointer; }
     .nav-links { display: flex; gap: 30px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
-    .nav-links div { cursor: pointer; border-bottom: 1px solid transparent; transition: 0.3s; }
-    .nav-links div:hover { border-bottom: 1px solid white; }
 
     /* ====== Hero Section ====== */
     .hero {
@@ -40,7 +66,9 @@
       display: flex; align-items: center; justify-content: center;
       color: white; overflow: hidden;
     }
-    .hero-content { text-align: center; z-index: 2; }
+    .hero-content { text-align: center; z-index: 2; opacity: 0; transform: translateY(30px); transition: 1.5s ease 2.7s; }
+    .hero.loaded .hero-content { opacity: 1; transform: translateY(0); }
+    
     .hero-content h1 { 
       font-size: 12vw; margin: 0; line-height: 0.8; font-weight: 900; 
       text-transform: uppercase; letter-spacing: -5px; 
@@ -48,83 +76,61 @@
     .hero-content p { font-size: 1.2rem; letter-spacing: 5px; text-transform: uppercase; margin-top: 20px; }
 
     /* ====== Quote Section ====== */
-    .section-quote {
-      padding: 150px 10%; background: #f9f9f9; text-align: center;
-    }
-    .large-quote {
-      font-family: 'Playfair Display', serif; font-size: 3.5rem; 
-      line-height: 1.2; font-style: italic; max-width: 1000px; margin: 0 auto;
-    }
-    .sub-quote { margin-top: 40px; font-size: 1rem; color: #666; letter-spacing: 2px; }
+    .section-quote { padding: 150px 10%; background: #f9f9f9; text-align: center; }
+    .large-quote { font-family: 'Playfair Display', serif; font-size: 3.5rem; line-height: 1.2; font-style: italic; }
 
-    /* ====== Gallery (The "Grid") ====== */
-    .gallery-title { padding: 100px 4% 20px; font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: #999; }
-    .grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 100px;
-    }
-    .grid-item {
-      position: relative; height: 80vh; overflow: hidden; cursor: pointer;
-    }
-    .grid-item img {
-      width: 100%; height: 100%; object-fit: cover; transition: transform 1s ease;
-    }
-    .grid-item:hover img { transform: scale(1.05); }
-    .grid-overlay {
-      position: absolute; bottom: 40px; left: 40px; color: white;
-    }
-    .grid-overlay h2 { font-size: 2rem; margin: 0; text-transform: uppercase; }
+    /* ====== Grid ====== */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 100px; }
+    .grid-item { position: relative; height: 80vh; overflow: hidden; cursor: pointer; }
+    .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); }
+    .grid-item:hover img { transform: scale(1.08); }
+    .grid-overlay { position: absolute; bottom: 40px; left: 40px; color: white; }
 
-    /* ====== Modal (Surprise) ====== */
+    /* ====== Modal ====== */
     .modal {
       display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-      background: white; color: black;
+      background: white; color: black; transition: 0.5s;
     }
-    .modal-content {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
-    }
+    .modal-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
     .modal-num { font-size: 15vw; font-weight: 900; }
-    .close-btn { position: absolute; top: 40px; right: 40px; font-size: 2rem; cursor: pointer; }
-
-    /* ====== Footer ====== */
-    footer { padding: 100px 4%; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; }
   </style>
 </head>
-<body>
+<body onload="initSite()">
+
+  <div id="loader">
+    <div class="loader-logo">D&R</div>
+    <div class="loader-bar"><div class="loader-progress"></div></div>
+    <p style="color: white; margin-top: 15px; font-size: 10px; letter-spacing: 3px;">INITIALIZING EXCELLENCE</p>
+  </div>
 
   <nav>
-    <div class="logo" onclick="location.reload()">D&R</div>
+    <div class="logo">D&R</div>
     <div id="clock" style="font-family: monospace; font-size: 14px;">00:00:00</div>
     <div class="nav-links">
       <div onclick="scrollToZone('grid-start')">לצלול לכיף</div>
-      <div onclick="alert('דף היסטוריה בבנייה')">היסטוריה</div>
-      <div onclick="alert('אודות בבנייה')">אודות</div>
+      <div onclick="alert('היסטוריה מלכותית בבנייה')">היסטוריה</div>
     </div>
   </nav>
 
-  <section class="hero">
+  <section class="hero" id="hero-sec">
     <div class="hero-content">
       <p id="parasha-display">Official Website</p>
-      <h1>DOLEV & ROEI</h1>
+      <h1>DOLEV & ROEE</h1>
     </div>
   </section>
 
   <section class="section-quote">
     <div class="large-quote">"העוצמה אינה נמדדת במה שיש לך, אלא במה שאתה בונה עבור אלו שאחריך."</div>
-    <div class="sub-quote">האיכות היא המצפן שלנו, והעוצמה היא המנוע.</div>
   </section>
 
-  <div id="grid-start" class="gallery-title">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
+  <div id="grid-start" style="padding: 100px 4% 20px; font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: #999;">
+    רועי ודולב מברכים אתכם על היוולדותכם לעולם
+  </div>
   
-  <div class="grid" id="main-grid">
-    </div>
-
-  <footer>
-    <div>© 2026 היכל העוצמה</div>
-    <div>DESIGNED FOR EXCELLENCE</div>
-  </footer>
+  <div class="grid" id="main-grid"></div>
 
   <div id="surpriseModal" class="modal">
-    <span class="close-btn" onclick="closeModal()">×</span>
+    <span style="position: absolute; top: 40px; right: 40px; font-size: 2rem; cursor: pointer;" onclick="closeModal()">×</span>
     <div class="modal-content">
       <p style="letter-spacing: 5px; text-transform: uppercase;">הגורל שלך</p>
       <div class="modal-num" id="luckyNumber"></div>
@@ -132,6 +138,16 @@
   </div>
 
   <script>
+    function initSite() {
+      // מחכה שהאנימציה של הבר תסתיים
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        document.getElementById('hero-sec').classList.add('loaded');
+      }, 2500);
+    }
+
     const images = [
       './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
       './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
@@ -162,14 +178,13 @@
     function closeModal() { document.getElementById('surpriseModal').style.display = "none"; }
     function scrollToZone(id) { document.getElementById(id).scrollIntoView({behavior: 'smooth'}); }
 
-    // שעון ופרשה
     setInterval(() => {
       document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL');
     }, 1000);
 
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
       .then(r => r.json()).then(j => {
-        const p = j.items.find(x => x.category === "parashat")?.title || "OFFICIAL SITE";
+        const p = j.items.find(x => x.category === "parashat")?.title || "OFFICIAL";
         document.getElementById('parasha-display').textContent = "פרשת " + p;
       });
   </script>
