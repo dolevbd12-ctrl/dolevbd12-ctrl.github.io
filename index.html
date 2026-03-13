@@ -23,15 +23,12 @@
       padding: 0 25px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* שמאל: זמן ותאריך */
     .header-left { order: 1; display: flex; flex-direction: column; align-items: flex-start; font-size: 13px; min-width: 120px; }
     #clock { font-weight: bold; font-size: 16px; color: var(--ok); }
     #full-date { opacity: 0.8; }
 
-    /* אמצע: פרשה */
     .header-center { order: 2; font-family: 'Frank Ruhl Libre', serif; color: var(--ok); font-size: 1.3rem; text-align: center; flex-grow: 1; }
 
-    /* ימין: קישורים */
     .header-right { order: 3; display: flex; gap: 20px; min-width: 150px; justify-content: flex-end; }
     .header-right a { color: white; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .header-right a:hover { color: var(--ok); }
@@ -49,13 +46,15 @@
 
     .quote-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
     .quote { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.5rem, 5vw, 3.5rem); line-height: 1.2; }
-    .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; }
-    .btn:hover { background: transparent; color: var(--ok); }
+    .btn { margin-top: 25px; padding: 12px 40px; border: 2px solid var(--ok); background: var(--ok); color: black; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
+    .btn:hover { background: transparent; color: var(--ok); transform: scale(1.05); }
 
     /* Pages */
     .page { display: none; min-height: 100vh; padding-top: 100px; text-align: center; background: radial-gradient(circle at center, #06301c, #041f12); }
     .page.active { display: block; }
-    .big-num { font-size: clamp(5rem, 15vw, 10rem); font-weight: 900; color: var(--ok); text-shadow: 0 0 30px rgba(36,209,138,0.4); margin: 40px 0; }
+    .big-num { font-size: clamp(5rem, 15vw, 10rem); font-weight: 900; color: var(--ok); text-shadow: 0 0 30px rgba(36,209,138,0.4); margin: 20px 0; }
+    
+    .prime-list { font-size: 3rem; color: #fff; letter-spacing: 15px; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -80,7 +79,7 @@
       <div class="quote-box">
         <div class="quote">"העוצמה היא המפתח לקיום,<br>והעוצמה היא המפתח לשלום."</div>
         <div style="margin-top:15px; font-size: 1.2rem; opacity: 0.9;">- בנימין נתניהו</div>
-        <button class="btn" onclick="show('about')">גלו מי אנחנו</button>
+        <button class="btn" onclick="show('fun')">מוכנים לצלול לכיף?</button>
       </div>
     </section>
   </div>
@@ -88,35 +87,42 @@
   <div id="history" class="page">
     <div class="big-num">6767</div>
     <h1 style="color:var(--ok)">היסטוריה</h1>
-    <p>ברוכים הבאים לדף ההיסטוריה של האתר</p>
+    <p>דף ההיסטוריה של האתר</p>
   </div>
 
   <div id="about" class="page">
     <div class="big-num">55655</div>
     <h1 style="color:var(--ok)">אודותנו</h1>
-    <p>כאן תוכלו למצוא מידע על דולב ורועי</p>
+    <p>כאן המידע על דולב ורועי</p>
+  </div>
+
+  <div id="fun" class="page">
+    <h1 style="color:var(--ok); margin-top: 50px;">צוללים לכיף!</h1>
+    <p>המספרים הראשוניים מאחד עד חמש הם:</p>
+    <div class="prime-list">2, 3, 5</div>
+    <button class="btn" style="margin-top: 50px;" onclick="show('main')">חזרה לבית</button>
   </div>
 
   <script>
-    // פונקציית ניווט
     function show(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       window.scrollTo(0,0);
+      
+      // עדכון הכתובת בשורת הדפדפן
+      const paths = { 'main': '/', 'history': '/history', 'about': '/about-us', 'fun': '/fun' };
+      window.history.pushState({}, '', paths[id] || '/');
     }
 
-    // עדכון זמן ותאריך
     function updateDateTime() {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('he-IL');
-      
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', options);
     }
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // משיכת פרשת השבוע
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
       .then(r => r.json())
       .then(j => {
