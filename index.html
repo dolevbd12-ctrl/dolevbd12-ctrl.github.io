@@ -25,19 +25,14 @@
     .loader-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: none; justify-content: center; align-items: center; z-index: 9999;
+      transition: opacity 0.6s ease;
     }
-
-    /* לודר היסטוריה - אלגנטיות נשלפת */
-    #loader-history { background: #111; color: white; border-bottom: 5px solid var(--accent-blue); }
-    
-    /* לודר אודות - אפקט קולנועי */
+    #loader-main { background: #fff; }
+    #loader-history { background: #111; color: white; }
     #loader-about { background: #000; clip-path: circle(0% at 50% 50%); transition: clip-path 0.8s ease-in-out; }
     #loader-about.active { clip-path: circle(150% at 50% 50%); }
 
-    /* לודר ראשי - כחול לבן */
-    #loader-main { background: #fff; }
     .loader-logo { font-size: 5rem; font-weight: 900; color: var(--accent-blue); animation: bounce 1.5s infinite; }
-
     @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
     /* ====== Navigation ====== */
@@ -49,10 +44,9 @@
     .logo { font-weight: 900; font-size: 2.8rem; cursor: pointer; letter-spacing: -2px; }
     #clock { font-size: 1.3rem; font-weight: bold; }
     .nav-links { display: flex; gap: 40px; font-size: 15px; text-transform: uppercase; font-weight: 700; }
-    .nav-links div { cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; }
-    .nav-links div:hover { border-bottom: 2px solid var(--accent-blue); }
+    .nav-links div { cursor: pointer; }
 
-    /* ====== Hero & Content ====== */
+    /* ====== Hero & Text Animation ====== */
     .page { display: none; min-height: 100vh; width: 100%; }
     .page.active { display: block; }
 
@@ -61,8 +55,27 @@
       background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       display: flex; align-items: center; justify-content: center; color: white; z-index: 1;
     }
+
+    /* הגדרות לאנימציה של הטקסט */
+    .hero-content > * {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .hero.reveal-text .hero-content > * {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* דירוג זמנים בין האלמנטים (Stagger) */
+    .hero.reveal-text .hero-content p:nth-child(1) { transition-delay: 0.2s; }
+    .hero.reveal-text .hero-content h1 { transition-delay: 0.4s; }
+    .hero.reveal-text .hero-content .welcome-text { transition-delay: 0.6s; }
+    .hero.reveal-text .hero-content .dive-btn { transition-delay: 0.8s; }
+
     .hero-content { text-align: center; }
-    .hero-content h1 { font-size: 11vw; margin: 0; font-weight: 900; letter-spacing: -6px; }
+    .hero-content h1 { font-size: 11vw; margin: 0; font-weight: 900; letter-spacing: -6px; line-height: 0.9; }
 
     .dive-btn {
       margin-top: 40px; display: inline-block; padding: 20px 60px; border: 2px solid white;
@@ -71,14 +84,13 @@
     }
     .dive-btn:hover { background: white; color: black; }
 
-    /* ====== גלריה ====== */
-    .reveal-section { position: relative; z-index: 2; background: white; }
+    /* ====== Reveal Section ====== */
+    .reveal-section { position: relative; z-index: 2; background: white; box-shadow: 0 -20px 50px rgba(0,0,0,0.3); }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
     .grid-item { position: relative; height: 90vh; overflow: hidden; cursor: pointer; }
     .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: 1s ease; }
     .grid-item:hover img { transform: scale(1.05); }
 
-    /* ====== דפים ייעודיים ====== */
     .subpage-container { padding: 180px 8%; background: white; min-height: 100vh; }
     .subpage-title { font-size: 10vw; font-weight: 900; letter-spacing: -5px; line-height: 0.8; margin-bottom: 50px; }
   </style>
@@ -86,7 +98,7 @@
 <body onload="showInitialLoader()">
 
   <div id="loader-main" class="loader-overlay"><div class="loader-logo">D&R</div></div>
-  <div id="loader-history" class="loader-overlay"><div style="font-size:3rem; letter-spacing:10px;">HISTORY LOADING...</div></div>
+  <div id="loader-history" class="loader-overlay"><div style="font-size:3rem; letter-spacing:10px; color:white;">HISTORY</div></div>
   <div id="loader-about" class="loader-overlay"><div style="color:white; font-size:3rem; font-weight:900;">D&R FILMS</div></div>
 
   <nav>
@@ -100,11 +112,13 @@
   </nav>
 
   <div id="main" class="page active">
-    <section class="hero">
+    <section class="hero" id="hero-sec">
       <div class="hero-content">
         <p style="letter-spacing: 10px; font-weight:700;">OFFICIAL INTERFACE</p>
         <h1>DOLEV & ROEE</h1>
-        <div style="font-family: 'Playfair Display'; font-style:italic; font-size: 1.5rem; margin-top:20px;">היי, אנחנו דולב ורועי, ברוכים הבאים לאתר</div>
+        <div class="welcome-text" style="font-family: 'Playfair Display'; font-style:italic; font-size: 1.5rem; margin-top:20px;">
+          היי, אנחנו דולב ורועי, ברוכים הבאים לאתר
+        </div>
         <div class="dive-btn" onclick="diveToFun()">לצלול לכיף</div>
       </div>
     </section>
@@ -116,31 +130,31 @@
   <div id="history" class="page">
     <div class="subpage-container">
       <div class="subpage-title">THE<br>LEGACY</div>
-      <p style="font-size: 2rem; font-family: 'Playfair Display'; max-width: 800px;">
-        כאן נכתבת ההיסטוריה של דולב ורועי. כל פרט ופרט באתר הזה הוא עדות לאיכות בלתי מתפשרת.
-      </p>
+      <p style="font-size: 2rem; font-family: 'Playfair Display';">מורשת של מצוינות.</p>
     </div>
   </div>
 
   <div id="about" class="page">
     <div class="subpage-container">
-      <div class="subpage-title" style="color: var(--accent-blue);">D&R<br>STUDIOS</div>
-      <div style="display:grid; gap:20px;">
-          <div style="height:400px; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">Video 1 Placeholder</div>
-          <div style="height:400px; background:#f0f0f0; display:flex; align-items:center; justify-content:center;">Video 2 Placeholder</div>
-      </div>
+      <div class="subpage-title">D&R<br>FILMS</div>
+      <p style="font-size: 2rem; font-family: 'Playfair Display';">הסרטונים שלכם יופיעו כאן בקרוב.</p>
     </div>
   </div>
 
   <script>
-    // פונקציה לטעינה ראשונית
+    // פונקציית הטענה ראשונית עם הפעלת אנימציית טקסט
     function showInitialLoader() {
       const l = document.getElementById('loader-main');
       l.style.display = 'flex';
-      setTimeout(() => { l.style.opacity = '0'; setTimeout(() => l.style.display='none', 600); }, 1500);
+      setTimeout(() => { 
+        l.style.opacity = '0'; 
+        setTimeout(() => {
+          l.style.display = 'none';
+          document.getElementById('hero-sec').classList.add('reveal-text');
+        }, 600); 
+      }, 1500);
     }
 
-    // מעבר בין דפים עם לודר ייחודי לכל דף
     function goToPage(pageId) {
       let loaderId = 'loader-main';
       if(pageId === 'history') loaderId = 'loader-history';
@@ -148,42 +162,41 @@
 
       const loader = document.getElementById(loaderId);
       loader.style.display = 'flex';
+      loader.style.opacity = '1';
       if(pageId === 'about') loader.classList.add('active');
 
       setTimeout(() => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('hero-sec').classList.remove('reveal-text');
+        
         document.getElementById(pageId).classList.add('active');
         window.scrollTo(0,0);
         
         setTimeout(() => {
           loader.style.opacity = '0';
           loader.classList.remove('active');
-          setTimeout(() => { loader.style.display='none'; loader.style.opacity='1'; }, 600);
+          if(pageId === 'main') document.getElementById('hero-sec').classList.add('reveal-text');
+          setTimeout(() => { loader.style.display='none'; }, 600);
         }, 800);
       }, 1000);
     }
 
-    // הפונקציה הקריטית: לצלול לכיף מכל מקום
     function diveToFun() {
-      const mainPage = document.getElementById('main');
-      if (!mainPage.classList.contains('active')) {
-        // אם אנחנו בדף אחר, נעבור קודם לדף הבית
+      if (!document.getElementById('main').classList.contains('active')) {
         goToPage('main');
         setTimeout(() => {
           document.getElementById('grid-start').scrollIntoView({behavior: 'smooth'});
-        }, 1800); // מחכה שהטעינה של דף הבית תסתיים
+        }, 1800);
       } else {
-        // אם אנחנו כבר בדף הבית, פשוט נגלול
         document.getElementById('grid-start').scrollIntoView({behavior: 'smooth'});
       }
     }
 
-    // מילוי גלריה
     const images = [
       './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
       './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
       './image_2026-03-13_230721055.png', './image_2026-03-13_230733426.png',
-      './image_2026-03-13_230748568.png'
+      './image_2026-03-13_222345060.png'
     ];
     const grid = document.getElementById('main-grid');
     images.forEach(src => {
