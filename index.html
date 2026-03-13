@@ -16,115 +16,107 @@
       --bg3:#041f12;
       --stroke: rgba(255,255,255,0.12);
       --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.68);
-      --pill: rgba(0,0,0,0.18);
       --ok: #24d18a;
-      --danger: #ff3b3b;
     }
 
     * { box-sizing:border-box; }
     html, body { height: 100%; margin: 0; scroll-behavior: smooth; }
     body {
-      background-color: var(--bg3);
+      background: radial-gradient(circle at 50% 30%, var(--bg2) 0%, var(--bg1) 45%, var(--bg3) 100%);
       color: var(--text);
       font-family: "Rubik", sans-serif;
       overflow-x: hidden;
     }
 
-    /* ====== שורה עליונה מאוחדת (Header) ====== */
+    /* ====== Header מעודכן ====== */
     .unified-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--stroke);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 30px;
       z-index: 1000;
     }
 
-    .header-left { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-    .header-center { font-family: "Frank Ruhl Libre", serif; font-size: 1.2rem; font-weight: 700; color: var(--ok); }
-    .header-right { display: flex; gap: 20px; }
-    .header-right a { color: var(--text); text-decoration: none; font-weight: 600; transition: 0.3s; }
-    .header-right a:hover { color: var(--ok); }
-
-    /* ====== אזור התמונה המרכזית (Hero) ====== */
-    .hero-container {
-      position: relative;
-      height: 100vh;
-      width: 100%;
-      /* החליפו את הכתובת כאן בתמונה שלכם */
-      background: url('https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop') no-repeat center center/cover;
+    /* תאריך ושעה בצד שמאל */
+    .header-left { 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      font-size: 14px; 
+      order: 1; 
     }
 
-    /* השחרה מגניבה */
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.85));
+    .header-center { 
+      font-family: "Frank Ruhl Libre", serif; 
+      font-size: 1.2rem; 
+      color: var(--ok); 
+      order: 2;
+    }
+
+    /* קישורים בצד ימין */
+    .header-right { 
+      display: flex; 
+      gap: 20px; 
+      order: 3; 
+    }
+    .header-right a { 
+      color: var(--text); 
+      text-decoration: none; 
+      font-weight: 600; 
+      cursor: pointer;
+    }
+    .header-right a:hover { color: var(--ok); }
+
+    /* ====== דפי תוכן ====== */
+    .page { display: none; min-height: 100vh; padding-top: 80px; text-align: center; }
+    .page.active { display: block; }
+
+    /* עיצוב הדף הראשי */
+    .hero-container {
+      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
-      padding: 20px;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&w=1920');
+      background-size: cover;
+      background-position: center;
     }
 
     .bibi-quote {
-      max-width: 800px;
       font-family: "Frank Ruhl Libre", serif;
       font-size: clamp(2rem, 5vw, 4rem);
       font-weight: 900;
-      color: white;
-      text-shadow: 2px 2px 15px rgba(0,0,0,0.8);
-      margin-bottom: 40px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 1.2s forwards ease-out;
+      margin-bottom: 30px;
+    }
+
+    .special-number {
+      font-size: 10rem;
+      font-weight: 900;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      color: var(--ok);
+      text-shadow: 0 0 30px rgba(36,209,138,0.3);
     }
 
     .scroll-down-btn {
-      padding: 15px 35px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: white;
-      background: transparent;
+      padding: 12px 30px;
       border: 2px solid white;
+      background: transparent;
+      color: white;
       border-radius: 50px;
       cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-    }
-
-    .scroll-down-btn:hover {
-      background: white;
-      color: black;
-      transform: scale(1.05);
-    }
-
-    /* ====== תוכן האתר (המקורי שלכם) ====== */
-    .main-content {
-      padding-top: 50px;
-      background: 
-        radial-gradient(circle at 50% 30%, var(--bg2) 0%, var(--bg1) 45%, var(--bg3) 100%);
-      min-height: 100vh;
-    }
-
-    /* התאמות לווידג'טים שלכם שיישארו למטה */
-    .secWidget, .newsWidget { z-index: 100; }
-
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-      .header-center { display: none; } /* במובייל נסתיר את האמצע כדי שלא יצטופף */
+      font-weight: bold;
     }
   </style>
 </head>
@@ -133,7 +125,7 @@
   <header class="unified-header">
     <div class="header-left">
       <span id="liveClock">00:00:00</span>
-      <span style="opacity: 0.5;">|</span>
+      <span style="opacity: 0.3;">|</span>
       <span id="gregDate">--.--.----</span>
     </div>
 
@@ -142,87 +134,70 @@
     </div>
 
     <div class="header-right">
-      <a href="#history">היסטוריה על האתר</a>
-      <a href="#about">אודות מי אנחנו</a>
+      <a onclick="showPage('history')">היסטוריה על האתר</a>
+      <a onclick="showPage('about')">אודות מי אנחנו</a>
+      <a onclick="showPage('main')" style="border-right: 1px solid var(--stroke); padding-right: 15px;">דף הבית</a>
     </div>
   </header>
 
-  <section class="hero-container">
-    <div class="hero-overlay">
+  <div id="main-page" class="page active">
+    <section class="hero-container">
       <blockquote class="bibi-quote">
-        "העוצמה היא המפתח לקיום, והעוצמה היא המפתח לשלום."
-        <div style="font-size: 1.2rem; margin-top: 10px; font-weight: 400;">- בנימין נתניהו</div>
+        "העוצמה היא המפתח לקיום."
+        <div style="font-size: 1.2rem; font-weight: 400;">- בנימין נתניהו</div>
       </blockquote>
-      <button class="scroll-down-btn" onclick="document.getElementById('site-start').scrollIntoView()">תגללו לעוד</button>
-    </div>
-  </section>
-
-  <main class="main-content" id="site-start">
-    <div class="stage">
-      <div class="centerCard">
-        <h1>ברוכים הבאים לאתר של דולב ורועי צדיקים</h1>
-        <p id="parashaName">טוען פרשה...</p>
-        <div class="pill hebrew" style="display:inline-block; margin-top:10px;">
-            <b id="dateHeb">תאריך עברי: --</b>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <div class="secWidget" id="secWidget">
-      <div class="secHeader">
-          <h3><span class="dot"></span>דיווחים ביטחוניים</h3>
-          <div class="secBtns"><button class="miniBtn" id="secToggleBtn">סגור</button></div>
-      </div>
-      <div class="secBody" id="secBody">
-          <div class="secList" id="secList"></div>
-      </div>
+      <button class="scroll-down-btn">תגללו לעוד</button>
+    </section>
   </div>
 
-  <div class="newsWidget" id="newsWidget">
-      <div class="secHeader">
-          <h3><span class="dot"></span>חדשות Ynet</h3>
-          <div class="secBtns"><button class="miniBtn" id="newsToggleBtn">סגור</button></div>
-      </div>
-      <div class="secBody" id="newsBody">
-          <div class="secList" id="newsList"></div>
-      </div>
+  <div id="history-page" class="page">
+    <div class="special-number">6767</div>
+    <p>דף היסטוריה (/history)</p>
+  </div>
+
+  <div id="about-page" class="page">
+    <div class="special-number">55655</div>
+    <p>דף אודות (/about-us)</p>
   </div>
 
   <script>
-    /* הלוגיקה המקורית שלכם עם התאמות קלות */
-    const WORKER_BASE = "https://jolly-mode-0a2a.dolevbd12.workers.dev";
-    const HEBCAL_URL = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he";
+    // פונקציית מעבר בין דפים
+    function showPage(pageName) {
+      // מסתיר את כל הדפים
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      
+      // מציג את הדף הנבחר
+      if(pageName === 'main') {
+        document.getElementById('main-page').classList.add('active');
+        window.history.pushState({}, '', '/');
+      } else if(pageName === 'history') {
+        document.getElementById('history-page').classList.add('active');
+        window.history.pushState({}, '', '/history');
+      } else if(pageName === 'about') {
+        document.getElementById('about-page').classList.add('active');
+        window.history.pushState({}, '', '/about-us');
+      }
+    }
 
-    function pad(n){ return String(n).padStart(2,"0"); }
-
-    function updateTopClock() {
+    // עדכון זמן
+    function updateClock() {
       const now = new Date();
-      document.getElementById("liveClock").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-      document.getElementById("gregDate").textContent = `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${now.getFullYear()}`;
+      document.getElementById("liveClock").textContent = now.toLocaleTimeString('he-IL');
+      document.getElementById("gregDate").textContent = now.toLocaleDateString('he-IL');
     }
+    setInterval(updateClock, 1000);
+    updateClock();
 
+    // טעינת פרשה בסיסית (כמו קודם)
     async function loadParasha() {
-      try {
-        const r = await fetch(HEBCAL_URL);
-        const j = await r.json();
-        const hebDate = j.hebrew;
-        const items = j.items || [];
-        const p = items.find(x => x.category === "parashat")?.title || "פרשת השבוע";
-        
-        document.getElementById("parashaHeader").textContent = "פרשת " + p;
-        document.getElementById("parashaName").textContent = "פרשת " + p;
-        document.getElementById("dateHeb").textContent = "תאריך עברי: " + hebDate;
-      } catch(e) { console.log("Error loading parasha"); }
+        try {
+            const r = await fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he");
+            const j = await r.json();
+            const p = j.items.find(x => x.category === "parashat")?.title || "ויקרא";
+            document.getElementById("parashaHeader").textContent = "פרשת " + p;
+        } catch(e) {}
     }
-
-    // הפעלת פונקציות
-    setInterval(updateTopClock, 1000);
-    updateTopClock();
     loadParasha();
-
-    // כאן תוכלו להוסיף את שאר הפונקציות של ה-News וה-Security שרשמתם קודם
   </script>
-
 </body>
 </html>
