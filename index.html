@@ -11,31 +11,33 @@
       --gold: #c5a059;
       --text-main: #f8f8f8;
       --bg-dark: #121212;
+      --purple: #2e1a47;
+      --blue: #1a2a47;
     }
 
     html { scroll-behavior: smooth; }
-    body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Assistant', sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-    /* ====== באנר אזעקות (משופר) ====== */
+    /* ====== אזעקות פיקוד העורף ====== */
     #alert-banner {
       display: none; position: fixed; top: 0; left: 0; right: 0;
       background: #ff0000; color: white; padding: 20px; text-align: center;
       font-weight: 900; z-index: 9999; border-bottom: 4px solid #fff;
-      font-size: 1.5rem; animation: alertBlink 0.8s infinite;
+      font-size: 1.5rem; animation: blinker 0.8s linear infinite;
     }
-    @keyframes alertBlink { 0% {background: #ff0000;} 50% {background: #8b0000;} 100% {background: #ff0000;} }
+    @keyframes blinker { 50% { opacity: 0; } }
 
     /* ====== Header ====== */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 80px;
       background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
-      display: grid; grid-template-columns: 1fr auto 1fr;
-      align-items: center; padding: 0 40px; z-index: 1000; border-bottom: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; z-index: 1000; border-bottom: 1px solid var(--gold);
     }
-    .header-left { display: flex; flex-direction: column; }
+    .header-left { display: flex; flex-direction: column; min-width: 150px; }
     #clock { font-weight: 700; font-size: 18px; color: var(--gold); }
-    .header-center { font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.6rem; font-weight: 700; }
-    .header-right { display: flex; gap: 10px; justify-content: flex-end; }
+    .header-center { font-family: 'Frank Ruhl Libre', serif; color: var(--gold); font-size: 1.6rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); }
+    .header-right { display: flex; gap: 10px; }
 
     .nav-btn {
       color: var(--text-main); text-decoration: none; font-weight: 600; cursor: pointer;
@@ -43,84 +45,93 @@
     }
     .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== Pages ====== */
-    .page { display: none; min-height: 100vh; padding-top: 80px; text-align: center; }
+    /* ====== דפים ====== */
+    .page { display: none; min-height: 100vh; width: 100%; padding-top: 80px; text-align: center; box-sizing: border-box; }
     .page.active { display: block; }
     
-    #main-hero {
-      height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png');
+    #main { background: #000; }
+    #history { background: radial-gradient(circle, var(--purple) 0%, #0c0c0c 100%); }
+    #about { background: radial-gradient(circle, var(--blue) 0%, #0c0c0c 100%); }
+
+    .hero-sec {
+      height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('./image_2026-03-13_222345060.png');
       background-size: cover; background-position: center;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* ====== קרוסלה "פי אלף" - אינסופית באמת ====== */
-    .carousel-wrap {
-      width: 100vw; overflow: hidden; background: #000; padding: 40px 0;
+    /* ====== קרוסלה "פי אלף" ללא הפסקה ====== */
+    .carousel-container {
+      width: 100%; overflow: hidden; background: #000; padding: 40px 0;
       border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
-      position: relative;
+      white-space: nowrap; position: relative;
     }
 
-    .carousel-track {
-      display: flex;
-      width: max-content;
-      animation: infiniteScroll 60s linear infinite; /* מהירות רגועה יותר כי יש המון תמונות */
+    .track {
+      display: inline-flex;
+      animation: slide 30s linear infinite;
     }
 
-    .carousel-track img {
+    .track img {
       width: 350px; height: 250px; object-fit: cover;
-      margin: 0 15px; border: 2px solid var(--gold); border-radius: 5px;
-      flex-shrink: 0;
+      margin: 0 10px; border: 2px solid var(--gold); border-radius: 8px;
     }
 
-    @keyframes infiniteScroll {
+    @keyframes slide {
       from { transform: translateX(0); }
-      to { transform: translateX(-50%); } /* ירוץ חצי דרך תמיד */
+      to { transform: translateX(-50%); } /* תמיד זז חצי מהאורך המשוכפל */
     }
 
-    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.5rem; color: var(--gold); margin: 40px 0; font-weight: 700; }
+    .welcome-text { font-family: 'Frank Ruhl Libre', serif; font-size: 2.8rem; color: var(--gold); margin: 60px 0; }
   </style>
 </head>
 <body>
 
-  <div id="alert-banner">🚨 אזעקת צבע אדום: <span id="alert-loc"></span></div>
+  <div id="alert-banner">🚨 אזעקה: <span id="alert-loc"></span></div>
 
   <header class="header">
     <div class="header-left">
       <div id="clock">00:00:00</div>
-      <div id="full-date" style="font-size:12px; opacity:0.7;"></div>
+      <div id="full-date" style="font-size:12px; opacity:0.8;"></div>
     </div>
-    <div class="header-center" id="parasha">טוען...</div>
+    <div class="header-center" id="parasha">טוען פרשה...</div>
     <div class="header-right">
-      <button class="nav-btn" onclick="showPage('history')">היסטוריה</button>
-      <button class="nav-btn" onclick="showPage('about')">אודות</button>
-      <button class="nav-btn" onclick="showPage('main')">דף הבית</button>
+      <button class="nav-btn" onclick="goTo('history')">היסטוריה</button>
+      <button class="nav-btn" onclick="goTo('about')">אודות</button>
+      <button class="nav-btn" onclick="goTo('main')">דף הבית</button>
     </div>
   </header>
 
   <div id="main" class="page active" style="padding-top:0;">
-    <section id="main-hero">
-      <div style="background: rgba(0,0,0,0.6); padding: 50px; border: 1px solid var(--gold);">
-        <h1 style="font-family: 'Frank Ruhl Libre', serif; font-size: 3rem;">"העוצמה היא המפתח לקיום."</h1>
-        <button class="nav-btn" style="padding: 15px 40px; margin-top: 20px;" onclick="document.getElementById('welcome-zone').scrollIntoView();">מוכנים לצלול לכיף?</button>
+    <section class="hero-sec">
+      <div style="background: rgba(0,0,0,0.7); padding: 50px; border: 1px solid var(--gold); backdrop-filter: blur(5px);">
+        <h1 style="font-family: 'Frank Ruhl Libre', serif; font-size: 3rem; margin: 0;">"העוצמה היא המפתח לקיום."</h1>
+        <button class="nav-btn" style="margin-top: 30px; padding: 15px 40px; font-size: 1.2rem;" onclick="document.getElementById('fun-zone').scrollIntoView();">מוכנים לצלול לכיף?</button>
       </div>
     </section>
 
-    <section id="welcome-zone" style="background: #0c0c0c; padding-bottom: 100px;">
+    <section id="fun-zone" style="background: #0c0c0c; padding-bottom: 100px;">
       <div class="welcome-text">רועי ודולב מברכים אתכם על היוולדותכם לעולם</div>
-      
-      <div class="carousel-wrap">
-        <div class="carousel-track" id="track">
-            </div>
+      <div class="carousel-container">
+        <div class="track" id="image-track">
+          </div>
       </div>
     </section>
   </div>
 
-  <div id="history" class="page"><h1>היסטוריה</h1></div>
-  <div id="about" class="page"><h1>אודותינו</h1></div>
+  <div id="history" class="page">
+    <h1 style="font-size: 4rem; color: var(--gold); margin-top: 100px;">6767</h1>
+    <h2>היסטוריה</h2>
+    <p>ברוכים הבאים לעמוד המורשת</p>
+  </div>
+
+  <div id="about" class="page">
+    <h1 style="font-size: 4rem; color: var(--gold); margin-top: 100px;">55655</h1>
+    <h2>אודות</h2>
+    <p>החזון של דולב ורועי</p>
+  </div>
 
   <script>
-    const images = [
+    const imgs = [
       './image_2026-03-13_222345060.png', './image_2026-03-13_230619314.png',
       './image_2026-03-13_230636882.png', './image_2026-03-13_230654112.png',
       './image_2026-03-13_230706432.png', './image_2026-03-13_230721055.png',
@@ -128,25 +139,21 @@
       './image_2026-03-13_230759616.png'
     ];
 
-    // יצירת מסילה סופר-ארוכה (שכפול פי 10 ליתר ביטחון)
-    const track = document.getElementById('track');
-    const createSlides = () => {
-        const fragment = document.createDocumentFragment();
-        // משכפלים את כל הסט 10 פעמים - זה יוצר שרשרת ענקית של 90 תמונות
-        for(let i=0; i < 10; i++) {
-            images.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                fragment.appendChild(img);
-            });
-        }
-        track.appendChild(fragment);
-    };
-    createSlides();
+    // מילוי הקרוסלה ב-10 סטים (90 תמונות) כדי שזה יהיה אינסופי
+    const track = document.getElementById('image-track');
+    for(let i=0; i<10; i++) {
+      imgs.forEach(s => {
+        const img = document.createElement('img');
+        img.src = s;
+        track.appendChild(img);
+      });
+    }
 
-    function showPage(id) {
+    // ניווט בין דפים
+    function goTo(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
     }
 
     // שעון
@@ -156,27 +163,20 @@
       document.getElementById('full-date').textContent = now.toLocaleDateString('he-IL', {day:'numeric', month:'long'});
     }, 1000);
 
-    // אזעקות פיקוד העורף - כולל מעקף CORS
-    async function checkOref() {
+    // אזעקות - שימוש ב-allorigins לעקוף חסימות
+    async function getAlerts() {
       try {
-        // שימוש בפרוקסי ציבורי כדי לעקוף את החסימה של דפדפנים
-        const proxyUrl = "https://api.allorigins.win/get?url=";
-        const targetUrl = encodeURIComponent("https://www.oref.org.il/WarningMessages/alert/alerts.json");
-        
-        const response = await fetch(proxyUrl + targetUrl);
-        const json = await response.json();
-        const data = JSON.parse(json.contents);
-        
-        const banner = document.getElementById('alert-banner');
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.oref.org.il/WarningMessages/alert/alerts.json')}`);
+        const d = await r.json();
+        const data = JSON.parse(d.contents);
+        const b = document.getElementById('alert-banner');
         if (data && data.data && data.data.length > 0) {
           document.getElementById('alert-loc').textContent = data.data.join(', ');
-          banner.style.display = 'block';
-        } else {
-          banner.style.display = 'none';
-        }
-      } catch (e) { console.log("Alert check failed"); }
+          b.style.display = 'block';
+        } else { b.style.display = 'none'; }
+      } catch(e) {}
     }
-    setInterval(checkOref, 3000);
+    setInterval(getAlerts, 3000);
 
     // פרשה
     fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&lg=he")
