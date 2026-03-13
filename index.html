@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R STUDIO | Official</title>
+  <title>D&R STUDIO | Phenomenal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
   <style>
@@ -19,15 +19,35 @@
       background-color: var(--bg); overflow-x: hidden;
     }
 
-    /* ====== לודר D&R STUDIO ====== */
+    /* ====== לודר "התכוננו לפנומן" המקפץ ====== */
     .loader-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: none; justify-content: center; align-items: center; z-index: 9999;
       background: #000; transition: opacity 0.6s ease;
     }
     .loader-content { text-align: center; color: white; }
-    .studio-text { font-size: 4rem; font-weight: 900; letter-spacing: 15px; text-transform: uppercase; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 0.5; letter-spacing: 15px; } 50% { opacity: 1; letter-spacing: 25px; } }
+    
+    .studio-bounce { 
+      font-size: 5rem; font-weight: 900; letter-spacing: -2px; color: var(--accent-blue);
+      display: inline-block;
+      animation: bounceJump 1.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+    
+    .phenomenon-text { 
+      margin-top: 30px; font-size: 1.5rem; letter-spacing: 8px; 
+      text-transform: uppercase; font-weight: 300; color: #fff;
+      animation: fadeInOut 1.8s ease-in-out infinite;
+    }
+
+    @keyframes bounceJump {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      50% { transform: translateY(-40px) rotate(180deg) scale(1.2); color: #fff; }
+    }
+    
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.3; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
 
     /* ====== Navigation ====== */
     nav {
@@ -37,7 +57,7 @@
     }
     .logo { font-weight: 900; font-size: 2.8rem; cursor: pointer; letter-spacing: -2px; }
     .nav-links { display: flex; gap: 40px; font-size: 15px; text-transform: uppercase; font-weight: 700; }
-    .nav-links div { cursor: pointer; transition: 0.3s; }
+    .nav-links div { cursor: pointer; }
 
     /* ====== Hero Section ====== */
     .page { display: none; min-height: 100vh; width: 100%; }
@@ -54,19 +74,17 @@
     /* ====== גלריה ====== */
     .reveal-section { position: relative; z-index: 20; background: white; padding-top: 100px; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-    .grid-item { height: 90vh; overflow: hidden; background: #000; }
-    .grid-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.8s; }
-    .grid-item:hover img { opacity: 1; transform: scale(1.03); }
+    .grid-item { height: 90vh; overflow: hidden; background: #000; cursor: pointer; }
+    .grid-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.8s ease; }
+    .grid-item:hover img { opacity: 1; transform: scale(1.05); }
 
     /* ====== Footer: הכירו את דולב ורועי ====== */
     .meet-us {
       padding: 150px 5%; background: #000; color: white;
       display: flex; justify-content: space-around; text-align: center;
     }
-    .person-card { flex: 1; transition: 0.5s; cursor: pointer; }
-    .person-card:hover { color: var(--accent-blue); }
     .person-card h3 { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin: 0; }
-    .person-card p { font-family: 'Playfair Display'; font-style: italic; font-size: 1.2rem; opacity: 0.7; }
+    .person-card p { font-family: 'Playfair Display'; font-style: italic; font-size: 1.2rem; opacity: 0.6; margin-bottom: 10px; }
 
     /* ====== דפי תוכן ====== */
     .subpage-container { padding: 180px 8%; background: white; min-height: 100vh; }
@@ -77,8 +95,8 @@
 
   <div id="loader-main" class="loader-overlay">
     <div class="loader-content">
-        <div class="studio-text">D&R STUDIO</div>
-        <p style="letter-spacing: 5px; margin-top: 20px;">PRODUCTION START</p>
+        <div class="studio-bounce">D&R STUDIO</div>
+        <div class="phenomenon-text">התכוננו לפנומן</div>
     </div>
   </div>
 
@@ -96,7 +114,7 @@
       <div class="sticky-wrap">
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
         <div style="position: absolute; bottom: 10%; width: 100%; text-align: center;">
-            <div style="border: 1px solid white; display: inline-block; padding: 15px 40px; color: white; cursor: pointer; letter-spacing: 5px; font-weight: 900;" onclick="diveToFun()">DIVE IN</div>
+            <div style="border: 2px solid white; display: inline-block; padding: 15px 50px; color: white; cursor: pointer; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; transition: 0.3s;" onclick="diveToFun()">DIVE IN</div>
         </div>
       </div>
     </section>
@@ -121,17 +139,14 @@
   <div id="history" class="page">
     <div class="subpage-container">
       <div class="studio-header">OUR<br>LEGACY</div>
-      <p style="font-size: 2rem; font-family: 'Playfair Display';">המורשת של הסטודיו נבנית בכל פריים מחדש.</p>
+      <p style="font-size: 2rem; font-family: 'Playfair Display';">נכתב ע"י דולב ורועי.</p>
     </div>
   </div>
 
   <div id="films" class="page">
     <div class="subpage-container">
-      <div class="studio-header" style="color: var(--accent-blue);">D&R STUDIO<br>FILMS</div>
-      <div style="display: grid; gap: 40px; margin-top: 50px;">
-          <div style="height: 500px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem;">COMING SOON: FILM 01</div>
-          <div style="height: 500px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem;">COMING SOON: FILM 02</div>
-      </div>
+      <div class="studio-header">STUDIO<br>FILMS</div>
+      <div style="height: 400px; background: #eee; display: flex; align-items: center; justify-content: center; font-weight: 900;">VIDEO GALLERY COMING SOON</div>
     </div>
   </div>
 
@@ -142,7 +157,7 @@
       setTimeout(() => { 
         l.style.opacity = '0'; 
         setTimeout(() => l.style.display = 'none', 600); 
-      }, 2000);
+      }, 2500); // קצת יותר זמן כדי שיראו את הפנומן
     }
 
     window.addEventListener('scroll', () => {
@@ -150,6 +165,7 @@
       const winHeight = window.innerHeight;
       const progress = Math.min(scrollPos / winHeight, 1);
       const name = document.getElementById('main-name');
+      // השם מחליק מימין לשמאל
       const xPos = 100 - (progress * 200); 
       name.style.transform = `translateX(${xPos}%)`;
     });
@@ -162,7 +178,7 @@
         document.getElementById(pageId).classList.add('active');
         window.scrollTo(0,0);
         setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => loader.style.display='none', 600); }, 1000);
-      }, 1200);
+      }, 1500);
     }
 
     function diveToFun() {
