@@ -2,11 +2,18 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>D&R | Official</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="D&R">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
   
+  <title>D&R | Official App</title>
+  
+  <link rel="apple-touch-icon" href="./image_2026-03-13_222345060.png">
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -15,148 +22,126 @@
       --bg-dark: #050505;
     }
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { 
       margin: 0; padding: 0; font-family: 'Assistant', sans-serif; 
-      background: var(--bg-dark); color: white; overflow-x: hidden; 
+      background: var(--bg-dark); color: white; overflow-x: hidden;
+      user-select: none; /* מונע בחירת טקסט מעצבן באפליקציה */
     }
 
-    /* ====== תפריט צף - שורה אחת מושלמת ====== */
-    .floating-nav {
-      position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 10px; z-index: 2000;
-      pointer-events: none;
+    /* ====== מסך פתיחה (Splash Screen) ====== */
+    #splash-screen {
+      position: fixed; inset: 0; background: var(--bg-dark);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 10000; transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     }
-    @media (min-width: 768px) { .floating-nav { padding: 0 50px; height: 90px; } }
+    .splash-logo {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    /* ====== תפריט עליון - אופטימיזציה למובייל ====== */
+    .floating-nav {
+      position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 25px 15px 10px 15px; z-index: 2000; pointer-events: none;
+    }
     .floating-nav > * { pointer-events: auto; }
 
-    .brand-home {
+    .nav-btn, .brand-home {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
-      padding: 5px 10px; border-radius: 50px;
+      padding: 6px 14px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.65rem; flex: 0 0 auto;
+      border: none; cursor: pointer; font-size: 0.7rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    @media (min-width: 768px) { .brand-home { padding: 12px 30px; font-size: 1.1rem; } }
+    #clock { font-size: 14px; color: var(--gold-bright); font-family: 'Cinzel'; font-weight: 900; flex: 1; text-align: center; }
 
-    #clock { 
-      font-size: 12px; color: var(--gold-bright); font-weight: 900; 
-      font-family: 'Cinzel'; flex: 1; text-align: center; white-space: nowrap;
-    }
-    @media (min-width: 768px) { #clock { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); } }
-    
-    .nav-links { display: flex; gap: 5px; flex: 0 0 auto; }
-    .nav-btn {
-      color: #000; font-family: 'Cinzel'; font-weight: 900;
-      padding: 5px 8px; border-radius: 50px;
-      background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.6rem; white-space: nowrap;
-    }
-    @media (min-width: 768px) { .nav-btn { padding: 10px 28px; font-size: 0.9rem; } }
-
-    /* ====== המעברים המגניבים (Transitions) ====== */
+    /* ====== אנימציות מעבר ====== */
     .page { 
-      display: none; 
-      opacity: 0; 
-      transform: scale(1.1); /* מתחיל גדול */
-      filter: blur(15px); /* מתחיל מטושטש */
+      display: none; opacity: 0; transform: scale(1.1); filter: blur(20px);
       transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-      position: absolute; width: 100%; top: 0; left: 0;
+      position: absolute; width: 100%; top: 0;
     }
-    .page.active { 
-      display: block; 
-      opacity: 1; 
-      transform: scale(1); /* חוזר לגודל רגיל */
-      filter: blur(0); /* מתנקה מהטשטוש */
-    }
-    .page.exit {
-      opacity: 0;
-      transform: scale(0.9); /* קטן ביציאה */
-      filter: blur(10px);
-    }
+    .page.active { display: block; opacity: 1; transform: scale(1); filter: blur(0); }
+    .page.exit { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(10px); }
 
-    /* ====== HERO ====== */
-    .hero-section { height: 200vh; width: 100%; position: relative; }
-    .hero-sticky-box {
+    /* ====== עיצוב דף הבית ====== */
+    .hero-sticky {
       position: sticky; top: 0; height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .parasha-float { font-family: 'Cinzel'; font-size: 1.2rem; color: var(--gold); letter-spacing: 5px; margin-bottom: 20px; will-change: transform; }
-    .scrolling-name { font-size: 15vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; text-transform: uppercase; white-space: nowrap; will-change: transform; }
-    
-    .reveal-group { opacity: 0; transform: translateY(30px); transition: 0.8s ease; margin-top: 30px; text-align: center; }
-    .reveal-group.show { opacity: 1; transform: translateY(0); }
-
-    /* ====== LOADER ====== */
-    #loader-main { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: 0.5s; }
+    .scrolling-name { font-size: 16vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; white-space: nowrap; will-change: transform; }
+    .parasha-float { font-family: 'Cinzel'; font-size: 1.2rem; color: var(--gold); letter-spacing: 5px; margin-bottom: 10px; will-change: transform; }
   </style>
 </head>
-<body onload="init()">
+<body>
 
-  <div id="loader-main"><div style="font-size:3rem; color:var(--gold); font-family:Inter; font-weight:900;">D&R</div></div>
+  <div id="splash-screen">
+    <div class="splash-logo"></div>
+    <h2 style="font-family:Cinzel; color:var(--gold); margin-top:20px; letter-spacing:5px;">D&R</h2>
+  </div>
 
   <nav class="floating-nav">
     <button class="brand-home" onclick="navigateTo('/')">D&R</button>
     <div id="clock">00:00:00</div>
-    <div class="nav-links">
+    <div style="display:flex; gap:5px;">
       <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
       <button class="nav-btn" onclick="navigateTo('/films')">סרטים</button>
     </div>
   </nav>
 
   <div id="page-home" class="page">
-    <section class="hero-section">
-      <div class="hero-sticky-box">
+    <div style="height: 200vh;">
+      <div class="hero-sticky">
         <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
-        <div class="reveal-group" id="reveal-elements">
-          <div style="font-family:'Cinzel'; color:var(--gold); margin-bottom:15px; letter-spacing:3px;">ESTABLISHED 2026</div>
-          <button style="font-family:'Cinzel'; background:var(--gold); border:none; padding:12px 30px; font-weight:900; cursor:pointer;" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">בואו נתחיל</button>
-        </div>
       </div>
-    </section>
-    <div id="gallery-zone" style="height:100vh; background:var(--bg-dark); display:flex; align-items:center; justify-content:center;">
-        <h2 style="font-family:Cinzel; color:var(--gold-bright);">GALLERY COMING SOON</h2>
     </div>
   </div>
 
   <div id="page-history" class="page">
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-        <h2 style="font-size:4rem; font-family:Cinzel; color:var(--gold-bright);">HISTORY</h2>
-        <p style="max-width:600px; font-size:1.2rem; opacity:0.8;">כאן נשמרים כל הרגעים הגדולים של D&R מאז ההקמה בשנת 2026.</p>
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <h1 style="font-family:Cinzel; font-size:3rem; color:var(--gold);">HISTORY</h1>
     </div>
   </div>
 
   <div id="page-films" class="page">
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-        <h2 style="font-size:4rem; font-family:Cinzel; color:var(--gold-bright);">FILMS</h2>
-        <p style="max-width:600px; font-size:1.2rem; opacity:0.8;">הפקות המקור והסרטים הבלעדיים שלנו. בקרוב בבכורה.</p>
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <h1 style="font-family:Cinzel; font-size:3rem; color:var(--gold);">FILMS</h1>
     </div>
   </div>
 
   <script>
     function init() {
-      setTimeout(() => {
-        document.getElementById('loader-main').style.opacity = '0';
-        setTimeout(() => document.getElementById('loader-main').style.display = 'none', 500);
+      // עדכון שעון
+      setInterval(() => {
+        document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
       }, 1000);
-      updateClock();
+
+      // הסרת מסך פתיחה
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        setTimeout(() => splash.style.display = 'none', 800);
+      }, 1500);
+
       handleRoute(window.location.pathname);
     }
 
     function navigateTo(path) {
-      const currentPage = document.querySelector('.page.active');
-      if (currentPage) {
-        currentPage.classList.add('exit');
-        currentPage.classList.remove('active');
-        setTimeout(() => {
-            currentPage.style.display = 'none';
-            currentPage.classList.remove('exit');
-        }, 800);
+      const current = document.querySelector('.page.active');
+      if (current) {
+        current.classList.add('exit');
+        setTimeout(() => { current.classList.remove('active', 'exit'); current.style.display = 'none'; }, 800);
       }
-
       setTimeout(() => {
         window.history.pushState({}, "", path);
         handleRoute(path);
@@ -167,36 +152,23 @@
     function handleRoute(path) {
       let id = 'page-home';
       if(path.includes('history')) id = 'page-history';
-      else if(path.includes('films')) id = 'page-films';
-      
+      if(path.includes('films')) id = 'page-films';
       const target = document.getElementById(id);
       target.style.display = 'block';
-      setTimeout(() => {
-        target.classList.add('active');
-      }, 50);
+      setTimeout(() => target.classList.add('active'), 50);
     }
 
     window.addEventListener('scroll', () => {
       const home = document.getElementById('page-home');
       if(home.classList.contains('active')) {
-        const scroll = window.scrollY;
-        const height = window.innerHeight;
-        const progress = Math.min(scroll / height, 1);
-        const moveFactor = window.innerWidth < 768 ? 60 : 100;
-        
-        document.getElementById('main-name').style.transform = `translateX(${50 - (progress * moveFactor)}%)`;
-        document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * moveFactor)}%)`;
-        
-        if (progress > 0.8) document.getElementById('reveal-elements').classList.add('show');
-        else document.getElementById('reveal-elements').classList.remove('show');
+        const progress = Math.min(window.scrollY / window.innerHeight, 1);
+        const factor = window.innerWidth < 768 ? 70 : 100;
+        document.getElementById('main-name').style.transform = `translateX(${50 - (progress * factor)}%)`;
+        document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * factor)}%)`;
       }
     });
 
-    function updateClock() {
-      setInterval(() => {
-        document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12: false});
-      }, 1000);
-    }
+    window.onload = init;
   </script>
 </body>
 </html>
