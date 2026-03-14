@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R STUDIO | היכל העוצמה</title>
+  <title>D&R | Official</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -20,29 +20,33 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== LOADER: התכוננו לפנומן ====== */
+    /* ====== LOADER: D&R קופץ עם חץ ====== */
     #loader-main {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: flex; justify-content: center; align-items: center; z-index: 9999;
       background: var(--bg-dark); transition: opacity 0.8s ease;
     }
     .loader-content { text-align: center; }
-    .studio-bounce { 
-      font-size: 5rem; font-weight: 900; color: var(--gold);
-      display: inline-block; animation: bounceJump 1.8s infinite;
-      font-family: 'Inter', sans-serif;
+    .dr-bounce { 
+      font-size: 6rem; font-weight: 900; color: var(--gold);
+      display: inline-block; animation: simpleJump 1.5s ease-in-out infinite;
+      font-family: 'Inter', sans-serif; letter-spacing: -5px;
     }
-    .phenomenon-text { 
-      margin-top: 20px; font-size: 1.2rem; letter-spacing: 10px; color: white;
-      text-transform: uppercase; animation: fadeInOut 1.5s infinite;
+    .scroll-arrow {
+      margin-top: 20px; font-size: 2rem; color: var(--gold);
+      animation: arrowDown 1.5s infinite; display: block;
     }
-    @keyframes bounceJump {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-30px) rotate(180deg); }
-    }
-    @keyframes fadeInOut { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-    /* ====== HEADER: המקורי משודרג ====== */
+    @keyframes simpleJump {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-25px); }
+    }
+    @keyframes arrowDown {
+      0%, 100% { transform: translateY(0); opacity: 0.3; }
+      50% { transform: translateY(15px); opacity: 1; }
+    }
+
+    /* ====== HEADER ====== */
     .header {
       position: fixed; top: 0; left: 0; right: 0; height: 90px;
       background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px);
@@ -59,10 +63,10 @@
     }
     .nav-btn:hover { background: var(--gold); color: black; }
 
-    /* ====== HERO: אנימציית הטקסט הזז (במקום הפריים באמצע) ====== */
+    /* ====== HERO: השם הוקטן לגלילה יפה ====== */
     .hero {
       height: 200vh; width: 100%; position: relative;
-      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       background-attachment: fixed;
     }
     .sticky-wrap {
@@ -70,30 +74,26 @@
       display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
     .scrolling-name {
-      font-size: 15vw; font-weight: 900; color: transparent; 
-      -webkit-text-stroke: 2px var(--gold); font-family: 'Inter', sans-serif;
+      font-size: 10vw; /* מ-15vw ל-10vw - קטן יותר ומרשים */
+      font-weight: 900; color: transparent; 
+      -webkit-text-stroke: 1.5px var(--gold); font-family: 'Inter', sans-serif;
       text-transform: uppercase; white-space: nowrap; will-change: transform;
+      letter-spacing: -2px;
     }
 
-    /* ====== GALLERY & CARDS ====== */
+    /* ====== GALLERY ====== */
     .page { display: none; }
     .page.active { display: block; }
-    .gallery-zone { background: var(--bg-dark); padding: 100px 20px; position: relative; z-index: 10; }
+    .gallery-zone { background: var(--bg-dark); padding: 50px 20px 100px; position: relative; z-index: 10; }
     .gallery-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px; max-width: 1400px; margin: 50px auto;
+      gap: 25px; max-width: 1400px; margin: 0 auto;
     }
     .card {
-      height: 500px; cursor: pointer; border: 2px solid #222;
+      height: 500px; cursor: pointer; border: 1px solid #222;
       background-size: cover; background-position: center; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-      position: relative; overflow: hidden;
-    }
-    .card::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 0;
-      background: linear-gradient(transparent, var(--gold)); opacity: 0.3; transition: 0.4s;
     }
     .card:hover { transform: scale(1.02); border-color: var(--gold); }
-    .card:hover::after { height: 100%; }
 
     /* ====== MODAL ====== */
     .modal {
@@ -102,21 +102,18 @@
     }
     .modal-content {
       background: #000; margin: 10% auto; padding: 60px; border: 2px solid var(--gold);
-      width: 320px; text-align: center; box-shadow: 0 0 70px rgba(197, 160, 89, 0.4);
+      width: 300px; text-align: center;
     }
     .modal-number { font-size: 8rem; font-weight: 900; color: var(--gold); font-family: 'Inter'; }
-
-    /* ====== HISTORY ====== */
-    .subpage-container { padding: 150px 10%; line-height: 1.8; text-align: center; }
-    .subpage-container h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 4rem; margin-bottom: 40px; }
   </style>
 </head>
 <body onload="init()">
 
   <div id="loader-main">
     <div class="loader-content">
-        <div class="studio-bounce">D&R STUDIO</div>
-        <div class="phenomenon-text">התכוננו לפנומן</div>
+        <div class="dr-bounce">D&R</div>
+        <div class="phenomenon-text" style="letter-spacing: 5px;">התכוננו לפנומן</div>
+        <div class="scroll-arrow">↓</div>
     </div>
   </div>
 
@@ -141,24 +138,16 @@
     </section>
 
     <div id="gallery-zone" class="gallery-zone">
-      <h2 style="text-align: center; font-family: 'Cinzel', serif; font-size: 3rem; color: var(--gold);">WELCOME TO THE EMPIRE</h2>
+      <div style="text-align: center; margin-bottom: 50px;">
+        <p style="color: var(--gold); letter-spacing: 10px; font-size: 0.8rem; margin-bottom: 10px;">EST. 2026</p>
+        <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--white);">GALLERY</h2>
+      </div>
       <div class="gallery-grid" id="gallery"></div>
     </div>
   </div>
 
-  <div id="history" class="page">
-    <div class="subpage-container">
-      <h2>OUR LEGACY</h2>
-      <p style="font-size: 1.5rem; color: #ccc;">המורשת של דולב ורועי נבנתה מתוך תשוקה לעוצמה ואיכות בלתי מתפשרת.</p>
-    </div>
-  </div>
-
-  <div id="films" class="page">
-    <div class="subpage-container">
-      <h2>D&R FILMS</h2>
-      <p style="font-size: 1.5rem; color: #ccc;">בקרוב: גלריית הסרטים של הסטודיו.</p>
-    </div>
-  </div>
+  <div id="history" class="page"><div style="padding:150px; text-align:center;"><h2>OUR LEGACY</h2></div></div>
+  <div id="films" class="page"><div style="padding:150px; text-align:center;"><h2>D&R FILMS</h2></div></div>
 
   <div id="surpriseModal" class="modal">
     <div class="modal-content">
@@ -173,23 +162,24 @@
       setTimeout(() => {
         document.getElementById('loader-main').style.opacity = '0';
         setTimeout(() => document.getElementById('loader-main').style.display = 'none', 800);
-      }, 2500);
+      }, 2000);
       updateClock();
       fetchParasha();
     }
 
-    // אנימציית גלילה לשמות (D&R)
+    // גלילה חלקה של השם
     window.addEventListener('scroll', () => {
       const scrollPos = window.scrollY;
       const winHeight = window.innerHeight;
-      const progress = Math.min(scrollPos / winHeight, 1.5);
+      const progress = Math.min(scrollPos / winHeight, 1.2);
       const name = document.getElementById('main-name');
-      const xPos = 100 - (progress * 200); 
+      
+      // תנועה מעודנת יותר
+      const xPos = 60 - (progress * 120); 
       name.style.transform = `translateX(${xPos}%)`;
       
-      // שינוי צבע הדרגתי מזהב חלול לזהב מלא
-      if(progress > 0.5) {
-          name.style.color = `rgba(197, 160, 89, ${progress - 0.5})`;
+      if(progress > 0.4) {
+          name.style.color = `rgba(197, 160, 89, ${progress - 0.4})`;
       } else {
           name.style.color = 'transparent';
       }
