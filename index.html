@@ -22,54 +22,59 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== תפריט צף - שורה אחת מושלמת במובייל ====== */
+    /* ====== תפריט צף - שורה אחת מושלמת ====== */
     .floating-nav {
       position: fixed; top: 0; left: 0; width: 100%; height: 60px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 10px; z-index: 2000;
-      background: rgba(5, 5, 5, 0.4); /* רקע עדין לניווט */
-      backdrop-filter: blur(5px);
       pointer-events: none;
     }
-    @media (min-width: 768px) { .floating-nav { padding: 0 50px; height: 90px; background: transparent; backdrop-filter: none; } }
-    
+    @media (min-width: 768px) { .floating-nav { padding: 0 50px; height: 90px; } }
     .floating-nav > * { pointer-events: auto; }
 
-    /* כפתור D&R */
     .brand-home {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
       padding: 5px 10px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.65rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-      flex: 0 0 auto;
+      border: none; cursor: pointer; font-size: 0.65rem; flex: 0 0 auto;
     }
     @media (min-width: 768px) { .brand-home { padding: 12px 30px; font-size: 1.1rem; } }
 
-    /* שעון - לא Absolute בנייד כדי שלא יעלה על אחרים */
     #clock { 
       font-size: 12px; color: var(--gold-bright); font-weight: 900; 
-      font-family: 'Cinzel'; text-shadow: 0 0 5px rgba(0,0,0,1);
-      flex: 1; text-align: center; /* תופס את כל המרכז ודוחף את הצדדים */
-      white-space: nowrap;
+      font-family: 'Cinzel'; flex: 1; text-align: center; white-space: nowrap;
     }
-    @media (min-width: 768px) { 
-        #clock { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); } 
-    }
+    @media (min-width: 768px) { #clock { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); } }
     
-    .nav-links { display: flex; gap: 5px; flex: 0 0 auto; justify-content: flex-end; }
-    @media (min-width: 768px) { .nav-links { gap: 15px; } }
-
-    /* כפתורי ניווט */
+    .nav-links { display: flex; gap: 5px; flex: 0 0 auto; }
     .nav-btn {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
       padding: 5px 8px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.6rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-      white-space: nowrap;
+      border: none; cursor: pointer; font-size: 0.6rem; white-space: nowrap;
     }
     @media (min-width: 768px) { .nav-btn { padding: 10px 28px; font-size: 0.9rem; } }
+
+    /* ====== המעברים המגניבים (Transitions) ====== */
+    .page { 
+      display: none; 
+      opacity: 0; 
+      transform: scale(1.1); /* מתחיל גדול */
+      filter: blur(15px); /* מתחיל מטושטש */
+      transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      position: absolute; width: 100%; top: 0; left: 0;
+    }
+    .page.active { 
+      display: block; 
+      opacity: 1; 
+      transform: scale(1); /* חוזר לגודל רגיל */
+      filter: blur(0); /* מתנקה מהטשטוש */
+    }
+    .page.exit {
+      opacity: 0;
+      transform: scale(0.9); /* קטן ביציאה */
+      filter: blur(10px);
+    }
 
     /* ====== HERO ====== */
     .hero-section { height: 200vh; width: 100%; position: relative; }
@@ -78,47 +83,23 @@
       background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
     }
-
-    .parasha-float {
-      font-family: 'Cinzel'; font-size: 1rem; color: var(--gold);
-      letter-spacing: 3px; margin-bottom: 20px; white-space: nowrap;
-      will-change: transform; opacity: 0.8;
-    }
-    @media (min-width: 768px) { .parasha-float { font-size: 2.5rem; letter-spacing: 15px; } }
-
-    .scrolling-name {
-      font-size: 15vw; font-weight: 900; color: transparent; 
-      -webkit-text-stroke: 0.8px var(--gold); font-family: 'Inter';
-      text-transform: uppercase; white-space: nowrap; will-change: transform;
-    }
-    @media (min-width: 768px) { .scrolling-name { font-size: 10vw; -webkit-text-stroke: 1.5px var(--gold); } }
-
-    .reveal-group {
-      display: flex; flex-direction: column; align-items: center;
-      opacity: 0; transform: translateY(20px);
-      transition: 0.8s ease; margin-top: 30px;
-    }
+    .parasha-float { font-family: 'Cinzel'; font-size: 1.2rem; color: var(--gold); letter-spacing: 5px; margin-bottom: 20px; will-change: transform; }
+    .scrolling-name { font-size: 15vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; text-transform: uppercase; white-space: nowrap; will-change: transform; }
+    
+    .reveal-group { opacity: 0; transform: translateY(30px); transition: 0.8s ease; margin-top: 30px; text-align: center; }
     .reveal-group.show { opacity: 1; transform: translateY(0); }
 
-    /* ====== OTHER ====== */
-    #loader-main {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; justify-content: center; align-items: center; z-index: 9999;
-      background: var(--bg-dark);
-    }
-    .page { display: none; opacity: 0; transition: 0.5s; }
-    .page.active { display: block; opacity: 1; }
+    /* ====== LOADER ====== */
+    #loader-main { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: 0.5s; }
   </style>
 </head>
 <body onload="init()">
 
-  <div id="loader-main"><div style="font-size:2rem; color:var(--gold); font-family:Inter; font-weight:900;">D&R</div></div>
+  <div id="loader-main"><div style="font-size:3rem; color:var(--gold); font-family:Inter; font-weight:900;">D&R</div></div>
 
   <nav class="floating-nav">
     <button class="brand-home" onclick="navigateTo('/')">D&R</button>
-    
     <div id="clock">00:00:00</div>
-    
     <div class="nav-links">
       <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
       <button class="nav-btn" onclick="navigateTo('/films')">סרטים</button>
@@ -131,62 +112,83 @@
         <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
         <div class="reveal-group" id="reveal-elements">
-          <div style="font-family:'Cinzel'; color:var(--gold); margin-bottom:10px;">ESTABLISHED 2026</div>
-          <button style="font-family:'Cinzel'; background:var(--gold); border:none; padding:10px 20px; font-weight:900;" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">בואו נתחיל</button>
+          <div style="font-family:'Cinzel'; color:var(--gold); margin-bottom:15px; letter-spacing:3px;">ESTABLISHED 2026</div>
+          <button style="font-family:'Cinzel'; background:var(--gold); border:none; padding:12px 30px; font-weight:900; cursor:pointer;" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">בואו נתחיל</button>
         </div>
       </div>
     </section>
-    <div id="gallery-zone" style="height:100vh; background:var(--bg-dark); padding:20px; text-align:center;">
-      <h2>הגלריה שלך כאן</h2>
+    <div id="gallery-zone" style="height:100vh; background:var(--bg-dark); display:flex; align-items:center; justify-content:center;">
+        <h2 style="font-family:Cinzel; color:var(--gold-bright);">GALLERY COMING SOON</h2>
     </div>
   </div>
 
-  <div id="page-history" class="page" style="padding-top:100px; text-align:center;"><h1>HISTORY</h1></div>
-  <div id="page-films" class="page" style="padding-top:100px; text-align:center;"><h1>FILMS</h1></div>
+  <div id="page-history" class="page">
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+        <h2 style="font-size:4rem; font-family:Cinzel; color:var(--gold-bright);">HISTORY</h2>
+        <p style="max-width:600px; font-size:1.2rem; opacity:0.8;">כאן נשמרים כל הרגעים הגדולים של D&R מאז ההקמה בשנת 2026.</p>
+    </div>
+  </div>
+
+  <div id="page-films" class="page">
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+        <h2 style="font-size:4rem; font-family:Cinzel; color:var(--gold-bright);">FILMS</h2>
+        <p style="max-width:600px; font-size:1.2rem; opacity:0.8;">הפקות המקור והסרטים הבלעדיים שלנו. בקרוב בבכורה.</p>
+    </div>
+  </div>
 
   <script>
     function init() {
       setTimeout(() => {
         document.getElementById('loader-main').style.opacity = '0';
         setTimeout(() => document.getElementById('loader-main').style.display = 'none', 500);
-      }, 800);
+      }, 1000);
       updateClock();
       handleRoute(window.location.pathname);
     }
 
     function navigateTo(path) {
-      window.history.pushState({}, "", path);
-      handleRoute(path);
+      const currentPage = document.querySelector('.page.active');
+      if (currentPage) {
+        currentPage.classList.add('exit');
+        currentPage.classList.remove('active');
+        setTimeout(() => {
+            currentPage.style.display = 'none';
+            currentPage.classList.remove('exit');
+        }, 800);
+      }
+
+      setTimeout(() => {
+        window.history.pushState({}, "", path);
+        handleRoute(path);
+      }, 100);
       window.scrollTo(0, 0);
     }
 
     function handleRoute(path) {
-      document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
       let id = 'page-home';
       if(path.includes('history')) id = 'page-history';
-      if(path.includes('films')) id = 'page-films';
+      else if(path.includes('films')) id = 'page-films';
+      
       const target = document.getElementById(id);
       target.style.display = 'block';
-      setTimeout(() => target.classList.add('active'), 50);
+      setTimeout(() => {
+        target.classList.add('active');
+      }, 50);
     }
 
     window.addEventListener('scroll', () => {
       const home = document.getElementById('page-home');
-      if(home.style.display !== 'none') {
+      if(home.classList.contains('active')) {
         const scroll = window.scrollY;
         const height = window.innerHeight;
         const progress = Math.min(scroll / height, 1);
-        
         const moveFactor = window.innerWidth < 768 ? 60 : 100;
         
         document.getElementById('main-name').style.transform = `translateX(${50 - (progress * moveFactor)}%)`;
         document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * moveFactor)}%)`;
         
-        if (progress > 0.8) {
-          document.getElementById('reveal-elements').classList.add('show');
-        } else {
-          document.getElementById('reveal-elements').classList.remove('show');
-        }
+        if (progress > 0.8) document.getElementById('reveal-elements').classList.add('show');
+        else document.getElementById('reveal-elements').classList.remove('show');
       }
     });
 
