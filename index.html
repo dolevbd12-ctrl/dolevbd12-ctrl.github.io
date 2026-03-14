@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R | Gold Edition</title>
+  <title>D&R | Elite Design</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -20,32 +20,35 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== LOADER ====== */
-    #loader-main {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; justify-content: center; align-items: center; z-index: 9999;
-      background: var(--bg-dark); transition: opacity 0.8s ease;
-    }
-    .dr-bounce { font-size: 6rem; font-weight: 900; color: var(--gold); animation: simpleJump 1.5s infinite; font-family: 'Inter'; }
-    @keyframes simpleJump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
-
-    /* ====== HEADER & ROUND GOLD BUTTONS ====== */
+    /* ====== HEADER (שורת משימות) ====== */
     .header {
-      position: fixed; top: 0; left: 0; right: 0; height: 110px;
+      position: fixed; top: 0; left: 0; right: 0; height: 100px;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; z-index: 1000;
+      padding: 0 50px; z-index: 1000; border-bottom: 1px solid rgba(197, 160, 89, 0.2);
     }
+    
+    .header-left { display: flex; flex-direction: column; }
+    #clock { font-size: 24px; color: var(--gold); font-weight: 900; font-family: 'Cinzel', serif; }
+    
+    /* ====== כפתורי אליפסה מוזהבים ====== */
+    .nav-links { display: flex; gap: 15px; }
+    
     .nav-btn {
       color: black; font-family: 'Cinzel', serif; font-weight: 700;
-      width: 100px; height: 100px; border-radius: 50%;
-      border: 2px solid var(--gold-bright);
-      background: radial-gradient(circle, var(--gold-bright), var(--gold));
-      cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      margin-left: 15px; font-size: 0.85rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-      display: inline-flex; align-items: center; justify-content: center; text-align: center;
-      line-height: 1.1;
+      padding: 12px 35px; border-radius: 50px; /* הופך אותו לאליפסה */
+      border: 1px solid var(--gold-bright);
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      cursor: pointer; transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      font-size: 0.9rem; text-decoration: none; display: flex; align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    .nav-btn:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 25px var(--gold); }
+    
+    .nav-btn:hover { 
+      transform: translateY(-3px) scale(1.05); 
+      box-shadow: 0 8px 25px rgba(197, 160, 89, 0.5);
+      filter: brightness(1.1);
+    }
 
     /* ====== HERO & SCROLLING NAME ====== */
     .hero {
@@ -63,19 +66,19 @@
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
 
-    /* ====== "לצלול לכיף" BUTTON ====== */
+    /* ====== לצלול לכיף BUTTON ====== */
     .dive-btn-container {
-      margin-top: 30px; opacity: 0; transform: translateY(20px); transition: 0.8s ease;
+      margin-top: 40px; opacity: 0; transform: translateY(30px); transition: 1s ease;
     }
     .dive-btn-container.visible { opacity: 1; transform: translateY(0); }
 
     .medieval-btn {
       font-family: 'Cinzel', serif; background: linear-gradient(135deg, var(--gold), #8a6d3b);
-      color: black; padding: 15px 45px; border: 2px solid #5e4d2b; font-weight: 900;
-      font-size: 1.2rem; cursor: pointer; transition: 0.3s;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      color: black; padding: 18px 55px; border: 2px solid #5e4d2b; font-weight: 900;
+      font-size: 1.4rem; cursor: pointer; transition: 0.3s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 4px;
     }
-    .medieval-btn:hover { transform: translateY(-5px); filter: brightness(1.2); box-shadow: 0 15px 30px var(--gold); }
+    .medieval-btn:hover { transform: scale(1.05); filter: brightness(1.2); box-shadow: 0 0 40px var(--gold); }
 
     /* ====== GALLERY ====== */
     .page { display: none; }
@@ -87,9 +90,18 @@
     }
     .card {
       height: 500px; cursor: pointer; border: 1px solid #222;
-      background-size: cover; background-position: center; transition: 0.5s;
+      background-size: cover; background-position: center; transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     }
     .card:hover { border-color: var(--gold); transform: scale(1.02); }
+
+    /* ====== LOADER ====== */
+    #loader-main {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center; z-index: 9999;
+      background: var(--bg-dark); transition: opacity 0.8s ease;
+    }
+    .dr-bounce { font-size: 6rem; font-weight: 900; color: var(--gold); animation: simpleJump 1.5s infinite; font-family: 'Inter'; }
+    @keyframes simpleJump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
     /* ====== MODAL ====== */
     .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
@@ -102,18 +114,18 @@
   <div id="loader-main">
     <div class="loader-content">
         <div class="dr-bounce">D&R</div>
-        <div style="color: var(--gold); letter-spacing: 5px; margin-top: 10px;">PREPARING PHENOMENON</div>
+        <div style="color: var(--gold); letter-spacing: 5px; margin-top: 10px; font-family: 'Cinzel';">התכוננו לפנומן</div>
     </div>
   </div>
 
   <header class="header">
     <div class="header-left">
-      <div id="clock" style="color: var(--gold); font-size: 24px; font-weight: 900; font-family: 'Cinzel';">00:00:00</div>
+      <div id="clock">00:00:00</div>
     </div>
-    <div class="header-right">
-      <button class="nav-btn" onclick="nav('main')">דף<br>הבית</button>
-      <button class="nav-btn" onclick="nav('history')">היסטוריה</button>
-      <button class="nav-btn" onclick="nav('films')">סרטים</button>
+    <div class="nav-links">
+      <div class="nav-btn" onclick="nav('main')">דף הבית</div>
+      <div class="nav-btn" onclick="nav('history')">היסטוריה</div>
+      <div class="nav-btn" onclick="nav('films')">סרטים</div>
     </div>
   </header>
 
@@ -132,8 +144,8 @@
     </div>
   </div>
 
-  <div id="history" class="page"><div style="padding:150px; text-align:center;"><h2 style="font-size:4rem; color:var(--gold); font-family:'Cinzel';">OUR LEGACY</h2></div></div>
-  <div id="films" class="page"><div style="padding:150px; text-align:center;"><h2 style="font-size:4rem; color:var(--gold); font-family:'Cinzel';">D&R FILMS</h2></div></div>
+  <div id="history" class="page"><div style="padding:200px; text-align:center;"><h2 style="font-size:4rem; color:var(--gold); font-family:'Cinzel';">OUR LEGACY</h2></div></div>
+  <div id="films" class="page"><div style="padding:200px; text-align:center;"><h2 style="font-size:4rem; color:var(--gold); font-family:'Cinzel';">D&R FILMS</h2></div></div>
 
   <div id="surpriseModal" class="modal">
     <div class="modal-content">
@@ -162,7 +174,7 @@
       const xPos = 60 - (progress * 120); 
       name.style.transform = `translateX(${xPos}%)`;
       
-      // הכפתור מופיע ככל שגוללים
+      // הופעת הטקסט והכפתור בגלילה
       if(progress > 0.3) {
           name.style.color = `rgba(197, 160, 89, ${progress - 0.3})`;
           diveBtn.classList.add('visible');
