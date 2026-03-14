@@ -2,131 +2,79 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
   
-  <title>D&R | Official</title>
+  <title>D&R Official</title>
   
-  <link rel="apple-touch-icon" href="./image_2026-03-13_222345060.png">
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Assistant:wght@400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --gold: #c5a059;
-      --gold-bright: #f1d592;
-      --bg-dark: #050505;
-    }
+    :root { --gold: #c5a059; --bg-dark: #050505; }
+    body { margin: 0; background: var(--bg-dark); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { 
-      margin: 0; padding: 0; font-family: 'Assistant', sans-serif; 
-      background: var(--bg-dark); color: white; overflow-x: hidden;
-    }
-
-    /* ====== SPLASH SCREEN ====== */
-    #splash-screen {
-      position: fixed; inset: 0; background: var(--bg-dark);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 0.8s ease;
-    }
-    .splash-logo {
-      width: 100px; height: 100px; border-radius: 50%;
-      background: url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      animation: pulse 2s infinite ease-in-out;
-    }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-    /* ====== NAVIGATION - ADAPTIVE ====== */
+    /* תפריט עליון משופר */
     .floating-nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 15px; pointer-events: none;
+      padding: 20px 15px; pointer-events: none;
     }
-    
-    /* עיצוב למחשב */
-    @media (min-width: 768px) {
-      .floating-nav { padding: 30px 50px; }
-      #clock { font-size: 28px !important; position: absolute; left: 50%; transform: translateX(-50%); }
-      .brand-home { font-size: 1.2rem !important; padding: 12px 30px !important; }
-      .nav-btn { font-size: 1rem !important; padding: 12px 30px !important; }
-      .nav-links { gap: 20px !important; }
-    }
-
     .floating-nav > * { pointer-events: auto; }
 
     .brand-home, .nav-btn {
-      color: #000; font-family: 'Cinzel'; font-weight: 900;
-      padding: 6px 12px; border-radius: 50px;
-      background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; font-size: 0.7rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      cursor: pointer; transition: transform 0.2s;
+      background: linear-gradient(135deg, #fff, #f1d592);
+      border: none; padding: 8px 12px; border-radius: 50px;
+      font-family: 'Cinzel'; font-weight: 900; font-size: 0.7rem; color: #000;
+      cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-    .brand-home:hover, .nav-btn:hover { transform: translateY(-2px); }
 
     #clock { 
-      font-size: 14px; color: var(--gold-bright); font-family: 'Cinzel'; 
-      font-weight: 900; flex: 1; text-align: center;
+      font-size: 14px; color: #f1d592; font-family: 'Cinzel'; font-weight: 900;
+      flex: 1; text-align: center; margin: 0 5px;
     }
 
-    .nav-links { display: flex; gap: 8px; }
+    /* דפים */
+    .page { display: none; opacity: 0; transition: 0.5s ease; width: 100%; }
+    .page.active { display: block; opacity: 1; }
 
-    /* ====== PAGES & TRANSITIONS ====== */
-    .page { 
-      display: none; opacity: 0; transform: scale(1.02); filter: blur(10px);
-      transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-      position: absolute; width: 100%; top: 0;
-    }
-    .page.active { display: block; opacity: 1; transform: scale(1); filter: blur(0); }
-
-    /* ====== HERO SECTION ====== */
-    .hero-container { height: 200vh; }
+    /* הירארו (בית) */
+    .hero-container { height: 200vh; position: relative; }
     .hero-sticky {
       position: sticky; top: 0; height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      overflow: hidden;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') center/cover;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
     }
     
-    .parasha-float { 
-      font-family: 'Cinzel'; font-size: 1.2rem; color: var(--gold); 
-      letter-spacing: 5px; margin-bottom: 20px; transition: transform 0.1s linear;
-    }
-    @media (min-width: 768px) { .parasha-float { font-size: 2.5rem; letter-spacing: 15px; } }
-
     .scrolling-name { 
-      font-size: 18vw; font-weight: 900; color: transparent; 
-      -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; 
-      white-space: nowrap; transition: transform 0.1s linear;
-      line-height: 0.9;
+      font-size: 18vw; font-family: 'Inter'; -webkit-text-stroke: 1px var(--gold); 
+      color: transparent; white-space: nowrap; will-change: transform;
     }
-    @media (min-width: 768px) { .scrolling-name { font-size: 12vw; -webkit-text-stroke: 2px var(--gold); } }
+    .parasha { 
+      font-family: 'Cinzel'; color: var(--gold); font-size: 1.2rem; 
+      margin-bottom: 10px; will-change: transform;
+    }
 
-    /* ====== GALLERY ====== */
-    .gallery-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px; padding: 40px 20px; background: var(--bg-dark);
+    /* כפתור גלילה (לצלול) */
+    .scroll-indicator {
+      margin-top: 30px; padding: 10px 20px; border: 2px solid var(--gold);
+      color: var(--gold); font-family: 'Cinzel'; font-weight: 900;
+      border-radius: 50px; animation: bounce 2s infinite; cursor: pointer;
     }
-    .card {
-      height: 450px; border-radius: 15px; border: 1px solid #222;
-      background-size: cover; background-position: center;
-      transition: transform 0.3s;
-    }
-    .card:hover { transform: scale(1.02); }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+    /* גלריה */
+    .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px; background: #000; }
+    .gallery img { width: 100%; border-radius: 10px; border: 1px solid #333; }
   </style>
 </head>
-<body>
-
-  <div id="splash-screen">
-    <div class="splash-logo"></div>
-    <h2 style="font-family:Cinzel; color:var(--gold); margin-top:15px; letter-spacing:3px;">D&R OFFICIAL</h2>
-  </div>
+<body onload="init()">
 
   <nav class="floating-nav">
     <button class="brand-home" onclick="navigateTo('/')">D&R</button>
     <div id="clock">00:00:00</div>
-    <div class="nav-links">
+    <div style="display:flex; gap:5px;">
       <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
       <button class="nav-btn" onclick="navigateTo('/films')">סרטים</button>
     </div>
@@ -135,27 +83,26 @@
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
-        <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
-        <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
+        <div class="parasha" id="p-text">פרשת כי תשא</div>
+        <h1 class="scrolling-name" id="s-name">DOLEV & ROEE</h1>
+        <div class="scroll-indicator" onclick="window.scrollTo({top: window.innerHeight, behavior: 'smooth'})">SCROLL</div>
       </div>
     </div>
-    <div class="gallery-grid" id="gallery-container"></div>
+    <div class="gallery" id="gallery-box"></div>
   </div>
 
-  <div id="page-history" class="page">
-    <div style="height:100vh; display:flex; align-items:center; justify-content:center;">
-      <h1 style="font-family:Cinzel; font-size:5vw; color:var(--gold);">HISTORY ZONE</h1>
-    </div>
+  <div id="page-history" class="page" style="padding-top:120px; text-align:center;">
+    <h1 style="font-family:Cinzel; color:var(--gold);">HISTORY</h1>
+    <p>בקרוב...</p>
   </div>
 
-  <div id="page-films" class="page">
-    <div style="height:100vh; display:flex; align-items:center; justify-content:center;">
-      <h1 style="font-family:Cinzel; font-size:5vw; color:var(--gold);">FILMS LIBRARY</h1>
-    </div>
+  <div id="page-films" class="page" style="padding-top:120px; text-align:center;">
+    <h1 style="font-family:Cinzel; color:var(--gold);">FILMS</h1>
+    <p>בקרוב...</p>
   </div>
 
   <script>
-    const images = [
+    const imgs = [
       './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
       './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
       './image_2026-03-13_230721055.png', './image_2026-03-13_230733426.png',
@@ -164,70 +111,53 @@
 
     function init() {
       // שעון
-      setInterval(() => {
-        document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
+      setInterval(() => { 
+        document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false}); 
       }, 1000);
 
-      // גלריה
-      const container = document.getElementById('gallery-container');
-      if(container) {
-        images.forEach(src => {
-          const div = document.createElement('div');
-          div.className = 'card';
-          div.style.backgroundImage = `url('${src}')`;
-          container.appendChild(div);
-        });
-      }
-
-      // Splash
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        setTimeout(() => splash.style.display = 'none', 800);
-      }, 1200);
+      // טעינת תמונות
+      const box = document.getElementById('gallery-box');
+      imgs.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        box.appendChild(img);
+      });
 
       handleRoute(window.location.pathname);
     }
 
     function navigateTo(path) {
-      const current = document.querySelector('.page.active');
-      if (current) {
-        current.style.opacity = '0';
-        setTimeout(() => { current.classList.remove('active'); current.style.display = 'none'; }, 600);
-      }
-      setTimeout(() => {
-        window.history.pushState({}, "", path);
-        handleRoute(path);
-      }, 50);
+      window.history.pushState({}, "", path);
+      handleRoute(path);
       window.scrollTo(0,0);
     }
 
     function handleRoute(path) {
+      document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+      
       let id = 'page-home';
-      if(path.includes('history')) id = 'page-history';
-      if(path.includes('films')) id = 'page-films';
+      if (path.includes('history')) id = 'page-history';
+      if (path.includes('films')) id = 'page-films';
       
       const target = document.getElementById(id);
       target.style.display = 'block';
       setTimeout(() => target.classList.add('active'), 50);
     }
 
+    // האנימציה המגניבה של השם
     window.addEventListener('scroll', () => {
       const home = document.getElementById('page-home');
-      if(home.classList.contains('active')) {
-        const scrollY = window.scrollY;
-        const winH = window.innerHeight;
-        const progress = Math.min(scrollY / winH, 1);
-        
-        // התנועה תלויה ברוחב המסך
+      if (home.style.display !== 'none') {
+        const progress = Math.min(window.scrollY / window.innerHeight, 1);
         const factor = window.innerWidth < 768 ? 80 : 120;
         
-        document.getElementById('main-name').style.transform = `translateX(${50 - (progress * factor)}%)`;
-        document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * factor)}%)`;
+        document.getElementById('s-name').style.transform = `translateX(${50 - (progress * factor)}%)`;
+        document.getElementById('p-text').style.transform = `translateX(${-50 + (progress * factor)}%)`;
       }
     });
 
-    window.onload = init;
+    // מאפשר חזרה אחורה בדפדפן/אפליקציה
+    window.onpopstate = () => handleRoute(window.location.pathname);
   </script>
 </body>
 </html>
