@@ -22,52 +22,56 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== תפריט צף - תיקון התנגשות במובייל ====== */
+    /* ====== תפריט צף - שורה אחת מושלמת במובייל ====== */
     .floating-nav {
       position: fixed; top: 0; left: 0; width: 100%; height: 60px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 10px; z-index: 2000;
+      background: rgba(5, 5, 5, 0.4); /* רקע עדין לניווט */
+      backdrop-filter: blur(5px);
       pointer-events: none;
     }
-    @media (min-width: 768px) { .floating-nav { padding: 0 50px; height: 90px; } }
+    @media (min-width: 768px) { .floating-nav { padding: 0 50px; height: 90px; background: transparent; backdrop-filter: none; } }
     
     .floating-nav > * { pointer-events: auto; }
 
-    /* כפתור D&R - קטן יותר בטלפון */
+    /* כפתור D&R */
     .brand-home {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
-      padding: 5px 12px; border-radius: 50px;
+      padding: 5px 10px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.7rem; /* מוקטן */
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      flex-shrink: 0;
+      border: none; cursor: pointer; font-size: 0.65rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      flex: 0 0 auto;
     }
     @media (min-width: 768px) { .brand-home { padding: 12px 30px; font-size: 1.1rem; } }
 
-    /* השעה - מוקטנת במובייל כדי לא להתנגש */
+    /* שעון - לא Absolute בנייד כדי שלא יעלה על אחרים */
     #clock { 
-      font-size: 13px; color: var(--gold-bright); font-weight: 900; 
-      font-family: 'Cinzel'; text-shadow: 0 0 10px rgba(0,0,0,1);
-      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 12px; color: var(--gold-bright); font-weight: 900; 
+      font-family: 'Cinzel'; text-shadow: 0 0 5px rgba(0,0,0,1);
+      flex: 1; text-align: center; /* תופס את כל המרכז ודוחף את הצדדים */
       white-space: nowrap;
     }
-    @media (min-width: 768px) { #clock { font-size: 24px; } }
+    @media (min-width: 768px) { 
+        #clock { font-size: 24px; position: absolute; left: 50%; transform: translateX(-50%); } 
+    }
     
-    .nav-links { display: flex; gap: 4px; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 5px; flex: 0 0 auto; justify-content: flex-end; }
     @media (min-width: 768px) { .nav-links { gap: 15px; } }
 
-    /* כפתורי ניווט - מוקטנים משמעותית בטלפון */
+    /* כפתורי ניווט */
     .nav-btn {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
       padding: 5px 8px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.6rem; /* מוקטן מאוד למניעת חפיפה */
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      border: none; cursor: pointer; font-size: 0.6rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
       white-space: nowrap;
     }
     @media (min-width: 768px) { .nav-btn { padding: 10px 28px; font-size: 0.9rem; } }
 
-    /* ====== HERO SECTION ====== */
+    /* ====== HERO ====== */
     .hero-section { height: 200vh; width: 100%; position: relative; }
     .hero-sticky-box {
       position: sticky; top: 0; height: 100vh;
@@ -75,16 +79,15 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
     }
 
-    /* טקסט הפרשה - מורחק מהשם כדי לא לעלות עליו */
     .parasha-float {
       font-family: 'Cinzel'; font-size: 1rem; color: var(--gold);
-      letter-spacing: 4px; margin-bottom: 30px; white-space: nowrap;
+      letter-spacing: 3px; margin-bottom: 20px; white-space: nowrap;
       will-change: transform; opacity: 0.8;
     }
-    @media (min-width: 768px) { .parasha-float { font-size: 2.5rem; letter-spacing: 15px; margin-bottom: 10px; } }
+    @media (min-width: 768px) { .parasha-float { font-size: 2.5rem; letter-spacing: 15px; } }
 
     .scrolling-name {
-      font-size: 16vw; font-weight: 900; color: transparent; 
+      font-size: 15vw; font-weight: 900; color: transparent; 
       -webkit-text-stroke: 0.8px var(--gold); font-family: 'Inter';
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
@@ -93,27 +96,23 @@
     .reveal-group {
       display: flex; flex-direction: column; align-items: center;
       opacity: 0; transform: translateY(20px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      pointer-events: none; margin-top: 30px;
+      transition: 0.8s ease; margin-top: 30px;
     }
-    .reveal-group.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .reveal-group.show { opacity: 1; transform: translateY(0); }
 
-    /* ====== LOADER & PAGES ====== */
+    /* ====== OTHER ====== */
     #loader-main {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: flex; justify-content: center; align-items: center; z-index: 9999;
       background: var(--bg-dark);
     }
-    .dr-bounce { font-size: 2.5rem; color: var(--gold); animation: bnc 1.5s infinite; font-family: 'Inter'; font-weight: 900; }
-    @keyframes bnc { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-    .page { display: none; opacity: 0; transition: opacity 0.5s; }
+    .page { display: none; opacity: 0; transition: 0.5s; }
     .page.active { display: block; opacity: 1; }
   </style>
 </head>
 <body onload="init()">
 
-  <div id="loader-main"><div class="dr-bounce">D&R</div></div>
+  <div id="loader-main"><div style="font-size:2rem; color:var(--gold); font-family:Inter; font-weight:900;">D&R</div></div>
 
   <nav class="floating-nav">
     <button class="brand-home" onclick="navigateTo('/')">D&R</button>
@@ -132,13 +131,13 @@
         <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
         <div class="reveal-group" id="reveal-elements">
-          <div style="font-family:'Cinzel'; color:var(--gold); letter-spacing:5px; margin-bottom:15px;">ESTABLISHED 2026</div>
-          <button style="font-family:'Cinzel'; background:var(--gold); border:none; padding:10px 25px; font-weight:900; cursor:pointer;" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">בואו נתחיל</button>
+          <div style="font-family:'Cinzel'; color:var(--gold); margin-bottom:10px;">ESTABLISHED 2026</div>
+          <button style="font-family:'Cinzel'; background:var(--gold); border:none; padding:10px 20px; font-weight:900;" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">בואו נתחיל</button>
         </div>
       </div>
     </section>
-    <div id="gallery-zone" style="padding: 40px 15px;">
-        <div id="gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;"></div>
+    <div id="gallery-zone" style="height:100vh; background:var(--bg-dark); padding:20px; text-align:center;">
+      <h2>הגלריה שלך כאן</h2>
     </div>
   </div>
 
@@ -150,7 +149,7 @@
       setTimeout(() => {
         document.getElementById('loader-main').style.opacity = '0';
         setTimeout(() => document.getElementById('loader-main').style.display = 'none', 500);
-      }, 1000);
+      }, 800);
       updateClock();
       handleRoute(window.location.pathname);
     }
@@ -178,8 +177,7 @@
         const height = window.innerHeight;
         const progress = Math.min(scroll / height, 1);
         
-        // תנועה מותאמת לרוחב מסך
-        const moveFactor = window.innerWidth < 768 ? 70 : 100;
+        const moveFactor = window.innerWidth < 768 ? 60 : 100;
         
         document.getElementById('main-name').style.transform = `translateX(${50 - (progress * moveFactor)}%)`;
         document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * moveFactor)}%)`;
@@ -197,23 +195,6 @@
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12: false});
       }, 1000);
     }
-
-    // טעינת גלריה פשוטה
-    const images = [
-      './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
-      './image_2026-03-13_230654112.png', './image_2026-03-13_222345060.png'
-    ];
-    const container = document.getElementById('gallery');
-    images.forEach(src => {
-      const div = document.createElement('div');
-      div.style.height = '350px';
-      div.style.backgroundImage = `url('${src}')`;
-      div.style.backgroundSize = 'cover';
-      div.style.backgroundPosition = 'center';
-      div.style.borderRadius = '8px';
-      div.style.border = '1px solid #222';
-      container.appendChild(div);
-    });
   </script>
 </body>
 </html>
