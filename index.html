@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R | R&D Official</title>
+  <title>D&R | Official</title>
   
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
@@ -53,7 +53,6 @@
       border: none; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
-    .nav-btn:hover, .brand-home:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
     /* ====== PAGE TRANSITIONS ====== */
     .page { 
@@ -70,35 +69,35 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
     }
 
+    /* פרשת השבוע שזזה */
+    .parasha-float {
+      font-family: 'Cinzel';
+      font-size: 2rem;
+      color: var(--gold);
+      letter-spacing: 15px;
+      margin-bottom: -20px;
+      white-space: nowrap;
+      will-change: transform;
+      opacity: 0.6;
+    }
+
     .scrolling-name {
       font-size: 10vw; font-weight: 900; color: transparent; 
       -webkit-text-stroke: 1.2px var(--gold); font-family: 'Inter';
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
 
-    /* קונטיינר לכל מה שמופיע בסוף הגלילה */
     .reveal-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      opacity: 0;
-      transform: translateY(30px);
+      display: flex; flex-direction: column; align-items: center;
+      opacity: 0; transform: translateY(30px);
       transition: opacity 0.8s ease, transform 0.8s ease;
       pointer-events: none;
     }
-    .reveal-group.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
+    .reveal-group.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
     .established-text {
-      font-family: 'Cinzel';
-      font-size: 1.5rem;
-      color: var(--gold);
-      letter-spacing: 10px;
-      margin: 15px 0 35px 0;
-      opacity: 0.8;
+      font-family: 'Cinzel'; font-size: 1.5rem; color: var(--gold);
+      letter-spacing: 10px; margin: 15px 0 35px 0; opacity: 0.8;
     }
 
     .medieval-btn {
@@ -130,7 +129,7 @@
   <div id="loader-main"><div class="dr-bounce">D&R</div></div>
 
   <nav class="floating-nav">
-    <button class="brand-home" onclick="navigateTo('/')">R&D</button>
+    <button class="brand-home" onclick="navigateTo('/')">D&R</button>
     <div id="clock">00:00:00</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
@@ -141,6 +140,8 @@
   <div id="page-home" class="page">
     <section class="hero-section">
       <div class="hero-sticky-box">
+        <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
+        
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
         
         <div class="reveal-group" id="reveal-elements">
@@ -223,19 +224,25 @@
         const scrollPos = window.scrollY;
         const winHeight = window.innerHeight;
         const name = document.getElementById('main-name');
+        const parasha = document.getElementById('parasha-text');
         const revealGroup = document.getElementById('reveal-elements');
         const progress = Math.min(scrollPos / winHeight, 1);
         
-        const xPos = 50 - (progress * 100); 
-        name.style.transform = `translateX(${xPos}%)`;
+        // תנועה של השם הראשי (מימין לשמאל)
+        const xPosName = 50 - (progress * 100); 
+        name.style.transform = `translateX(${xPosName}%)`;
+
+        // תנועה של פרשת השבוע (משמאל לימין - קונטרה מעניינת)
+        const xPosParasha = -50 + (progress * 100);
+        parasha.style.transform = `translateX(${xPosParasha}%)`;
         
         if (progress > 0.3) {
           name.style.color = `rgba(197, 160, 89, ${progress})`;
+          parasha.style.opacity = (1 - progress) + 0.2; // דוהה מעט כשמתקרבים לסוף
         } else {
           name.style.color = 'transparent';
         }
 
-        // הופעת הקבוצה כולה (טקסט + כפתור)
         if (progress > 0.82) {
           revealGroup.classList.add('show');
         } else {
