@@ -6,7 +6,6 @@
   <title>D&R | R&D Official</title>
   
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -14,7 +13,6 @@
       --gold: #c5a059;
       --gold-bright: #f1d592;
       --bg-dark: #050505;
-      --header-bg: rgba(255, 255, 255, 0.12); 
     }
 
     * { box-sizing: border-box; }
@@ -24,17 +22,31 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== HEADER (Sticky) ====== */
-    .header {
-      position: sticky; top: 0;
-      width: 100%; height: 90px;
-      background: var(--header-bg); backdrop-filter: blur(25px);
+    /* ====== תפריט צף ללא שורת משימות ====== */
+    .floating-nav {
+      position: fixed; top: 0; left: 0; width: 100%; height: 90px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 50px; z-index: 1000; 
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 50px; z-index: 1000;
+      pointer-events: none; /* מאפשר ללחוץ על מה שמתחת חוץ מעל הכפתורים */
     }
     
-    #clock { font-size: 22px; color: var(--gold-bright); font-weight: 900; font-family: 'Cinzel'; }
+    .floating-nav > * { pointer-events: auto; } /* מחזיר יכולת לחיצה לאלמנטים עצמם */
+
+    /* כפתור R&D בימין */
+    .brand-home {
+      color: #000; font-family: 'Cinzel'; font-weight: 900;
+      padding: 12px 30px; border-radius: 50px;
+      background: linear-gradient(135deg, #fff, var(--gold-bright));
+      border: none; cursor: pointer; transition: 0.3s; font-size: 1.1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* שעון באמצע */
+    #clock { 
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 24px; color: var(--gold-bright); font-weight: 900; 
+      font-family: 'Cinzel'; text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    }
     
     .nav-links { display: flex; gap: 15px; }
     .nav-btn {
@@ -42,27 +54,21 @@
       padding: 10px 28px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
       border: none; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
+    .nav-btn:hover, .brand-home:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-    /* ====== PAGE TRANSITION (Portal Effect) ====== */
+    /* ====== PAGE TRANSITIONS ====== */
     .page { 
-      display: none; 
-      opacity: 0; 
-      transform: scale(1.1);
-      filter: blur(10px);
+      display: none; opacity: 0; transform: scale(1.1); filter: blur(10px);
       transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     }
-    .page.active { 
-      display: block; 
-      opacity: 1; 
-      transform: scale(1);
-      filter: blur(0);
-    }
+    .page.active { display: block; opacity: 1; transform: scale(1); filter: blur(0); }
 
     /* ====== HERO HOME ====== */
     .hero-section { height: 200vh; width: 100%; position: relative; }
     .hero-sticky-box {
-      position: sticky; top: 90px; height: calc(100vh - 90px);
+      position: sticky; top: 0; height: 100vh;
       background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
     }
@@ -74,17 +80,10 @@
     }
 
     .dive-btn-container {
-      margin-top: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-      pointer-events: none;
+      margin-top: 30px; opacity: 0; transform: translateY(20px);
+      transition: 0.6s ease; pointer-events: none;
     }
-    .dive-btn-container.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
+    .dive-btn-container.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
     .medieval-btn {
       font-family: 'Cinzel'; background: linear-gradient(135deg, var(--gold), #8a6d3b);
@@ -102,7 +101,7 @@
 
     /* ====== INTERNAL CONTENT ====== */
     .content-container { 
-        padding: 120px 10%; text-align: center; min-height: calc(100vh - 90px); 
+        padding: 120px 10%; text-align: center; min-height: 100vh; 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         background: radial-gradient(circle at center, #111 0%, #000 100%);
     }
@@ -123,14 +122,14 @@
 
   <div id="loader-main"><div class="dr-bounce">D&R</div></div>
 
-  <header class="header">
-    <div class="header-left"><div id="clock">00:00:00</div></div>
+  <nav class="floating-nav">
+    <button class="brand-home" onclick="navigateTo('/')">R&D</button>
+    <div id="clock">00:00:00</div>
     <div class="nav-links">
-      <button class="nav-btn" onclick="navigateTo('/')">דף הבית</button>
       <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
       <button class="nav-btn" onclick="navigateTo('/films')">סרטים</button>
     </div>
-  </header>
+  </nav>
 
   <div id="page-home" class="page">
     <section class="hero-section">
@@ -169,7 +168,6 @@
         setTimeout(() => document.getElementById('loader-main').style.display = 'none', 500);
       }, 1000);
       updateClock();
-      
       window.onpopstate = () => handleRoute(window.location.pathname);
       handleRoute(window.location.pathname);
     }
@@ -181,7 +179,6 @@
           p.style.transform = 'scale(0.95)';
         }
       });
-
       setTimeout(() => {
         window.history.pushState({}, "", path);
         handleRoute(path);
@@ -202,13 +199,11 @@
       
       const targetPage = document.getElementById(targetId);
       targetPage.style.display = 'block';
-      
       setTimeout(() => {
         targetPage.classList.add('active');
         targetPage.style.opacity = '1';
         targetPage.style.transform = 'scale(1)';
       }, 50);
-
       window.scrollTo(0, 0);
     }
 
@@ -219,7 +214,6 @@
         const winHeight = window.innerHeight;
         const name = document.getElementById('main-name');
         const diveBtn = document.getElementById('dive-btn');
-        
         const progress = Math.min(scrollPos / winHeight, 1);
         
         const xPos = 50 - (progress * 100); 
