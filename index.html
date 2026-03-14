@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>D&R | R&D Official</title>
+  
+  <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -70,7 +73,6 @@
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
 
-    /* כפתור שמופיע רק בסוף הגלילה של הטקסט */
     .dive-btn-container {
       margin-top: 30px;
       opacity: 0;
@@ -173,10 +175,6 @@
     }
 
     function navigateTo(path) {
-      const currentPath = window.location.pathname;
-      const targetPath = path === '/' ? window.location.origin + '/' : path;
-      
-      // אפקט יציאה
       document.querySelectorAll('.page').forEach(p => {
         if(p.classList.contains('active')) {
           p.style.opacity = '0';
@@ -191,7 +189,6 @@
     }
 
     function handleRoute(path) {
-      // ניקוי כל הדפים
       document.querySelectorAll('.page').forEach(p => {
           p.classList.remove('active');
           p.style.display = 'none';
@@ -206,7 +203,6 @@
       const targetPage = document.getElementById(targetId);
       targetPage.style.display = 'block';
       
-      // Trigger animation
       setTimeout(() => {
         targetPage.classList.add('active');
         targetPage.style.opacity = '1';
@@ -224,21 +220,17 @@
         const name = document.getElementById('main-name');
         const diveBtn = document.getElementById('dive-btn');
         
-        // חישוב התקדמות (בין 0 ל-1)
         const progress = Math.min(scrollPos / winHeight, 1);
         
-        // תנועת השם
         const xPos = 50 - (progress * 100); 
         name.style.transform = `translateX(${xPos}%)`;
         
-        // שינוי צבע
         if (progress > 0.3) {
           name.style.color = `rgba(197, 160, 89, ${progress})`;
         } else {
           name.style.color = 'transparent';
         }
 
-        // הופעת הכפתור - רק כשהטקסט הגיע ליעד (נניח מעל 80% מהדרך)
         if (progress > 0.85) {
           diveBtn.classList.add('show');
         } else {
