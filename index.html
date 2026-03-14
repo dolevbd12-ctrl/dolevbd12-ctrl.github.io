@@ -21,7 +21,7 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== HEADER (Sticky & Separate) ====== */
+    /* ====== HEADER (Sticky) ====== */
     .header {
       position: sticky; top: 0;
       width: 100%; height: 90px;
@@ -40,7 +40,6 @@
       background: linear-gradient(135deg, #fff, var(--gold-bright));
       border: none; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
     }
-    .nav-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
     /* ====== PAGE TRANSITION (Portal Effect) ====== */
     .page { 
@@ -58,7 +57,7 @@
     }
 
     /* ====== HERO HOME ====== */
-    .hero-section { height: 180vh; width: 100%; position: relative; }
+    .hero-section { height: 200vh; width: 100%; position: relative; }
     .hero-sticky-box {
       position: sticky; top: 90px; height: calc(100vh - 90px);
       background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
@@ -71,8 +70,22 @@
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
 
+    /* כפתור שמופיע רק בסוף הגלילה של הטקסט */
+    .dive-btn-container {
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+    .dive-btn-container.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
     .medieval-btn {
-      margin-top: 30px; font-family: 'Cinzel'; background: linear-gradient(135deg, var(--gold), #8a6d3b);
+      font-family: 'Cinzel'; background: linear-gradient(135deg, var(--gold), #8a6d3b);
       color: black; padding: 15px 45px; border: none; font-weight: 900;
       font-size: 1.1rem; cursor: pointer; transition: 0.3s;
     }
@@ -83,18 +96,16 @@
       display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 20px; max-width: 1400px; margin: 0 auto;
     }
-    .card { height: 500px; border: 1px solid #1a1a1a; background-size: cover; background-position: center; transition: 0.4s; }
-    .card:hover { border-color: var(--gold); }
+    .card { height: 500px; border: 1px solid #1a1a1a; background-size: cover; background-position: center; }
 
-    /* ====== INTERNAL CONTENT (Hebrew Clean Style) ====== */
+    /* ====== INTERNAL CONTENT ====== */
     .content-container { 
         padding: 120px 10%; text-align: center; min-height: calc(100vh - 90px); 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         background: radial-gradient(circle at center, #111 0%, #000 100%);
     }
-    .content-container h2 { font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright); margin: 0; letter-spacing: 5px; }
+    .content-container h2 { font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright); margin: 0; }
     .content-container .divider { width: 80px; height: 2px; background: var(--gold); margin: 30px 0; }
-    .content-container p { font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7; font-weight: 300; }
 
     /* ====== LOADER ====== */
     #loader-main {
@@ -123,7 +134,9 @@
     <section class="hero-section">
       <div class="hero-sticky-box">
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
-        <button class="medieval-btn" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">לגלריה המלאה</button>
+        <div class="dive-btn-container" id="dive-btn">
+          <button class="medieval-btn" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">מוכנים לצלול לכיף?</button>
+        </div>
       </div>
     </section>
     <div id="gallery-zone" class="gallery-zone">
@@ -135,7 +148,7 @@
     <div class="content-container">
       <h2>HISTORY</h2>
       <div class="divider"></div>
-      <p>ארכיון האימפריה — נוסד ב-2026</p>
+      <p style="font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7;">ארכיון האימפריה — 2026</p>
     </div>
   </div>
 
@@ -143,7 +156,7 @@
     <div class="content-container">
       <h2>FILMS</h2>
       <div class="divider"></div>
-      <p>הפקות מקור — בקרוב</p>
+      <p style="font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7;">הפקות מקור — בקרוב</p>
     </div>
   </div>
 
@@ -160,55 +173,76 @@
     }
 
     function navigateTo(path) {
-      if (window.location.pathname === path) return;
+      const currentPath = window.location.pathname;
+      const targetPath = path === '/' ? window.location.origin + '/' : path;
       
-      // אפקט יציאה (כיווץ קטן לפני המעבר)
-      const current = document.querySelector('.page.active');
-      if(current) {
-        current.style.opacity = '0';
-        current.style.transform = 'scale(0.95)';
-      }
+      // אפקט יציאה
+      document.querySelectorAll('.page').forEach(p => {
+        if(p.classList.contains('active')) {
+          p.style.opacity = '0';
+          p.style.transform = 'scale(0.95)';
+        }
+      });
 
       setTimeout(() => {
         window.history.pushState({}, "", path);
         handleRoute(path);
-      }, 300);
+      }, 400);
     }
 
     function handleRoute(path) {
+      // ניקוי כל הדפים
       document.querySelectorAll('.page').forEach(p => {
           p.classList.remove('active');
           p.style.display = 'none';
+          p.style.opacity = '0';
+          p.style.transform = 'scale(1.1)';
       });
 
-      let target = 'page-home';
-      if (path === '/history') target = 'page-history';
-      else if (path === '/films') target = 'page-films';
+      let targetId = 'page-home';
+      if (path.includes('history')) targetId = 'page-history';
+      else if (path.includes('films')) targetId = 'page-films';
       
-      const p = document.getElementById(target);
-      p.style.display = 'block';
+      const targetPage = document.getElementById(targetId);
+      targetPage.style.display = 'block';
       
-      // Force Reflow
-      p.offsetHeight; 
-      
-      p.classList.add('active');
+      // Trigger animation
+      setTimeout(() => {
+        targetPage.classList.add('active');
+        targetPage.style.opacity = '1';
+        targetPage.style.transform = 'scale(1)';
+      }, 50);
+
       window.scrollTo(0, 0);
     }
 
     window.addEventListener('scroll', () => {
-      if(document.getElementById('page-home').classList.contains('active')) {
+      const homePage = document.getElementById('page-home');
+      if(homePage.style.display !== 'none' && homePage.classList.contains('active')) {
         const scrollPos = window.scrollY;
         const winHeight = window.innerHeight;
         const name = document.getElementById('main-name');
-        const progress = Math.min(scrollPos / winHeight, 1.2);
+        const diveBtn = document.getElementById('dive-btn');
         
+        // חישוב התקדמות (בין 0 ל-1)
+        const progress = Math.min(scrollPos / winHeight, 1);
+        
+        // תנועת השם
         const xPos = 50 - (progress * 100); 
         name.style.transform = `translateX(${xPos}%)`;
         
+        // שינוי צבע
         if (progress > 0.3) {
-          name.style.color = `rgba(197, 160, 89, ${progress - 0.3})`;
+          name.style.color = `rgba(197, 160, 89, ${progress})`;
         } else {
           name.style.color = 'transparent';
+        }
+
+        // הופעת הכפתור - רק כשהטקסט הגיע ליעד (נניח מעל 80% מהדרך)
+        if (progress > 0.85) {
+          diveBtn.classList.add('show');
+        } else {
+          diveBtn.classList.remove('show');
         }
       }
     });
