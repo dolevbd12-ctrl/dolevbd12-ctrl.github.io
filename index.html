@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D&R | R&D</title>
+  <title>D&R | R&D Official</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -38,13 +38,24 @@
       color: #000; font-family: 'Cinzel'; font-weight: 900;
       padding: 10px 28px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; transition: 0.3s; font-size: 0.8rem;
+      border: none; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
     }
     .nav-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-    /* ====== PAGES ====== */
-    .page { display: none; opacity: 0; transition: opacity 0.6s ease; }
-    .page.active { display: block; opacity: 1; }
+    /* ====== PAGE TRANSITION (Portal Effect) ====== */
+    .page { 
+      display: none; 
+      opacity: 0; 
+      transform: scale(1.1);
+      filter: blur(10px);
+      transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    .page.active { 
+      display: block; 
+      opacity: 1; 
+      transform: scale(1);
+      filter: blur(0);
+    }
 
     /* ====== HERO HOME ====== */
     .hero-section { height: 180vh; width: 100%; position: relative; }
@@ -75,14 +86,15 @@
     .card { height: 500px; border: 1px solid #1a1a1a; background-size: cover; background-position: center; transition: 0.4s; }
     .card:hover { border-color: var(--gold); }
 
-    /* ====== INTERNAL CONTENT (CLEAN STYLE) ====== */
+    /* ====== INTERNAL CONTENT (Hebrew Clean Style) ====== */
     .content-container { 
         padding: 120px 10%; text-align: center; min-height: calc(100vh - 90px); 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: radial-gradient(circle at center, #111 0%, #000 100%);
     }
-    .content-container h2 { font-size: 4.5rem; font-family: 'Cinzel'; color: var(--gold-bright); margin: 0; letter-spacing: 8px; }
-    .content-container .divider { width: 60px; height: 3px; background: var(--gold); margin: 25px 0; }
-    .content-container p { font-size: 1.1rem; letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; }
+    .content-container h2 { font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright); margin: 0; letter-spacing: 5px; }
+    .content-container .divider { width: 80px; height: 2px; background: var(--gold); margin: 30px 0; }
+    .content-container p { font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7; font-weight: 300; }
 
     /* ====== LOADER ====== */
     #loader-main {
@@ -101,9 +113,9 @@
   <header class="header">
     <div class="header-left"><div id="clock">00:00:00</div></div>
     <div class="nav-links">
-      <button class="nav-btn" onclick="navigateTo('/')">HOME</button>
-      <button class="nav-btn" onclick="navigateTo('/history')">HISTORY</button>
-      <button class="nav-btn" onclick="navigateTo('/films')">FILMS</button>
+      <button class="nav-btn" onclick="navigateTo('/')">דף הבית</button>
+      <button class="nav-btn" onclick="navigateTo('/history')">היסטוריה</button>
+      <button class="nav-btn" onclick="navigateTo('/films')">סרטים</button>
     </div>
   </header>
 
@@ -111,7 +123,7 @@
     <section class="hero-section">
       <div class="hero-sticky-box">
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
-        <button class="medieval-btn" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">ENTER GALLERY</button>
+        <button class="medieval-btn" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">לגלריה המלאה</button>
       </div>
     </section>
     <div id="gallery-zone" class="gallery-zone">
@@ -123,7 +135,7 @@
     <div class="content-container">
       <h2>HISTORY</h2>
       <div class="divider"></div>
-      <p>ESTABLISHED MMXXVI — R&D ARCHIVE</p>
+      <p>ארכיון האימפריה — נוסד ב-2026</p>
     </div>
   </div>
 
@@ -131,7 +143,7 @@
     <div class="content-container">
       <h2>FILMS</h2>
       <div class="divider"></div>
-      <p>VISUAL PRODUCTIONS — COMING SOON</p>
+      <p>הפקות מקור — בקרוב</p>
     </div>
   </div>
 
@@ -143,15 +155,24 @@
       }, 1000);
       updateClock();
       
-      // תמיכה בניווט
       window.onpopstate = () => handleRoute(window.location.pathname);
       handleRoute(window.location.pathname);
     }
 
     function navigateTo(path) {
       if (window.location.pathname === path) return;
-      window.history.pushState({}, "", path);
-      handleRoute(path);
+      
+      // אפקט יציאה (כיווץ קטן לפני המעבר)
+      const current = document.querySelector('.page.active');
+      if(current) {
+        current.style.opacity = '0';
+        current.style.transform = 'scale(0.95)';
+      }
+
+      setTimeout(() => {
+        window.history.pushState({}, "", path);
+        handleRoute(path);
+      }, 300);
     }
 
     function handleRoute(path) {
@@ -166,7 +187,11 @@
       
       const p = document.getElementById(target);
       p.style.display = 'block';
-      setTimeout(() => p.classList.add('active'), 50);
+      
+      // Force Reflow
+      p.offsetHeight; 
+      
+      p.classList.add('active');
       window.scrollTo(0, 0);
     }
 
