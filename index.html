@@ -22,17 +22,15 @@
       background: var(--bg-dark); color: white; overflow-x: hidden; 
     }
 
-    /* ====== תפריט צף ללא שורת משימות ====== */
+    /* ====== תפריט צף ====== */
     .floating-nav {
       position: fixed; top: 0; left: 0; width: 100%; height: 90px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 50px; z-index: 1000;
-      pointer-events: none; /* מאפשר ללחוץ על מה שמתחת חוץ מעל הכפתורים */
+      pointer-events: none;
     }
-    
-    .floating-nav > * { pointer-events: auto; } /* מחזיר יכולת לחיצה לאלמנטים עצמם */
+    .floating-nav > * { pointer-events: auto; }
 
-    /* כפתור R&D בימין */
     .brand-home {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
       padding: 12px 30px; border-radius: 50px;
@@ -41,7 +39,6 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
-    /* שעון באמצע */
     #clock { 
       position: absolute; left: 50%; transform: translateX(-50%);
       font-size: 24px; color: var(--gold-bright); font-weight: 900; 
@@ -79,8 +76,24 @@
       text-transform: uppercase; white-space: nowrap; will-change: transform;
     }
 
+    /* ESTABLISHED 2026 */
+    .established-text {
+      font-family: 'Cinzel';
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 10px;
+      margin-top: 15px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .established-text.show {
+      opacity: 0.8;
+      transform: translateY(0);
+    }
+
     .dive-btn-container {
-      margin-top: 30px; opacity: 0; transform: translateY(20px);
+      margin-top: 35px; opacity: 0; transform: translateY(20px);
       transition: 0.6s ease; pointer-events: none;
     }
     .dive-btn-container.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -98,15 +111,6 @@
       gap: 20px; max-width: 1400px; margin: 0 auto;
     }
     .card { height: 500px; border: 1px solid #1a1a1a; background-size: cover; background-position: center; }
-
-    /* ====== INTERNAL CONTENT ====== */
-    .content-container { 
-        padding: 120px 10%; text-align: center; min-height: 100vh; 
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        background: radial-gradient(circle at center, #111 0%, #000 100%);
-    }
-    .content-container h2 { font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright); margin: 0; }
-    .content-container .divider { width: 80px; height: 2px; background: var(--gold); margin: 30px 0; }
 
     /* ====== LOADER ====== */
     #loader-main {
@@ -135,6 +139,7 @@
     <section class="hero-section">
       <div class="hero-sticky-box">
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
+        <div class="established-text" id="est-text">ESTABLISHED 2026</div>
         <div class="dive-btn-container" id="dive-btn">
           <button class="medieval-btn" onclick="document.getElementById('gallery-zone').scrollIntoView({behavior: 'smooth'})">מוכנים לצלול לכיף?</button>
         </div>
@@ -146,18 +151,18 @@
   </div>
 
   <div id="page-history" class="page">
-    <div class="content-container">
-      <h2>HISTORY</h2>
-      <div class="divider"></div>
-      <p style="font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7;">ארכיון האימפריה — 2026</p>
+    <div style="padding: 150px 10%; text-align: center; min-height: 100vh;">
+      <h2 style="font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright);">HISTORY</h2>
+      <div style="width: 80px; height: 2px; background: var(--gold); margin: 30px auto;"></div>
+      <p style="font-size: 1.5rem; opacity: 0.7;">ארכיון האימפריה — 2026</p>
     </div>
   </div>
 
   <div id="page-films" class="page">
-    <div class="content-container">
-      <h2>FILMS</h2>
-      <div class="divider"></div>
-      <p style="font-size: 1.5rem; letter-spacing: 2px; opacity: 0.7;">הפקות מקור — בקרוב</p>
+    <div style="padding: 150px 10%; text-align: center; min-height: 100vh;">
+      <h2 style="font-size: 5rem; font-family: 'Cinzel'; color: var(--gold-bright);">FILMS</h2>
+      <div style="width: 80px; height: 2px; background: var(--gold); margin: 30px auto;"></div>
+      <p style="font-size: 1.5rem; opacity: 0.7;">הפקות מקור — בקרוב</p>
     </div>
   </div>
 
@@ -213,6 +218,7 @@
         const scrollPos = window.scrollY;
         const winHeight = window.innerHeight;
         const name = document.getElementById('main-name');
+        const estText = document.getElementById('est-text');
         const diveBtn = document.getElementById('dive-btn');
         const progress = Math.min(scrollPos / winHeight, 1);
         
@@ -223,6 +229,13 @@
           name.style.color = `rgba(197, 160, 89, ${progress})`;
         } else {
           name.style.color = 'transparent';
+        }
+
+        // הופעת הטקסט והכפתור בשלבים
+        if (progress > 0.7) {
+          estText.classList.add('show');
+        } else {
+          estText.classList.remove('show');
         }
 
         if (progress > 0.85) {
