@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="D&R">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
   
@@ -12,7 +11,6 @@
   
   <link rel="apple-touch-icon" href="./image_2026-03-13_222345060.png">
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@300;400;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -26,67 +24,83 @@
     body { 
       margin: 0; padding: 0; font-family: 'Assistant', sans-serif; 
       background: var(--bg-dark); color: white; overflow-x: hidden;
-      user-select: none; /* מונע בחירת טקסט מעצבן באפליקציה */
+      user-select: none;
     }
 
-    /* ====== מסך פתיחה (Splash Screen) ====== */
+    /* ====== SPLASH SCREEN ====== */
     #splash-screen {
       position: fixed; inset: 0; background: var(--bg-dark);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 10000; transition: opacity 0.8s ease;
     }
     .splash-logo {
-      width: 120px; height: 120px; border-radius: 50%;
+      width: 100px; height: 100px; border-radius: 50%;
       background: url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
-      box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
       animation: pulse 2s infinite ease-in-out;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
-    }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-    /* ====== תפריט עליון - אופטימיזציה למובייל ====== */
+    /* ====== NAV (FIXED COLLISION) ====== */
     .floating-nav {
       position: fixed; top: 0; left: 0; width: 100%; height: 70px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 25px 15px 10px 15px; z-index: 2000; pointer-events: none;
+      padding: 25px 15px 10px 15px; z-index: 5000; pointer-events: none;
     }
     .floating-nav > * { pointer-events: auto; }
 
     .nav-btn, .brand-home {
       color: #000; font-family: 'Cinzel'; font-weight: 900;
-      padding: 6px 14px; border-radius: 50px;
+      padding: 6px 12px; border-radius: 50px;
       background: linear-gradient(135deg, #fff, var(--gold-bright));
-      border: none; cursor: pointer; font-size: 0.7rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      border: none; font-size: 0.65rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-    #clock { font-size: 14px; color: var(--gold-bright); font-family: 'Cinzel'; font-weight: 900; flex: 1; text-align: center; }
+    #clock { 
+      font-size: 14px; color: var(--gold-bright); font-family: 'Cinzel'; 
+      font-weight: 900; flex: 1; text-align: center; z-index: 5001;
+    }
 
-    /* ====== אנימציות מעבר ====== */
+    /* ====== PAGE TRANSITIONS ====== */
     .page { 
-      display: none; opacity: 0; transform: scale(1.1); filter: blur(20px);
-      transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      display: none; opacity: 0; transform: scale(1.05); filter: blur(15px);
+      transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
       position: absolute; width: 100%; top: 0;
     }
     .page.active { display: block; opacity: 1; transform: scale(1); filter: blur(0); }
-    .page.exit { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(10px); }
 
-    /* ====== עיצוב דף הבית ====== */
+    /* ====== HERO ====== */
+    .hero-container { height: 200vh; position: relative; }
     .hero-sticky {
       position: sticky; top: 0; height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('./image_2026-03-13_222345060.png') no-repeat center center/cover;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .scrolling-name { font-size: 16vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; white-space: nowrap; will-change: transform; }
-    .parasha-float { font-family: 'Cinzel'; font-size: 1.2rem; color: var(--gold); letter-spacing: 5px; margin-bottom: 10px; will-change: transform; }
+    .parasha-float { 
+      font-family: 'Cinzel'; font-size: 1rem; color: var(--gold); 
+      letter-spacing: 4px; margin-bottom: 20px; transition: transform 0.1s linear;
+      z-index: 10;
+    }
+    .scrolling-name { 
+      font-size: 16vw; font-weight: 900; color: transparent; 
+      -webkit-text-stroke: 1px var(--gold); font-family: 'Inter'; 
+      white-space: nowrap; transition: transform 0.1s linear;
+    }
+
+    /* ====== GALLERY ====== */
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px; padding: 20px; background: var(--bg-dark);
+    }
+    .card {
+      height: 400px; border-radius: 12px; border: 1px solid #222;
+      background-size: cover; background-position: center;
+    }
   </style>
 </head>
 <body>
 
   <div id="splash-screen">
     <div class="splash-logo"></div>
-    <h2 style="font-family:Cinzel; color:var(--gold); margin-top:20px; letter-spacing:5px;">D&R</h2>
+    <h2 style="font-family:Cinzel; color:var(--gold); margin-top:15px;">D&R</h2>
   </div>
 
   <nav class="floating-nav">
@@ -99,34 +113,48 @@
   </nav>
 
   <div id="page-home" class="page">
-    <div style="height: 200vh;">
+    <div class="hero-container">
       <div class="hero-sticky">
         <div class="parasha-float" id="parasha-text">פרשת כי תשא</div>
         <h1 class="scrolling-name" id="main-name">DOLEV & ROEE</h1>
       </div>
     </div>
+    <div class="gallery-grid" id="gallery-container"></div>
   </div>
 
-  <div id="page-history" class="page">
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <h1 style="font-family:Cinzel; font-size:3rem; color:var(--gold);">HISTORY</h1>
-    </div>
+  <div id="page-history" class="page" style="padding-top:150px; text-align:center;">
+    <h1 style="font-family:Cinzel;">HISTORY</h1>
   </div>
 
-  <div id="page-films" class="page">
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <h1 style="font-family:Cinzel; font-size:3rem; color:var(--gold);">FILMS</h1>
-    </div>
+  <div id="page-films" class="page" style="padding-top:150px; text-align:center;">
+    <h1 style="font-family:Cinzel;">FILMS</h1>
   </div>
 
   <script>
+    // רשימת התמונות שלך
+    const images = [
+      './image_2026-03-13_230619314.png', './image_2026-03-13_230636882.png',
+      './image_2026-03-13_230654112.png', './image_2026-03-13_230706432.png',
+      './image_2026-03-13_230721055.png', './image_2026-03-13_230733426.png',
+      './image_2026-03-13_230748568.png', './image_2026-03-13_222345060.png'
+    ];
+
     function init() {
-      // עדכון שעון
+      // שעון
       setInterval(() => {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
       }, 1000);
 
-      // הסרת מסך פתיחה
+      // טעינת גלריה
+      const container = document.getElementById('gallery-container');
+      images.forEach(src => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.backgroundImage = `url('${src}')`;
+        container.appendChild(div);
+      });
+
+      // הסרת Splash
       setTimeout(() => {
         const splash = document.getElementById('splash-screen');
         splash.style.opacity = '0';
@@ -139,14 +167,14 @@
     function navigateTo(path) {
       const current = document.querySelector('.page.active');
       if (current) {
-        current.classList.add('exit');
-        setTimeout(() => { current.classList.remove('active', 'exit'); current.style.display = 'none'; }, 800);
+        current.style.opacity = '0';
+        setTimeout(() => { current.classList.remove('active'); current.style.display = 'none'; }, 700);
       }
       setTimeout(() => {
         window.history.pushState({}, "", path);
         handleRoute(path);
       }, 100);
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
     }
 
     function handleRoute(path) {
@@ -158,11 +186,16 @@
       setTimeout(() => target.classList.add('active'), 50);
     }
 
+    // אנימציית גלילה (החזרתי את התנועה!)
     window.addEventListener('scroll', () => {
       const home = document.getElementById('page-home');
       if(home.classList.contains('active')) {
-        const progress = Math.min(window.scrollY / window.innerHeight, 1);
+        const scrollY = window.scrollY;
+        const winH = window.innerHeight;
+        const progress = Math.min(scrollY / winH, 1);
+        
         const factor = window.innerWidth < 768 ? 70 : 100;
+        
         document.getElementById('main-name').style.transform = `translateX(${50 - (progress * factor)}%)`;
         document.getElementById('parasha-text').style.transform = `translateX(${-50 + (progress * factor)}%)`;
       }
