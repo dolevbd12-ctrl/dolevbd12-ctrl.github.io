@@ -11,73 +11,119 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@300;600&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
-    :root { --gold: #c5a059; --bg: #050505; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; background: var(--bg); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
+    :root { 
+      --gold: #c5a059; 
+      --bg: #050505; 
+      --text: #ffffff;
+      --nav-bg: rgba(255,255,255,0.08);
+    }
 
-    /* תפריט עליון */
+    body.light-mode {
+      --bg: #f5f5f5;
+      --text: #1a1a1a;
+      --nav-bg: rgba(0,0,0,0.05);
+      --gold: #b08d48;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { 
+      margin: 0; background: var(--bg); color: var(--text); 
+      font-family: 'Assistant', sans-serif; overflow-x: hidden;
+      transition: background 0.5s ease;
+    }
+
+    /* ====== LOADING SCREEN ====== */
+    #loading-screen {
+      position: fixed; inset: 0; background: #050505; 
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    .loader-content { text-align: center; }
+    .loader-logo {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: url('./image_2026-03-13_222345060.png') center/cover;
+      animation: pulse 1.5s infinite ease-in-out;
+      margin-bottom: 20px;
+    }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+
+    /* ====== NAVIGATION ====== */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
       padding: 15px; pointer-events: none;
     }
     .nav > * { pointer-events: auto; }
-    
+    .nav-side { display: flex; gap: 8px; flex: 1; }
+    .nav-side.right { justify-content: flex-start; }
+    .nav-side.left { justify-content: flex-end; }
+
     .btn {
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
-      border: 1px solid rgba(197, 160, 89, 0.2); color: var(--gold);
-      padding: 7px 12px; border-radius: 4px; font-family: 'Cinzel';
-      font-size: 0.65rem; cursor: pointer;
+      background: var(--nav-bg); backdrop-filter: blur(10px);
+      border: 1px solid var(--gold); color: var(--gold);
+      padding: 7px 10px; border-radius: 4px; font-family: 'Cinzel';
+      font-size: 0.6rem; cursor: pointer;
     }
 
-    #clock { font-family: 'Cinzel'; font-size: 13px; color: var(--gold); letter-spacing: 1px; }
+    #clock { 
+      font-family: 'Cinzel'; font-size: 13px; color: var(--gold); 
+      flex: 0; white-space: nowrap; font-weight: 900;
+    }
 
-    /* דפים */
-    .page { display: none; opacity: 0; transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1); width: 100%; }
+    /* ====== PAGES ====== */
+    .page { display: none; opacity: 0; transition: 0.8s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* הירו - סגנון מוקטן */
-    .hero-container { height: 230vh; background: var(--bg); }
+    /* ====== HERO ====== */
+    .hero-container { height: 230vh; }
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png') center/cover;
     }
 
-    .parasha { font-family: 'Cinzel'; color: var(--gold); font-size: 1rem; letter-spacing: 4px; margin-bottom: 15px; z-index: 2; }
+    .parasha { font-family: 'Cinzel'; color: var(--gold); font-size: 1rem; letter-spacing: 4px; margin-bottom: 15px; }
 
-    /* טקסט מוקטן ומאוזן */
     .main-title {
       font-family: 'Inter'; font-size: 14vw; line-height: 1;
       text-align: center; white-space: nowrap; will-change: transform;
       -webkit-text-stroke: 1px var(--gold); color: transparent;
-      z-index: 1;
     }
-    @media (min-width: 768px) { .main-title { font-size: 8vw; } }
 
     .founded {
       position: absolute; bottom: 110px; font-family: 'Cinzel';
-      font-size: 0.7rem; color: var(--gold); letter-spacing: 3px; opacity: 0.6;
+      font-size: 0.7rem; color: var(--gold); letter-spacing: 3px;
     }
 
     .dive-btn {
       position: absolute; bottom: 50px; border: 1px solid var(--gold);
       padding: 10px 22px; color: var(--gold); font-family: 'Cinzel';
-      border-radius: 50px; cursor: pointer; z-index: 10; font-size: 0.8rem;
-      animation: pulse 2s infinite;
+      border-radius: 50px; cursor: pointer; font-size: 0.8rem;
     }
-    @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(197,160,89,0.3);} 70% {box-shadow: 0 0 0 10px rgba(197,160,89,0);} 100% {box-shadow: 0 0 0 0 rgba(197,160,89,0);} }
 
     .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
-    .gallery img { width: 100%; border-radius: 4px; border: 0.5px solid #222; }
+    .gallery img { width: 100%; border-radius: 4px; border: 1px solid var(--gold); }
   </style>
 </head>
 <body onload="init()">
 
+  <div id="loading-screen">
+    <div class="loader-content">
+      <div class="loader-logo"></div>
+      <div style="font-family:'Cinzel'; color:var(--gold); letter-spacing:5px;">D&R OFFICIAL</div>
+    </div>
+  </div>
+
   <nav class="nav">
-    <button class="btn" onclick="location.href='/'">HOME</button>
+    <div class="nav-side right">
+      <button class="btn" onclick="location.href='/'">HOME</button>
+      <button class="btn" onclick="toggleTheme()" id="theme-btn">LIGHT</button>
+    </div>
+
     <div id="clock">00:00:00</div>
-    <div style="display:flex; gap:8px;">
+
+    <div class="nav-side left">
       <button class="btn" onclick="navigateTo('/history')">HISTORY</button>
       <button class="btn" onclick="navigateTo('/films')">FILMS</button>
     </div>
@@ -112,16 +158,34 @@
     ];
 
     function init() {
+      // שעון
       setInterval(() => {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
       }, 1000);
+
+      // טעינת תמונות לגלריה
       const gal = document.getElementById('gallery-section');
       images.forEach(s => {
         const i = document.createElement('img');
         i.src = s;
         gal.appendChild(i);
       });
+
+      // העלמת מסך טעינה
+      setTimeout(() => {
+        const ls = document.getElementById('loading-screen');
+        ls.style.opacity = '0';
+        setTimeout(() => { ls.style.visibility = 'hidden'; }, 800);
+      }, 2000); // מציג את הלואודינג ל-2 שניות
+
       handleRoute(window.location.pathname);
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('theme-btn');
+      body.classList.toggle('light-mode');
+      btn.textContent = body.classList.contains('light-mode') ? 'DARK' : 'LIGHT';
     }
 
     function navigateTo(path) {
@@ -146,7 +210,6 @@
       const progress = Math.min(scrollY / winH, 1.2);
       const name = document.getElementById('animated-name');
       
-      // תנועה הצידה מתונה יותר והגדלה מינימלית
       const xPos = 40 - (progress * 100); 
       name.style.transform = `translateX(${xPos}%) scale(${1 + progress * 0.2})`;
       
