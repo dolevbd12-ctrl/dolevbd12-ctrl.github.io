@@ -119,9 +119,9 @@
       height: 5000px; 
       background: transparent;
       display: flex;
-      align-items: flex-end; /* מוריד את התוכן להכי למטה שאפשר */
+      align-items: flex-end;
       justify-content: center;
-      padding-bottom: 100px; /* נותן קצת אוויר מתחת לטקסט בסוף הגלילה */
+      padding-bottom: 100px;
     }
 
     .basement-text {
@@ -131,7 +131,10 @@
       color: var(--gold);
       text-align: center;
       text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.2s;
     }
+    .basement-text:active { transform: scale(0.9); }
 
     .basement-text .sub {
       display: block;
@@ -139,6 +142,24 @@
       opacity: 0.7;
       margin-top: 5px;
       font-weight: 700;
+    }
+
+    /* סגנון לעמוד הקוד */
+    .code-container {
+      direction: ltr;
+      font-family: monospace;
+      text-align: center;
+      margin-top: 200px;
+    }
+    .code-line {
+      font-size: 1.5rem;
+      color: var(--text);
+    }
+    .error-line {
+      font-size: 0.9rem;
+      color: #ff3333;
+      margin-top: 15px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -164,6 +185,7 @@
     </div>
   </nav>
 
+  <!-- עמוד הבית -->
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
@@ -176,21 +198,34 @@
     
     <div class="gallery" id="gallery-section"></div>
     
-    <!-- שטח הגלילה הענק עם הטקסט בסוף -->
     <div class="massive-scroll-spacer">
-      <div class="basement-text">
+      <div class="basement-text" onclick="navigateTo('/basement')">
         המרתף
         <span class="sub">(ביותר טוב)</span>
       </div>
     </div>
   </div>
 
+  <!-- עמוד היסטוריה -->
   <div id="page-history" class="page" style="padding-top:150px; text-align:center;">
     <h1 style="font-family:Cinzel; color:var(--gold); font-size:3rem;">HISTORY</h1>
   </div>
 
+  <!-- עמוד סרטים -->
   <div id="page-films" class="page" style="padding-top:150px; text-align:center;">
     <h1 style="font-family:Cinzel; color:var(--gold); font-size:3rem;">FILMS</h1>
+  </div>
+
+  <!-- העמוד הסודי של המרתף -->
+  <div id="page-basement" class="page">
+    <div class="code-container">
+      <div class="code-line">
+        print, { : "Hello World" } 😊
+      </div>
+      <div class="error-line">
+        error
+      </div>
+    </div>
   </div>
 
   <script>
@@ -243,6 +278,8 @@
       let id = 'page-home';
       if(path.includes('history')) id = 'page-history';
       if(path.includes('films')) id = 'page-films';
+      if(path.includes('basement')) id = 'page-basement'; // הוספתי את הנתיב החדש
+      
       const target = document.getElementById(id);
       target.style.display = 'block';
       setTimeout(() => target.classList.add('active'), 50);
