@@ -8,217 +8,231 @@
   <title>D&R | Official</title>
   
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@400;700;900&family=Inter:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;700&family=Inter:wght@300;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
   <style>
+    /* =========================================
+       F1 PREMIUM DESIGN (Leclerc / Norris Style)
+       ========================================= */
     :root { 
       --gold: #c5a059; 
-      --bg: #050505; 
-      --text: #ffffff;
-      --nav-btn-bg: rgba(0, 0, 0, 0.7);
-      --nav-btn-text: #c5a059;
+      --bg: #030303; 
+      --text: #f0f0f0;
+      --nav-bg: rgba(3, 3, 3, 0.8);
+      --accent: #ffffff;
     }
 
     body.light-mode {
-      --bg: #ffffff;
-      --text: #1a1a1a;
-      --nav-btn-bg: rgba(255, 255, 255, 0.9);
-      --nav-btn-text: #8b6d2d;
-      --gold: #8b6d2d;
+      --bg: #f9f9f9;
+      --text: #111111;
+      --nav-bg: rgba(249, 249, 249, 0.8);
+      --gold: #9c7b3c;
+      --accent: #000000;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
     body { 
       margin: 0; background: var(--bg); color: var(--text); 
       font-family: 'Assistant', sans-serif; overflow-x: hidden;
-      transition: background 0.4s ease;
+      transition: background 0.5s cubic-bezier(0.19, 1, 0.22, 1), color 0.5s ease;
     }
 
-    /* ====== מסך טעינה ====== */
+    /* מסך טעינה */
     #loading-screen {
-      position: fixed; inset: 0; background: #000; 
+      position: fixed; inset: 0; background: var(--bg); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 0.6s ease;
+      z-index: 10000; transition: opacity 0.8s ease;
     }
     .loader-logo {
-      width: 130px; height: 130px; border-radius: 50%;
-      border: 3px solid var(--gold);
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 1px solid var(--gold);
       background: url('./image_2026-03-13_222345060.png') center/cover;
-      box-shadow: 0 0 30px rgba(197, 160, 89, 0.3);
-      animation: pulse 2s infinite;
-      margin-bottom: 25px;
+      animation: f1-pulse 1.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 20px;
     }
-    @keyframes pulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.3); } 100% { transform: scale(1); filter: brightness(1); } }
+    @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 40px rgba(197, 160, 89, 0.2); } }
 
-    /* ====== ניווט ====== */
+    /* ניווט נקי ומינימליסטי */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 15px; pointer-events: none;
+      padding: 25px 30px; pointer-events: none;
+      backdrop-filter: blur(10px);
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.1);
     }
     .nav > * { pointer-events: auto; }
-    .nav-side { display: flex; gap: 10px; flex: 1; }
+    .nav-side { display: flex; gap: 20px; flex: 1; }
     .nav-side.left { justify-content: flex-end; }
 
     .btn {
-      background: var(--nav-btn-bg);
-      border: 1.5px solid var(--gold); 
-      color: var(--nav-btn-text);
-      padding: 8px 14px; border-radius: 8px; 
-      font-family: 'Cinzel'; font-weight: 900;
-      font-size: 0.75rem; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: all 0.2s;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: 0.7rem; letter-spacing: 2px; cursor: pointer;
+      text-transform: uppercase;
+      position: relative;
+      padding: 5px 0;
     }
-    .btn:active { transform: scale(0.95); }
+    .btn::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 0%;
+      height: 1px; background: var(--gold); transition: 0.3s ease;
+    }
+    .btn:hover::after { width: 100%; }
 
     #clock { 
-      font-family: 'Cinzel'; font-size: 15px; color: var(--gold); 
-      font-weight: 900; letter-spacing: 1px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); 
+      font-weight: 400; letter-spacing: 2px;
     }
 
-    /* ====== דפים ====== */
-    .page { display: none; opacity: 0; transition: 0.5s ease; width: 100%; }
+    /* דפים מעברים */
+    .page { display: none; opacity: 0; transition: opacity 0.6s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* ====== הירו ====== */
+    /* הירו - שטח עצום */
     .hero-container { height: 600vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('./image_2026-03-13_222345060.png') center/cover;
+      background: url('./image_2026-03-13_222345060.png') center/cover;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 40%, var(--bg) 100%);
+      z-index: 0;
     }
 
-    .parasha { font-family: 'Cinzel'; color: var(--gold); font-size: 1.1rem; letter-spacing: 5px; margin-bottom: 20px; font-weight: 700; }
+    .parasha { 
+      font-family: 'Assistant'; color: var(--gold); font-size: 0.9rem; 
+      letter-spacing: 8px; margin-bottom: 30px; font-weight: 300; z-index: 1;
+      text-transform: uppercase;
+    }
 
     .main-title {
-      font-family: 'Inter'; font-size: 15vw; line-height: 1;
+      font-family: 'Inter'; font-size: 16vw; line-height: 0.85;
       text-align: center; white-space: nowrap; will-change: transform;
-      -webkit-text-stroke: 1.5px var(--gold); color: transparent;
-      transition: color 0.4s ease;
+      -webkit-text-stroke: 1px var(--accent); color: transparent;
+      transition: color 0.5s ease; z-index: 1; text-transform: uppercase;
     }
 
     .founded {
-      position: absolute; bottom: 120px; font-family: 'Cinzel';
-      font-size: 0.8rem; color: var(--gold); letter-spacing: 4px; font-weight: 700;
+      position: absolute; bottom: 10vh; font-family: 'Space Mono';
+      font-size: 0.7rem; color: var(--text); letter-spacing: 4px; z-index: 1;
+      opacity: 0.5;
     }
 
     .dive-btn {
-      position: absolute; bottom: 50px; border: 2px solid var(--gold);
-      padding: 12px 28px; color: #fff; font-family: 'Cinzel'; font-weight: 900;
-      border-radius: 50px; cursor: pointer; background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(5px);
+      position: absolute; bottom: 18vh; 
+      color: var(--bg); background: var(--accent);
+      padding: 15px 40px; font-family: 'Inter'; font-weight: 900; letter-spacing: 2px;
+      font-size: 0.7rem; cursor: pointer; z-index: 1;
+      transition: 0.3s; text-transform: uppercase;
     }
+    .dive-btn:hover { background: var(--gold); }
 
-    .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; background: var(--bg); }
-    .gallery img { width: 100%; border-radius: 8px; border: 1.5px solid var(--gold); }
-    
-    /* ====== שטח גלילה עצום עם "המרתף" ====== */
+    /* גלריה נקייה */
+    .gallery { 
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
+      padding: 2px; background: var(--bg); max-width: 1200px; margin: 0 auto;
+    }
+    .gallery img { 
+      width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5;
+      filter: grayscale(100%); transition: 0.5s ease;
+    }
+    .gallery img:hover { filter: grayscale(0%); }
+
+    /* שטח הגלילה העצום */
     .massive-scroll-spacer {
       height: 5000px; 
-      background: transparent;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 100px;
+      background: var(--bg);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 150px;
     }
 
+    .basement-link-wrapper { text-align: center; cursor: pointer; }
     .basement-text {
-      font-family: 'Assistant', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: var(--gold);
-      text-align: center;
-      text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      cursor: pointer;
-      transition: transform 0.2s;
+      font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 900;
+      color: var(--bg); -webkit-text-stroke: 1px var(--gold);
+      text-transform: uppercase; transition: 0.3s; letter-spacing: -2px;
     }
-    .basement-text:active { transform: scale(0.9); }
-
-    .basement-text .sub {
-      display: block;
-      font-size: 1.2rem;
-      opacity: 0.7;
-      margin-top: 5px;
-      font-weight: 700;
+    .basement-link-wrapper:hover .basement-text { color: var(--gold); }
+    .basement-link-wrapper .sub {
+      display: block; font-family: 'Space Mono'; font-size: 0.8rem;
+      color: var(--text); margin-top: 10px; opacity: 0.4; letter-spacing: 2px;
     }
 
-    /* ====== סגנון לעמוד המרתף ====== */
-    .basement-content {
-      padding-top: 150px;
-      padding-bottom: 100px;
-      text-align: center;
-      direction: ltr; /* יישור משמאל לימין בשביל האנגלית והקוד */
+
+    /* =========================================
+       THE BASEMENT (8-Year-Old Nightmare Mode)
+       ========================================= */
+    body.ugly-basement {
+      background-color: #ff00ff !important;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 100 100"><text y="50" font-size="40">✨</text></svg>') !important;
+      background-repeat: repeat !important;
+      animation: seizure-bg 0.3s infinite !important;
+      color: #00ff00 !important;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', cursive !important;
     }
 
-    .code-container {
-      font-family: monospace;
-      margin-bottom: 60px;
-    }
-    .code-line {
-      font-size: 1.5rem;
-      color: var(--text);
-    }
-    .error-line {
-      font-size: 1rem;
-      color: #ff3333;
-      margin-top: 10px;
-      font-weight: bold;
+    @keyframes seizure-bg {
+      0% { background-color: #ff00ff; background-position: 0px 0px; }
+      50% { background-color: #ffff00; background-position: 25px 25px; }
+      100% { background-color: #00ffff; background-position: 50px 50px; }
     }
 
-    /* כותרת הטענות באדום ענק */
-    .allegations-title {
-      color: #ff0000;
-      font-size: 12vw; /* גודל דינאמי ענק */
-      font-family: 'Inter', sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin: 40px 10px;
-      line-height: 1.1;
-      text-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+    /* הריסת הניווט כשאנחנו במרתף */
+    body.ugly-basement .nav {
+      background: blue !important; border: 10px ridge red !important; backdrop-filter: none !important;
+    }
+    body.ugly-basement .btn, body.ugly-basement #clock {
+      color: yellow !important; font-family: 'Comic Sans MS' !important;
+      font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important;
     }
 
-    @media (min-width: 768px) {
-      .allegations-title { font-size: 4rem; }
+    #page-basement .basement-content {
+      padding-top: 200px; padding-bottom: 200px; text-align: center; direction: ltr;
     }
 
-    /* רשימת הטענות (מספרים + מקום לתמונה) */
-    .allegations-list {
-      display: flex;
-      flex-direction: column;
-      gap: 60px; /* המרווח הגדול בין כל מספר למספר */
-      padding: 20px;
+    #page-basement .code-container {
+      background: black; border: 15px double yellow; padding: 20px;
+      margin: 0 auto 50px auto; width: 90%; max-width: 500px;
+    }
+    
+    #page-basement .code-line {
+      font-size: 2rem; color: #00ffff; font-family: "Courier New", Courier, monospace;
+      animation: blinker 1s linear infinite;
+    }
+    
+    #page-basement .error-line {
+      font-size: 1.5rem; color: red; margin-top: 15px; font-weight: bold; text-decoration: underline;
     }
 
-    .list-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    @keyframes blinker { 50% { opacity: 0; } }
+
+    /* כותרת הטענות זזה ומכוערת */
+    #page-basement .allegations-title {
+      color: red; font-size: 3rem; text-transform: uppercase;
+      text-shadow: 5px 5px 0px yellow, -5px -5px 0px blue;
+      margin-bottom: 50px; background: black; display: inline-block; padding: 10px;
     }
 
-    .list-number {
-      font-family: 'Cinzel', serif;
-      font-size: 3.5rem;
-      color: var(--gold);
-      font-weight: 900;
-      margin-bottom: 15px;
+    #page-basement .allegations-list { display: flex; flex-direction: column; gap: 80px; padding: 20px; }
+    
+    #page-basement .list-item { display: flex; flex-direction: column; align-items: center; }
+    
+    #page-basement .list-number {
+      font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%;
+      width: 100px; height: 100px; line-height: 100px; border: 5px solid red;
+      margin-bottom: 20px; text-shadow: 2px 2px black;
     }
 
-    /* זה המרווח/מסגרת המוכנה לתמונה - תוכל להחליף את זה ב-<img> בהמשך */
-    .image-placeholder {
-      width: 100%;
-      max-width: 400px;
-      height: 250px;
-      border: 2px dashed rgba(197, 160, 89, 0.5);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold);
-      opacity: 0.5;
-      font-family: 'Assistant', sans-serif;
+    #page-basement .image-placeholder {
+      width: 90%; max-width: 400px; height: 300px;
+      border: 15px groove lime; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat;
+      background-color: pink; display: flex; align-items: center; justify-content: center;
+      color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg);
     }
   </style>
 </head>
@@ -227,17 +241,15 @@
   <!-- מסך טעינה -->
   <div id="loading-screen">
     <div class="loader-logo"></div>
-    <div style="font-family:'Cinzel'; color:var(--gold); letter-spacing:6px; font-weight:900;">D&R OFFICIAL</div>
+    <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:4px; font-size:0.7rem;">LOADING SYSTEM</div>
   </div>
 
   <nav class="nav">
     <div class="nav-side">
-      <button class="btn" onclick="location.href='/'">HOME</button>
+      <button class="btn" onclick="navigateTo('/')">HOME</button>
       <button class="btn" onclick="toggleTheme()" id="theme-btn">LIGHT</button>
     </div>
-
     <div id="clock">00:00:00</div>
-
     <div class="nav-side left">
       <button class="btn" onclick="navigateTo('/history')">HISTORY</button>
       <button class="btn" onclick="navigateTo('/films')">FILMS</button>
@@ -248,6 +260,7 @@
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
+        <div class="hero-overlay"></div>
         <div class="parasha">פרשת כי תשא</div>
         <h1 class="main-title" id="animated-name">DOLEV & ROEE</h1>
         <div class="founded">EST. 2026</div>
@@ -258,68 +271,59 @@
     <div class="gallery" id="gallery-section"></div>
     
     <div class="massive-scroll-spacer">
-      <div class="basement-text" onclick="navigateTo('/basement')">
-        המרתף
+      <div class="basement-link-wrapper" onclick="navigateTo('/basement')">
+        <div class="basement-text">המרתף</div>
         <span class="sub">(ביותר טוב)</span>
       </div>
     </div>
   </div>
 
   <!-- עמוד היסטוריה -->
-  <div id="page-history" class="page" style="padding-top:150px; text-align:center;">
-    <h1 style="font-family:Cinzel; color:var(--gold); font-size:3rem;">HISTORY</h1>
+  <div id="page-history" class="page" style="padding-top:200px; text-align:center;">
+    <h1 style="font-family:'Inter'; color:var(--text); font-size:4rem; font-weight:900; text-transform:uppercase;">History</h1>
+    <p style="font-family:'Space Mono'; color:var(--gold);">[ DATA NOT FOUND ]</p>
   </div>
 
   <!-- עמוד סרטים -->
-  <div id="page-films" class="page" style="padding-top:150px; text-align:center;">
-    <h1 style="font-family:Cinzel; color:var(--gold); font-size:3rem;">FILMS</h1>
+  <div id="page-films" class="page" style="padding-top:200px; text-align:center;">
+    <h1 style="font-family:'Inter'; color:var(--text); font-size:4rem; font-weight:900; text-transform:uppercase;">Films</h1>
+    <p style="font-family:'Space Mono'; color:var(--gold);">[ NO MEDIA AVAILABLE ]</p>
   </div>
 
-  <!-- העמוד הסודי של המרתף -->
+  <!-- העמוד הסודי של המרתף (עיצוב מזעזע) -->
   <div id="page-basement" class="page">
     <div class="basement-content">
       
-      <!-- חלק הקוד -->
       <div class="code-container">
-        <div class="code-line">
-          print, { : "Hello World" } 😊
-        </div>
-        <div class="error-line">
-          error
-        </div>
+        <div class="code-line">print, { : "Hello World" } 😊</div>
+        <div class="error-line">error</div>
       </div>
 
-      <!-- כותרת הטענות -->
-      <h1 class="allegations-title">Addressing the allegations:</h1>
+      <marquee scrollamount="15">
+        <h1 class="allegations-title">Addressing the allegations:</h1>
+      </marquee>
 
-      <!-- הרשימה עם המספרים והרווחים לתמונות -->
       <div class="allegations-list">
-        
         <div class="list-item">
           <div class="list-number">1</div>
-          <div class="image-placeholder">Image Space</div>
+          <div class="image-placeholder">PUT PIC HERE!</div>
         </div>
-        
         <div class="list-item">
           <div class="list-number">2</div>
-          <div class="image-placeholder">Image Space</div>
+          <div class="image-placeholder">PUT PIC HERE!</div>
         </div>
-        
         <div class="list-item">
           <div class="list-number">3</div>
-          <div class="image-placeholder">Image Space</div>
+          <div class="image-placeholder">PUT PIC HERE!</div>
         </div>
-        
         <div class="list-item">
           <div class="list-number">4</div>
-          <div class="image-placeholder">Image Space</div>
+          <div class="image-placeholder">PUT PIC HERE!</div>
         </div>
-        
         <div class="list-item">
           <div class="list-number">5</div>
-          <div class="image-placeholder">Image Space</div>
+          <div class="image-placeholder">PUT PIC HERE!</div>
         </div>
-
       </div>
 
     </div>
@@ -340,18 +344,17 @@
 
       const gal = document.getElementById('gallery-section');
       images.forEach(s => {
-        const i = document.createElement('img');
-        i.src = s;
-        gal.appendChild(i);
+        const i = document.createElement('img'); i.src = s; gal.appendChild(i);
       });
 
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
-        ls.style.opacity = '0';
-        setTimeout(() => { ls.style.display = 'none'; }, 600);
+        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 800);
       }, 2000);
 
-      handleRoute(window.location.pathname);
+      // טיפול במקרה של רענון עמוד אם אנחנו לא בבית
+      const initialPath = window.location.pathname === '/' ? '/home' : window.location.pathname;
+      handleRoute(initialPath, true);
     }
 
     function toggleTheme() {
@@ -362,43 +365,59 @@
     }
 
     function navigateTo(path) {
-      window.history.pushState({}, "", path);
+      if(path === '/') path = '/home';
+      window.history.pushState({}, "", path === '/home' ? '/' : path);
       handleRoute(path);
       window.scrollTo(0,0);
     }
 
-    function handleRoute(path) {
+    function handleRoute(path, isInitial = false) {
+      // איפוס כללי
       document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+      document.body.classList.remove('ugly-basement');
+      
       let id = 'page-home';
       if(path.includes('history')) id = 'page-history';
       if(path.includes('films')) id = 'page-films';
-      if(path.includes('basement')) id = 'page-basement'; 
+      if(path.includes('basement')) {
+        id = 'page-basement';
+        document.body.classList.add('ugly-basement'); // מפעיל את העיצוב המזעזע!
+      }
       
       const target = document.getElementById(id);
-      target.style.display = 'block';
-      setTimeout(() => target.classList.add('active'), 50);
+      if(target) {
+        target.style.display = 'block';
+        setTimeout(() => target.classList.add('active'), 50);
+      }
     }
 
+    // אנימציית הגלילה המדויקת לפונט האאוטליין (Leclerc Vibe)
     window.addEventListener('scroll', () => {
+      if(document.body.classList.contains('ugly-basement')) return; // מבטל אפקטים במרתף
+      
       const scrollY = window.scrollY;
       const winH = window.innerHeight;
-      
-      const progress = Math.min(scrollY / (winH * 4), 1.1);
+      const progress = Math.min(scrollY / (winH * 3.5), 1);
       const name = document.getElementById('animated-name');
       
-      const xPos = 40 - (progress * 100); 
-      name.style.transform = `translateX(${xPos}%) scale(${1 + progress * 0.15})`;
-      
-      if (progress > 0.45) {
-        name.style.color = 'var(--gold)';
-        name.style.webkitTextStroke = '0px';
-      } else {
-        name.style.color = 'transparent';
-        name.style.webkitTextStroke = '1.5px var(--gold)';
+      if(name) {
+        const xPos = 40 - (progress * 100); 
+        name.style.transform = `translateX(${xPos}vw)`;
+        
+        if (progress > 0.3) {
+          name.style.color = 'var(--text)';
+          name.style.webkitTextStroke = '0px';
+        } else {
+          name.style.color = 'transparent';
+          name.style.webkitTextStroke = '1px var(--accent)';
+        }
       }
     });
 
-    window.onpopstate = () => handleRoute(window.location.pathname);
+    window.onpopstate = () => {
+      const path = window.location.pathname === '/' ? '/home' : window.location.pathname;
+      handleRoute(path);
+    };
   </script>
 </body>
 </html>
