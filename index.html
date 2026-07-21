@@ -20,7 +20,7 @@
       --text: #fafafa;
       --nav-bg: rgba(5, 5, 5, 0.4);
       --accent: #ffffff;
-      --glow-color: rgba(212, 175, 55, 0.15); /* הילה זהובה עדינה */
+      --glow-color: rgba(212, 175, 55, 0.15);
     }
 
     body.light-mode {
@@ -40,13 +40,11 @@
       transition: background 0.7s cubic-bezier(0.19, 1, 0.22, 1), color 0.7s ease;
     }
 
-    /* מרקם קולנועי (Film Grain) שנותן יוקרה */
     .film-grain {
       position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.25;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
-    /* הילה מגנטית של העכבר */
     #mouse-glow {
       position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
       background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
@@ -57,7 +55,6 @@
     }
     body.light-mode #mouse-glow { mix-blend-mode: multiply; }
 
-    /* מסך טעינה */
     #loading-screen {
       position: fixed; inset: 0; background: var(--bg); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -72,7 +69,6 @@
     }
     @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 50px rgba(212, 175, 55, 0.3); } }
 
-    /* ניווט פרימיום - זכוכית (Glassmorphism) */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
@@ -103,7 +99,6 @@
     .page { display: none; opacity: 0; transition: opacity 0.8s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* הירו קולנועי */
     .hero-container { height: 600vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
@@ -161,7 +156,6 @@
     .basement-link-wrapper:hover .basement-text { color: var(--gold); }
     .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); margin-top: 15px; opacity: 0.3; letter-spacing: 3px; }
 
-
     /* =========================================
        THE BASEMENT (8-Year-Old Nightmare Mode)
        ========================================= */
@@ -185,10 +179,23 @@
     @keyframes blinker { 50% { opacity: 0; } }
 
     #page-basement .allegations-title { color: red; font-size: 3rem; text-transform: uppercase; text-shadow: 5px 5px 0px yellow, -5px -5px 0px blue; margin-bottom: 50px; background: black; display: inline-block; padding: 10px; }
+    
+    #page-basement .allegation-subtitle {
+      color: yellow; font-size: 2.5rem; text-decoration: underline;
+      text-shadow: 2px 2px 0px black; margin: 20px 0;
+    }
+
     #page-basement .allegations-list { display: flex; flex-direction: column; gap: 80px; padding: 20px; }
     #page-basement .list-item { display: flex; flex-direction: column; align-items: center; }
     #page-basement .list-number { font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%; width: 100px; height: 100px; line-height: 100px; border: 5px solid red; margin-bottom: 20px; text-shadow: 2px 2px black; }
-    #page-basement .image-placeholder { width: 90%; max-width: 400px; height: 300px; border: 15px groove lime; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat; background-color: pink; display: flex; align-items: center; justify-content: center; color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg); margin-bottom: 10px; }
+    
+    #page-basement .image-placeholder { 
+      width: 90%; max-width: 400px; height: 300px; border: 15px groove lime; 
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat; 
+      background-color: pink; display: flex; align-items: center; justify-content: center; 
+      color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg); margin-bottom: 10px; 
+      cursor: crosshair;
+    }
     
     #page-basement .allegation-text {
       background: white; color: black; font-size: 1.5rem; border: 5px solid red; padding: 10px; width: 90%; max-width: 600px; font-family: 'Arial', sans-serif; text-align: right; direction: rtl;
@@ -279,6 +286,8 @@
       </marquee>
 
       <div class="allegations-list">
+        
+        <!-- טענה 1 -->
         <div class="list-item">
           <div class="list-number">1</div>
           <div class="image-placeholder">PUT PIC HERE!</div>
@@ -287,7 +296,17 @@
           </div>
         </div>
         
-        <div class="list-item"><div class="list-number">2</div><div class="image-placeholder">PUT PIC HERE!</div></div>
+        <!-- טענה 2: הארון הדינמי -->
+        <div class="list-item">
+          <div class="list-number">2</div>
+          <h2 class="allegation-subtitle">הארון של המחסן (הארון הדינמי)</h2>
+          <!-- זה המקום לתמונה של הארון, הוספתי לו id בשביל הפיצוץ -->
+          <div class="image-placeholder" id="closet-image-trigger">PUT CLOSET PIC HERE!</div>
+          <div class="allegation-text">
+            אני בזאת מתוודה שאני שברתי את הארון של המחסן בזה שאני נגחתי בו. זה אפילו לא היה כזה חזק, הארון ממש חלש ממילא. ואחרי שסידרתי את הארון, שוב פעם הארון נשבר, אבל הפעם זה כי דולב בעט בו.
+          </div>
+        </div>
+
         <div class="list-item"><div class="list-number">3</div><div class="image-placeholder">PUT PIC HERE!</div></div>
         <div class="list-item"><div class="list-number">4</div><div class="image-placeholder">PUT PIC HERE!</div></div>
         <div class="list-item"><div class="list-number">5</div><div class="image-placeholder">PUT PIC HERE!</div></div>
@@ -304,7 +323,6 @@
       './image_2026-03-13_230748568.png', './image_2026-03-13_222345060.png'
     ];
 
-    // עוקב העכבר היוקרתי
     const mouseGlow = document.getElementById('mouse-glow');
     window.addEventListener('mousemove', (e) => {
       mouseGlow.style.left = e.clientX + 'px';
@@ -363,7 +381,6 @@
       }
     }
 
-    // אנימציית הטקסט הקולנועית בגלילה (Blend Effect)
     window.addEventListener('scroll', () => {
       if(document.body.classList.contains('ugly-basement')) return; 
       
@@ -392,16 +409,24 @@
     };
 
     // ==========================================
-    // מערכת הפיצוץ של "מגה גוצים" (Easter Egg)
+    // מערכת הפיצוץ של ה"גוצים"
     // ==========================================
+    function triggerGutzimExplosion(e) {
+      for (let i = 0; i < 60; i++) {
+        createGutz(e.clientX, e.clientY);
+      }
+    }
+
+    // טריגר 1: הטקסט מטענה 1
     const gutzimTrigger = document.getElementById('gutzim-trigger');
     if (gutzimTrigger) {
-      gutzimTrigger.addEventListener('mouseenter', (e) => {
-        // מייצר 60 גוצים שעפים לכל עבר
-        for (let i = 0; i < 60; i++) {
-          createGutz(e.clientX, e.clientY);
-        }
-      });
+      gutzimTrigger.addEventListener('mouseenter', triggerGutzimExplosion);
+    }
+
+    // טריגר 2: התמונה של הארון הדינמי מטענה 2
+    const closetImageTrigger = document.getElementById('closet-image-trigger');
+    if (closetImageTrigger) {
+      closetImageTrigger.addEventListener('mouseenter', triggerGutzimExplosion);
     }
 
     function createGutz(x, y) {
@@ -411,24 +436,20 @@
       gutz.style.left = x + 'px';
       gutz.style.top = y + 'px';
       
-      // צבעים אקראיים מזעזעים
       gutz.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
       document.body.appendChild(gutz);
       
-      // חישוב כיוון הפיצוץ
       const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 800 + 200; // מרחק תעופה
+      const distance = Math.random() * 800 + 200; 
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
-      const rot = Math.random() * 1080 - 540; // סיבוב אקראי
+      const rot = Math.random() * 1080 - 540; 
       
-      // הפעלת האנימציה דרך RequestAnimationFrame
       requestAnimationFrame(() => {
         gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 2 + 0.5})`;
         gutz.style.opacity = '0';
       });
       
-      // מנקה את האלמנט אחרי שהאנימציה מסתיימת
       setTimeout(() => gutz.remove(), 1000);
     }
   </script>
