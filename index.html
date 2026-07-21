@@ -12,70 +12,57 @@
 
   <style>
     /* =========================================
-       ULTRA-PREMIUM F1 DESIGN 
+       רשמי, מכובד, כחול חלק ונקי
        ========================================= */
     :root { 
       --gold: #d4af37; 
-      --bg: #050505; 
-      --text: #fafafa;
-      --nav-bg: rgba(5, 5, 5, 0.4);
+      --bg: #0b1329; /* רקע כחול עמוק, רשמי ומכובד */
+      --bg-gradient: linear-gradient(135deg, #0b1329 0%, #040814 100%);
+      --text: #ffffff;
+      --nav-bg: rgba(11, 19, 41, 0.85);
       --accent: #ffffff;
-      --glow-color: rgba(212, 175, 55, 0.15);
     }
 
     body.light-mode {
-      --bg: #f5f5f7;
-      --text: #1d1d1f;
-      --nav-bg: rgba(245, 245, 247, 0.4);
-      --gold: #b38b22;
+      --bg: #e6ecf5;
+      --bg-gradient: linear-gradient(135deg, #f0f4fc 0%, #d9e2f3 100%);
+      --text: #111827;
+      --nav-bg: rgba(230, 236, 245, 0.85);
+      --gold: #9c7b3c;
       --accent: #000000;
-      --glow-color: rgba(0, 0, 0, 0.05);
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body { 
-      margin: 0; background: var(--bg); color: var(--text); 
-      font-family: 'Assistant', sans-serif; overflow-x: hidden;
-      transition: background 0.7s cubic-bezier(0.19, 1, 0.22, 1), color 0.7s ease;
+      margin: 0; background: var(--bg); background-image: var(--bg-gradient);
+      color: var(--text); font-family: 'Assistant', sans-serif; overflow-x: hidden;
+      transition: background 0.5s ease, color 0.5s ease;
+      background-attachment: fixed;
     }
 
-    .film-grain {
-      position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.25;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    }
-
-    #mouse-glow {
-      position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
-      background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s, height 0.3s;
-      mix-blend-mode: screen;
-    }
-    body.light-mode #mouse-glow { mix-blend-mode: multiply; }
-
+    /* מסך טעינה חלק */
     #loading-screen {
-      position: fixed; inset: 0; background: var(--bg); 
+      position: fixed; inset: 0; background: #040814; 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 10000; transition: opacity 0.6s ease;
     }
     .loader-logo {
       width: 100px; height: 100px; border-radius: 50%;
-      border: 1px solid rgba(212, 175, 55, 0.5);
+      border: 2px solid var(--gold);
       background: url('./image_2026-03-13_222345060.png') center/cover;
-      animation: f1-pulse 2s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pulse 1.5s infinite alternate;
       margin-bottom: 20px;
     }
-    @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 50px rgba(212, 175, 55, 0.3); } }
+    @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 100% { transform: scale(1.05); opacity: 1; } }
 
+    /* ניווט רשמי */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 25px 40px; pointer-events: none;
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      background: var(--nav-bg);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 20px 40px; pointer-events: none;
+      backdrop-filter: blur(10px); background: var(--nav-bg);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     }
     .nav > * { pointer-events: auto; }
     .nav-side { display: flex; gap: 30px; flex: 1; }
@@ -85,21 +72,17 @@
       background: transparent; border: none; color: var(--text);
       font-family: 'Space Mono', monospace; font-weight: 700;
       font-size: 0.65rem; letter-spacing: 3px; cursor: pointer; text-transform: uppercase;
-      position: relative; padding: 5px 0; opacity: 0.7; transition: opacity 0.3s;
+      position: relative; padding: 5px 0; opacity: 0.8; transition: opacity 0.3s;
     }
-    .btn:hover { opacity: 1; }
-    .btn::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 0%;
-      height: 1px; background: var(--gold); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    .btn:hover::after { width: 100%; }
+    .btn:hover { opacity: 1; color: var(--gold); }
+    
+    #clock { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--gold); font-weight: 700; letter-spacing: 2px; }
 
-    #clock { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--gold); font-weight: 400; letter-spacing: 3px; opacity: 0.8; }
-
-    .page { display: none; opacity: 0; transition: opacity 0.8s ease; width: 100%; }
+    .page { display: none; opacity: 0; transition: opacity 0.5s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    .hero-container { height: 600vh; } 
+    /* הירו רשמי ונקי (بدون טשטושים) */
+    .hero-container { height: 250vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -108,53 +91,62 @@
     .hero-content {
       position: relative; z-index: 10;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      pointer-events: none; 
+      text-align: center; width: 100%;
     }
 
     .parasha { 
-      font-family: 'Assistant'; color: var(--gold); font-size: 0.85rem; 
-      letter-spacing: 12px; margin-bottom: 40px; font-weight: 300; text-transform: uppercase;
-      opacity: 0.8;
+      font-family: 'Assistant'; color: var(--gold); font-size: 1rem; 
+      letter-spacing: 10px; margin-bottom: 25px; font-weight: 600; text-transform: uppercase;
     }
 
     .main-title {
-      font-family: 'Inter'; font-size: 15vw; line-height: 0.85;
-      text-align: center; white-space: nowrap; will-change: transform;
-      -webkit-text-stroke: 1px var(--accent); color: transparent;
-      transition: color 0.6s ease, -webkit-text-stroke 0.6s ease; text-transform: uppercase;
-      letter-spacing: -2px;
+      font-family: 'Inter', sans-serif; font-size: 10vw; line-height: 1;
+      font-weight: 900; color: var(--text); text-transform: uppercase;
+      letter-spacing: 2px; margin: 0; text-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    .founded { font-family: 'Space Mono'; font-size: 0.65rem; color: var(--text); letter-spacing: 6px; opacity: 0.4; margin-top: 30px; }
+    /* אלמנט מקורי חדש: שורת טקסט רצה ויוקרתית במקום האנימציה הקודמת */
+    .ticker-wrap {
+      width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(212, 175, 55, 0.3);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 12px 0; margin: 30px 0; white-space: nowrap;
+    }
+    .ticker-move {
+      display: inline-block; animation: marquee 25s linear infinite;
+      font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); letter-spacing: 5px;
+    }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(50%); } }
+
+    .founded { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); letter-spacing: 6px; opacity: 0.6; margin-top: 10px; }
 
     .dive-btn {
-      margin-top: 60px; pointer-events: auto;
-      color: var(--bg); background: var(--text); padding: 16px 45px; 
-      font-family: 'Space Mono'; font-weight: 700; letter-spacing: 4px;
-      font-size: 0.65rem; cursor: pointer; transition: all 0.4s ease; text-transform: uppercase;
-      border-radius: 100px; border: 1px solid transparent;
+      margin-top: 30px; pointer-events: auto;
+      color: #0b1329; background: var(--gold); padding: 14px 40px; 
+      font-family: 'Space Mono'; font-weight: 700; letter-spacing: 3px;
+      font-size: 0.7rem; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;
+      border-radius: 4px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .dive-btn:hover { background: transparent; color: var(--text); border-color: var(--text); transform: scale(1.05); }
+    .dive-btn:hover { background: var(--text); transform: translateY(-2px); }
 
     .gallery { 
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; 
-      padding: 5px; background: var(--bg); max-width: 1400px; margin: 0 auto;
-      position: relative; z-index: 10;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; 
+      padding: 20px; background: transparent; max-width: 1200px; margin: 0 auto;
     }
     .gallery img { 
       width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5;
-      filter: grayscale(100%) contrast(1.1); transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-      border-radius: 4px;
+      border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);
+      transition: 0.4s ease;
     }
-    .gallery img:hover { filter: grayscale(0%) contrast(1); transform: scale(0.98); }
+    .gallery img:hover { transform: scale(1.02); border-color: var(--gold); }
 
     .massive-scroll-spacer {
-      height: 5000px; background: var(--bg); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 200px; position: relative; z-index: 10;
+      height: 3000px; background: transparent; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 150px;
     }
     .basement-link-wrapper { text-align: center; cursor: pointer; }
-    .basement-text { font-family: 'Inter', sans-serif; font-size: 2.5rem; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); text-transform: uppercase; transition: 0.4s; letter-spacing: -1px; }
-    .basement-link-wrapper:hover .basement-text { color: var(--gold); }
-    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); margin-top: 15px; opacity: 0.3; letter-spacing: 3px; }
+    .basement-text { font-family: 'Inter', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--gold); text-transform: uppercase; transition: 0.3s; letter-spacing: -1px; }
+    .basement-link-wrapper:hover .basement-text { color: var(--text); text-shadow: 0 0 15px var(--gold); }
+    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); margin-top: 10px; opacity: 0.6; letter-spacing: 2px; }
 
     /* =========================================
        THE BASEMENT (8-Year-Old Nightmare Mode)
@@ -162,36 +154,27 @@
     body.ugly-basement {
       background-color: #ff00ff !important;
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 100 100"><text y="50" font-size="40">✨</text></svg>') !important;
-      background-repeat: repeat !important; animation: seizure-bg 0.3s infinite !important; color: #00ff00 !important; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important;
+      background-repeat: repeat !important; animation: seizure-bg 0.3s infinite !important; color: #00ff00 !important; font-family: 'Comic Sans MS', cursive !important;
     }
 
-    @keyframes seizure-bg { 0% { background-color: #ff00ff; background-position: 0px 0px; } 50% { background-color: #ffff00; background-position: 25px 25px; } 100% { background-color: #00ffff; background-position: 50px 50px; } }
-
-    body.ugly-basement .film-grain, body.ugly-basement #mouse-glow { display: none !important; }
+    @keyframes seizure-bg { 0% { background-color: #ff00ff; } 50% { background-color: #ffff00; } 100% { background-color: #00ffff; } }
 
     body.ugly-basement .nav { background: blue !important; border: 10px ridge red !important; backdrop-filter: none !important; }
-    body.ugly-basement .btn, body.ugly-basement #clock { color: yellow !important; font-family: 'Comic Sans MS' !important; font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important; opacity: 1 !important; }
+    body.ugly-basement .btn, body.ugly-basement #clock { color: yellow !important; font-family: 'Comic Sans MS' !important; font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important; }
 
     #page-basement .basement-content { padding-top: 200px; padding-bottom: 200px; text-align: center; direction: ltr; }
     #page-basement .code-container { background: black; border: 15px double yellow; padding: 20px; margin: 0 auto 50px auto; width: 90%; max-width: 500px; }
-    #page-basement .code-line { font-size: 2rem; color: #00ffff; font-family: monospace; animation: blinker 1s linear infinite; }
+    #page-basement .code-line { font-size: 2rem; color: #00ffff; font-family: monospace; }
     #page-basement .error-line { font-size: 1.5rem; color: red; margin-top: 15px; font-weight: bold; text-decoration: underline; }
-    @keyframes blinker { 50% { opacity: 0; } }
 
-    #page-basement .allegations-title { color: red; font-size: 3rem; text-transform: uppercase; text-shadow: 5px 5px 0px yellow, -5px -5px 0px blue; margin-bottom: 50px; background: black; display: inline-block; padding: 10px; }
-    
-    #page-basement .allegation-subtitle {
-      color: yellow; font-size: 2.5rem; text-decoration: underline;
-      text-shadow: 2px 2px 0px black; margin: 20px 0;
-    }
-
+    #page-basement .allegations-title { color: red; font-size: 3rem; text-transform: uppercase; text-shadow: 5px 5px 0px yellow; margin-bottom: 50px; background: black; display: inline-block; padding: 10px; }
+    #page-basement .allegation-subtitle { color: yellow; font-size: 2.5rem; text-decoration: underline; text-shadow: 2px 2px 0px black; margin: 20px 0; }
     #page-basement .allegations-list { display: flex; flex-direction: column; gap: 80px; padding: 20px; }
     #page-basement .list-item { display: flex; flex-direction: column; align-items: center; }
-    #page-basement .list-number { font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%; width: 100px; height: 100px; line-height: 100px; border: 5px solid red; margin-bottom: 20px; text-shadow: 2px 2px black; }
+    #page-basement .list-number { font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%; width: 100px; height: 100px; line-height: 100px; border: 5px solid red; margin-bottom: 20px; }
     
     #page-basement .image-placeholder { 
       width: 90%; max-width: 400px; height: 300px; border: 15px groove lime; 
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat; 
       background-color: pink; display: flex; align-items: center; justify-content: center; 
       color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg); margin-bottom: 10px; 
       cursor: crosshair;
@@ -201,14 +184,12 @@
       background: white; color: black; font-size: 1.5rem; border: 5px solid red; padding: 10px; width: 90%; max-width: 600px; font-family: 'Arial', sans-serif; text-align: right; direction: rtl;
     }
 
-    /* הטריגר של הגוצים */
     #gutzim-trigger {
       color: orange; font-weight: 900; font-size: 2rem; text-decoration: underline;
-      cursor: crosshair; text-shadow: 2px 2px red; transition: 0.2s;
+      cursor: crosshair; text-shadow: 2px 2px red;
     }
     #gutzim-trigger:hover { background: yellow; color: purple; }
 
-    /* החלקיקים שמתפוצצים */
     .gutz-particle {
       position: fixed; font-family: 'Comic Sans MS', cursive; font-size: 2.5rem; font-weight: bold;
       pointer-events: none; z-index: 100000;
@@ -218,15 +199,9 @@
 </head>
 <body onload="init()">
 
-  <!-- Film Grain Texture -->
-  <div class="film-grain"></div>
-  
-  <!-- עוקב עכבר יוקרתי -->
-  <div id="mouse-glow"></div>
-
   <div id="loading-screen">
     <div class="loader-logo"></div>
-    <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:6px; font-size:0.6rem;">LOADING EXPERIENCE</div>
+    <div style="font-family:'Space Mono'; color:var(--gold); letter-spacing:4px; font-size:0.6rem;">LOADING SYSTEM</div>
   </div>
 
   <nav class="nav">
@@ -241,15 +216,21 @@
     </div>
   </nav>
 
-  <!-- עמוד הבית -->
+  <!-- עמוד הבית המשודרג (כחול רשמי, נקי וחלק) -->
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
         <div class="hero-content">
           <div class="parasha">פרשת כי תשא</div>
-          <h1 class="main-title" id="animated-name">DOLEV & ROEE</h1>
+          <h1 class="main-title">DOLEV & ROEE</h1>
+          
+          <!-- שורת טקסט רצה מקורית ואלגנטית -->
+          <div class="ticker-wrap">
+            <div class="ticker-move">OFFICIAL PORTFOLIO &bull; EST. 2026 &bull; ELITE EXPERIENCE &bull; OFFICIAL PORTFOLIO &bull; EST. 2026 &bull; ELITE EXPERIENCE &bull;</div>
+          </div>
+
           <div class="founded">EST. 2026</div>
-          <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">Explore</div>
+          <button class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">Explore Gallery</button>
         </div>
       </div>
     </div>
@@ -300,7 +281,6 @@
         <div class="list-item">
           <div class="list-number">2</div>
           <h2 class="allegation-subtitle">הארון של המחסן (הארון הדינמי)</h2>
-          <!-- זה המקום לתמונה של הארון, הוספתי לו id בשביל הפיצוץ -->
           <div class="image-placeholder" id="closet-image-trigger">PUT CLOSET PIC HERE!</div>
           <div class="allegation-text">
             אני בזאת מתוודה שאני שברתי את הארון של המחסן בזה שאני נגחתי בו. זה אפילו לא היה כזה חזק, הארון ממש חלש ממילא. ואחרי שסידרתי את הארון, שוב פעם הארון נשבר, אבל הפעם זה כי דולב בעט בו.
@@ -323,12 +303,6 @@
       './image_2026-03-13_230748568.png', './image_2026-03-13_222345060.png'
     ];
 
-    const mouseGlow = document.getElementById('mouse-glow');
-    window.addEventListener('mousemove', (e) => {
-      mouseGlow.style.left = e.clientX + 'px';
-      mouseGlow.style.top = e.clientY + 'px';
-    });
-
     function init() {
       setInterval(() => {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
@@ -341,8 +315,8 @@
 
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
-        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 1000);
-      }, 1500);
+        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 600);
+      }, 1200);
 
       const initialPath = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(initialPath, true);
@@ -381,49 +355,25 @@
       }
     }
 
-    window.addEventListener('scroll', () => {
-      if(document.body.classList.contains('ugly-basement')) return; 
-      
-      const scrollY = window.scrollY;
-      const winH = window.innerHeight;
-      const progress = Math.min(scrollY / (winH * 3), 1);
-      const name = document.getElementById('animated-name');
-      
-      if(name) {
-        const xPos = 50 - (progress * 150); 
-        name.style.transform = `translateX(${xPos}vw)`;
-        
-        if (progress > 0.25) {
-          name.style.color = 'var(--text)';
-          name.style.webkitTextStroke = '0px';
-        } else {
-          name.style.color = 'transparent';
-          name.style.webkitTextStroke = '1px var(--accent)';
-        }
-      }
-    });
-
     window.onpopstate = () => {
       const path = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(path);
     };
 
     // ==========================================
-    // מערכת הפיצוץ של ה"גוצים"
+    // מערכת פיצוץ גוצים מופעלת ב-Hover בלבד!
     // ==========================================
     function triggerGutzimExplosion(e) {
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 50; i++) {
         createGutz(e.clientX, e.clientY);
       }
     }
 
-    // טריגר 1: הטקסט מטענה 1
     const gutzimTrigger = document.getElementById('gutzim-trigger');
     if (gutzimTrigger) {
       gutzimTrigger.addEventListener('mouseenter', triggerGutzimExplosion);
     }
 
-    // טריגר 2: התמונה של הארון הדינמי מטענה 2
     const closetImageTrigger = document.getElementById('closet-image-trigger');
     if (closetImageTrigger) {
       closetImageTrigger.addEventListener('mouseenter', triggerGutzimExplosion);
@@ -440,13 +390,13 @@
       document.body.appendChild(gutz);
       
       const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 800 + 200; 
+      const distance = Math.random() * 700 + 150; 
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
-      const rot = Math.random() * 1080 - 540; 
+      const rot = Math.random() * 720 - 360; 
       
       requestAnimationFrame(() => {
-        gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 2 + 0.5})`;
+        gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 1.8 + 0.5})`;
         gutz.style.opacity = '0';
       });
       
