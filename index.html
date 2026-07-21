@@ -8,144 +8,158 @@
   <title>D&R | Official</title>
   
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Assistant:wght@300;400;700&family=Inter:wght@300;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&family=Inter:wght@300;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
   <style>
     /* =========================================
-       רשמי, מכובד, כחול חלק ונקי
+       F1 ULTRA-MINIMALIST PREMIUM (Leclerc / Norris Inspired)
        ========================================= */
     :root { 
-      --gold: #d4af37; 
-      --bg: #0b1329; 
-      --bg-gradient: linear-gradient(135deg, #0b1329 0%, #040814 100%);
+      --bg: #0a0a0c; 
       --text: #ffffff;
-      --nav-bg: rgba(11, 19, 41, 0.85);
-      --accent: #ffffff;
+      --muted: #888888;
+      --line: rgba(255, 255, 255, 0.1);
+      --accent: #ff1801; /* F1 Red Accent Vibe */
     }
 
     body.light-mode {
-      --bg: #e6ecf5;
-      --bg-gradient: linear-gradient(135deg, #f0f4fc 0%, #d9e2f3 100%);
-      --text: #111827;
-      --nav-bg: rgba(230, 236, 245, 0.85);
-      --gold: #9c7b3c;
-      --accent: #000000;
+      --bg: #f4f4f6;
+      --text: #111113;
+      --muted: #666666;
+      --line: rgba(0, 0, 0, 0.1);
+      --accent: #ff1801;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body { 
-      margin: 0; background: var(--bg); background-image: var(--bg-gradient);
-      color: var(--text); font-family: 'Assistant', sans-serif; overflow-x: hidden;
-      transition: background 0.5s ease, color 0.5s ease;
-      background-attachment: fixed;
+      margin: 0; background: var(--bg); color: var(--text); 
+      font-family: 'Assistant', sans-serif; overflow-x: hidden;
+      transition: background 0.4s ease, color 0.4s ease;
     }
 
+    /* Cinematic Loader */
     #loading-screen {
-      position: fixed; inset: 0; background: #040814; 
+      position: fixed; inset: 0; background: var(--bg); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 0.6s ease;
+      z-index: 10000; transition: opacity 0.5s ease;
     }
     .loader-logo {
-      width: 100px; height: 100px; border-radius: 50%;
-      border: 2px solid var(--gold);
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 2px solid var(--accent);
       background: url('./image_2026-03-13_222345060.png') center/cover;
-      animation: pulse 1.5s infinite alternate;
+      animation: f1-spin 1.2s infinite linear;
       margin-bottom: 20px;
     }
-    @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 100% { transform: scale(1.05); opacity: 1; } }
+    @keyframes f1-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* Clean F1 Header / Navigation */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 40px; pointer-events: none;
-      backdrop-filter: blur(10px); background: var(--nav-bg);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 30px 50px; pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
     }
     .nav > * { pointer-events: auto; }
-    .nav-side { display: flex; gap: 30px; flex: 1; }
+    .nav-side { display: flex; gap: 40px; flex: 1; }
     .nav-side.left { justify-content: flex-end; }
 
     .btn {
       background: transparent; border: none; color: var(--text);
       font-family: 'Space Mono', monospace; font-weight: 700;
-      font-size: 0.65rem; letter-spacing: 3px; cursor: pointer; text-transform: uppercase;
-      position: relative; padding: 5px 0; opacity: 0.8; transition: opacity 0.3s;
+      font-size: 0.7rem; letter-spacing: 3px; cursor: pointer; text-transform: uppercase;
+      opacity: 0.7; transition: opacity 0.2s, color 0.2s; padding: 0;
     }
-    .btn:hover { opacity: 1; color: var(--gold); }
-    
-    #clock { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--gold); font-weight: 700; letter-spacing: 2px; }
+    .btn:hover { opacity: 1; color: var(--accent); }
+
+    #clock { 
+      font-family: 'Space Mono', monospace; font-size: 0.75rem; 
+      color: var(--muted); font-weight: 400; letter-spacing: 2px; 
+    }
 
     .page { display: none; opacity: 0; transition: opacity 0.5s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    .hero-container { height: 250vh; } 
-    .hero-sticky {
-      position: sticky; top: 0; height: 100vh; overflow: hidden;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    
-    .hero-content {
-      position: relative; z-index: 10;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; width: 100%;
+    /* F1 Hero Section - Massive Typography & Pure Grid */
+    .hero {
+      height: 100vh; display: flex; flex-direction: column; justify-content: space-between;
+      padding: 120px 50px 60px 50px; max-width: 1600px; margin: 0 auto;
     }
 
-    .parasha { 
-      font-family: 'Assistant'; color: var(--gold); font-size: 1rem; 
-      letter-spacing: 10px; margin-bottom: 25px; font-weight: 600; text-transform: uppercase;
+    .hero-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 1px solid var(--line); padding-bottom: 20px;
     }
 
-    .main-title {
-      font-family: 'Inter', sans-serif; font-size: 10vw; line-height: 1;
-      font-weight: 900; color: var(--text); text-transform: uppercase;
-      letter-spacing: 2px; margin: 0; text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    .hero-label {
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      color: var(--accent); letter-spacing: 4px; text-transform: uppercase;
     }
 
-    .ticker-wrap {
-      width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.2);
-      border-top: 1px solid rgba(212, 175, 55, 0.3);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-      padding: 12px 0; margin: 30px 0; white-space: nowrap;
+    .hero-main {
+      text-align: center; margin: auto 0;
     }
-    .ticker-move {
-      display: inline-block; animation: marquee 25s linear infinite;
-      font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); letter-spacing: 5px;
-    }
-    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(50%); } }
 
-    .founded { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); letter-spacing: 6px; opacity: 0.6; margin-top: 10px; }
+    .hero-title {
+      font-family: 'Inter', sans-serif; font-size: 14vw; font-weight: 900;
+      line-height: 0.85; text-transform: uppercase; letter-spacing: -3px;
+      margin: 0; color: var(--text);
+    }
 
-    .dive-btn {
-      margin-top: 30px; pointer-events: auto;
-      color: #0b1329; background: var(--gold); padding: 14px 40px; 
-      font-family: 'Space Mono'; font-weight: 700; letter-spacing: 3px;
-      font-size: 0.7rem; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;
-      border-radius: 4px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    .hero-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--line); padding-top: 20px;
     }
-    .dive-btn:hover { background: var(--text); transform: translateY(-2px); }
 
-    .gallery { 
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; 
-      padding: 20px; background: transparent; max-width: 1200px; margin: 0 auto;
+    .explore-action {
+      font-family: 'Space Mono', monospace; font-size: 0.75rem;
+      letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+      color: var(--text); display: flex; align-items: center; gap: 10px;
+      transition: color 0.2s;
     }
-    .gallery img { 
-      width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5;
-      border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);
-      transition: 0.4s ease;
-    }
-    .gallery img:hover { transform: scale(1.02); border-color: var(--gold); }
+    .explore-action:hover { color: var(--accent); }
 
-    .massive-scroll-spacer {
-      height: 3000px; background: transparent; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 150px;
+    /* Minimalist F1 Gallery Layout */
+    .gallery-section {
+      max-width: 1600px; margin: 0 auto; padding: 0 50px 150px 50px;
     }
-    .basement-link-wrapper { text-align: center; cursor: pointer; }
-    .basement-text { font-family: 'Inter', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--gold); text-transform: uppercase; transition: 0.3s; letter-spacing: -1px; }
-    .basement-link-wrapper:hover .basement-text { color: var(--text); text-shadow: 0 0 15px var(--gold); }
-    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); margin-top: 10px; opacity: 0.6; letter-spacing: 2px; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+    }
+    .gallery-item {
+      position: relative; overflow: hidden; aspect-ratio: 16/10;
+      background: var(--line); border-radius: 4px;
+    }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(100%) contrast(1.1);
+      transition: filter 0.5s ease, transform 0.5s ease;
+    }
+    .gallery-item:hover img {
+      filter: grayscale(0%) contrast(1);
+      transform: scale(1.03);
+    }
+
+    /* Basement Access Footer block */
+    .basement-gate {
+      padding: 100px 50px; text-align: center; border-top: 1px solid var(--line);
+      cursor: pointer; background: var(--bg); transition: background 0.3s;
+    }
+    .basement-gate:hover { background: rgba(255, 24, 1, 0.03); }
+    .basement-gate-title {
+      font-family: 'Inter', sans-serif; font-size: 4vw; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -1px; color: var(--text);
+      margin: 0; transition: color 0.3s;
+    }
+    .basement-gate:hover .basement-gate-title { color: var(--accent); }
+    .basement-gate sub {
+      font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted);
+      letter-spacing: 3px; display: block; margin-top: 10px; text-decoration: none;
+    }
+
 
     /* =========================================
-       THE BASEMENT (8-Year-Old Nightmare Mode)
+       THE BASEMENT (8-Year-Old Nightmare Mode - Unchanged)
        ========================================= */
     body.ugly-basement {
       background-color: #ff00ff !important;
@@ -197,7 +211,7 @@
 
   <div id="loading-screen">
     <div class="loader-logo"></div>
-    <div style="font-family:'Space Mono'; color:var(--gold); letter-spacing:4px; font-size:0.6rem;">LOADING SYSTEM</div>
+    <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:4px; font-size:0.6rem;">INITIALIZING F1 SYSTEM</div>
   </div>
 
   <nav class="nav">
@@ -212,31 +226,31 @@
     </div>
   </nav>
 
-  <!-- עמוד הבית -->
+  <!-- עמוד הבית החדש לגמרי - סגנון Leclerc / Norris מקצועי ונקי -->
   <div id="page-home" class="page">
-    <div class="hero-container">
-      <div class="hero-sticky">
-        <div class="hero-content">
-          <div class="parasha">פרשת כי תשא</div>
-          <h1 class="main-title">DOLEV & ROEE</h1>
-          
-          <div class="ticker-wrap">
-            <div class="ticker-move">OFFICIAL PORTFOLIO &bull; EST. 2026 &bull; ELITE EXPERIENCE &bull; OFFICIAL PORTFOLIO &bull; EST. 2026 &bull; ELITE EXPERIENCE &bull;</div>
-          </div>
-
-          <div class="founded">EST. 2026</div>
-          <button class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">Explore Gallery</button>
+    <section class="hero">
+      <div class="hero-top">
+        <span class="hero-label">פרשת כי תשא</span>
+        <span class="hero-label">EST. 2026</span>
+      </div>
+      <div class="hero-main">
+        <h1 class="hero-title">Dolev & Roee</h1>
+      </div>
+      <div class="hero-bottom">
+        <span class="hero-label">Official Portfolio</span>
+        <div class="explore-action" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">
+          Explore Gallery &rarr;
         </div>
       </div>
-    </div>
-    
-    <div class="gallery" id="gallery-section"></div>
-    
-    <div class="massive-scroll-spacer">
-      <div class="basement-link-wrapper" onclick="navigateTo('/basement')">
-        <div class="basement-text">המרתף</div>
-        <span class="sub">(ביותר טוב)</span>
-      </div>
+    </section>
+
+    <section class="gallery-section" id="gallery-section">
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </section>
+
+    <div class="basement-gate" onclick="navigateTo('/basement')">
+      <h2 class="basement-gate-title">המרתף</h2>
+      <sub>[ ENTER THE BASEMENT ARCHIVES ]</sub>
     </div>
   </div>
 
@@ -268,11 +282,11 @@
           <div class="list-number">1</div>
           <div class="image-placeholder">PUT PIC HERE!</div>
           <div class="allegation-text">
-            האתר הנגדי fuckgayniggers.org. הם סתם אתר פרובוקטיבי שנוצר על ידי אנשים שמנסים להתחכות לרמת הומור ולשנינות שלנו והם לא טובים כמונו. ובנוסף, זה מאוד היפוקריטי מצידם להתלונן שהאתר שלנו בנוי מ-AI בזמן שגם שלהם בנוי מ-AI (שאנחנו משלמים על AI טוב ושהם <span id="gutzim-trigger">מגה גוצים</span>).
+            האתר הנגדי fuckgayniggers.org. הם סתם אתר פרובוקטיבי שנוצר על ידי אנשים שמנסים להתחכות לרמת הומור ולשנינות שלנו והם לא טובים כמונו. ובנוסף, זה מאוד היפוקריטי מצידם להתלונן שהאתר שלנו בנוי מ-AI בזמן שגם שלהם בנוי מ-AI (שאנחנו משלמים על AI טוב ושהם <span id="gutzim-trigger">גוצים</span>).
           </div>
         </div>
         
-        <!-- טענה 2: הארון הדינמי המעודכן -->
+        <!-- טענה 2: הארון הדינמי -->
         <div class="list-item">
           <div class="list-number">2</div>
           <h2 class="allegation-subtitle">הארון של המחסן (הארון הדינמי)</h2>
@@ -303,15 +317,20 @@
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
       }, 1000);
 
-      const gal = document.getElementById('gallery-section');
+      const grid = document.getElementById('gallery-grid');
       images.forEach(s => {
-        const i = document.createElement('img'); i.src = s; gal.appendChild(i);
+        const wrap = document.createElement('div');
+        wrap.className = 'gallery-item';
+        const img = document.createElement('img');
+        img.src = s;
+        wrap.appendChild(img);
+        grid.appendChild(wrap);
       });
 
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
-        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 600);
-      }, 1200);
+        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 500);
+      }, 1000);
 
       const initialPath = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(initialPath, true);
@@ -355,8 +374,11 @@
       handleRoute(path);
     };
 
+    // ==========================================
+    // פיצוץ גוצים ב-Hover על "גוצים" או על הארון
+    // ==========================================
     function triggerGutzimExplosion(e) {
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 60; i++) {
         createGutz(e.clientX, e.clientY);
       }
     }
@@ -382,13 +404,13 @@
       document.body.appendChild(gutz);
       
       const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 700 + 150; 
+      const distance = Math.random() * 800 + 200; 
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
       const rot = Math.random() * 720 - 360; 
       
       requestAnimationFrame(() => {
-        gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 1.8 + 0.5})`;
+        gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 2 + 0.5})`;
         gutz.style.opacity = '0';
       });
       
