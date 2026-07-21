@@ -12,7 +12,7 @@
 
   <style>
     /* =========================================
-       F1 PREMIUM DESIGN (Leclerc / Norris Style)
+       F1 PREMIUM DESIGN (Interactive Vibe)
        ========================================= */
     :root { 
       --gold: #c5a059; 
@@ -53,13 +53,12 @@
     }
     @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 40px rgba(197, 160, 89, 0.2); } }
 
-    /* ניווט נקי ומינימליסטי */
+    /* ניווט */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
       padding: 25px 30px; pointer-events: none;
-      backdrop-filter: blur(10px);
-      background: var(--nav-bg);
+      backdrop-filter: blur(10px); background: var(--nav-bg);
       border-bottom: 1px solid rgba(197, 160, 89, 0.1);
     }
     .nav > * { pointer-events: auto; }
@@ -67,14 +66,10 @@
     .nav-side.left { justify-content: flex-end; }
 
     .btn {
-      background: transparent;
-      border: none;
-      color: var(--text);
+      background: transparent; border: none; color: var(--text);
       font-family: 'Space Mono', monospace; font-weight: 700;
-      font-size: 0.7rem; letter-spacing: 2px; cursor: pointer;
-      text-transform: uppercase;
-      position: relative;
-      padding: 5px 0;
+      font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;
+      position: relative; padding: 5px 0;
     }
     .btn::after {
       content: ''; position: absolute; bottom: 0; left: 0; width: 0%;
@@ -82,57 +77,56 @@
     }
     .btn:hover::after { width: 100%; }
 
-    #clock { 
-      font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); 
-      font-weight: 400; letter-spacing: 2px;
-    }
+    #clock { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); font-weight: 400; letter-spacing: 2px; }
 
-    /* דפים מעברים */
     .page { display: none; opacity: 0; transition: opacity 0.6s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* הירו - שטח עצום */
+    /* הירו - רקע קנבס אינטראקטיבי */
     .hero-container { height: 600vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: url('./image_2026-03-13_222345060.png') center/cover;
+      background: var(--bg);
     }
-    .hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, var(--bg) 0%, transparent 40%, var(--bg) 100%);
-      z-index: 0;
+    
+    #hero-canvas {
+      position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+    }
+
+    body.light-mode #hero-canvas {
+      background: radial-gradient(circle at center, #ffffff 0%, #e0e0e0 100%);
+    }
+
+    .hero-content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none; /* כדי שהעכבר ישפיע על הקנבס שמתחת */
     }
 
     .parasha { 
       font-family: 'Assistant'; color: var(--gold); font-size: 0.9rem; 
-      letter-spacing: 8px; margin-bottom: 30px; font-weight: 300; z-index: 1;
-      text-transform: uppercase;
+      letter-spacing: 8px; margin-bottom: 30px; font-weight: 300; text-transform: uppercase;
     }
 
     .main-title {
       font-family: 'Inter'; font-size: 16vw; line-height: 0.85;
       text-align: center; white-space: nowrap; will-change: transform;
       -webkit-text-stroke: 1px var(--accent); color: transparent;
-      transition: color 0.5s ease; z-index: 1; text-transform: uppercase;
+      transition: color 0.5s ease; text-transform: uppercase;
     }
 
-    .founded {
-      position: absolute; bottom: 10vh; font-family: 'Space Mono';
-      font-size: 0.7rem; color: var(--text); letter-spacing: 4px; z-index: 1;
-      opacity: 0.5;
-    }
+    .founded { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); letter-spacing: 4px; opacity: 0.5; margin-top: 20px; }
 
     .dive-btn {
-      position: absolute; bottom: 18vh; 
-      color: var(--bg); background: var(--accent);
-      padding: 15px 40px; font-family: 'Inter'; font-weight: 900; letter-spacing: 2px;
-      font-size: 0.7rem; cursor: pointer; z-index: 1;
-      transition: 0.3s; text-transform: uppercase;
+      margin-top: 50px; pointer-events: auto;
+      color: var(--bg); background: var(--accent); padding: 15px 40px; 
+      font-family: 'Inter'; font-weight: 900; letter-spacing: 2px;
+      font-size: 0.7rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
     }
     .dive-btn:hover { background: var(--gold); }
 
-    /* גלריה נקייה */
     .gallery { 
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
       padding: 2px; background: var(--bg); max-width: 1200px; margin: 0 auto;
@@ -143,25 +137,13 @@
     }
     .gallery img:hover { filter: grayscale(0%); }
 
-    /* שטח הגלילה העצום */
     .massive-scroll-spacer {
-      height: 5000px; 
-      background: var(--bg);
-      display: flex; align-items: flex-end; justify-content: center;
-      padding-bottom: 150px;
+      height: 5000px; background: var(--bg); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 150px;
     }
-
     .basement-link-wrapper { text-align: center; cursor: pointer; }
-    .basement-text {
-      font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 900;
-      color: var(--bg); -webkit-text-stroke: 1px var(--gold);
-      text-transform: uppercase; transition: 0.3s; letter-spacing: -2px;
-    }
+    .basement-text { font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 900; color: var(--bg); -webkit-text-stroke: 1px var(--gold); text-transform: uppercase; transition: 0.3s; letter-spacing: -2px; }
     .basement-link-wrapper:hover .basement-text { color: var(--gold); }
-    .basement-link-wrapper .sub {
-      display: block; font-family: 'Space Mono'; font-size: 0.8rem;
-      color: var(--text); margin-top: 10px; opacity: 0.4; letter-spacing: 2px;
-    }
+    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.8rem; color: var(--text); margin-top: 10px; opacity: 0.4; letter-spacing: 2px; }
 
 
     /* =========================================
@@ -170,75 +152,33 @@
     body.ugly-basement {
       background-color: #ff00ff !important;
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 100 100"><text y="50" font-size="40">✨</text></svg>') !important;
-      background-repeat: repeat !important;
-      animation: seizure-bg 0.3s infinite !important;
-      color: #00ff00 !important;
-      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', cursive !important;
+      background-repeat: repeat !important; animation: seizure-bg 0.3s infinite !important; color: #00ff00 !important; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important;
     }
 
-    @keyframes seizure-bg {
-      0% { background-color: #ff00ff; background-position: 0px 0px; }
-      50% { background-color: #ffff00; background-position: 25px 25px; }
-      100% { background-color: #00ffff; background-position: 50px 50px; }
-    }
+    @keyframes seizure-bg { 0% { background-color: #ff00ff; background-position: 0px 0px; } 50% { background-color: #ffff00; background-position: 25px 25px; } 100% { background-color: #00ffff; background-position: 50px 50px; } }
 
-    /* הריסת הניווט כשאנחנו במרתף */
-    body.ugly-basement .nav {
-      background: blue !important; border: 10px ridge red !important; backdrop-filter: none !important;
-    }
-    body.ugly-basement .btn, body.ugly-basement #clock {
-      color: yellow !important; font-family: 'Comic Sans MS' !important;
-      font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important;
-    }
+    body.ugly-basement .nav { background: blue !important; border: 10px ridge red !important; backdrop-filter: none !important; }
+    body.ugly-basement .btn, body.ugly-basement #clock { color: yellow !important; font-family: 'Comic Sans MS' !important; font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important; }
 
-    #page-basement .basement-content {
-      padding-top: 200px; padding-bottom: 200px; text-align: center; direction: ltr;
-    }
-
-    #page-basement .code-container {
-      background: black; border: 15px double yellow; padding: 20px;
-      margin: 0 auto 50px auto; width: 90%; max-width: 500px;
-    }
-    
-    #page-basement .code-line {
-      font-size: 2rem; color: #00ffff; font-family: "Courier New", Courier, monospace;
-      animation: blinker 1s linear infinite;
-    }
-    
-    #page-basement .error-line {
-      font-size: 1.5rem; color: red; margin-top: 15px; font-weight: bold; text-decoration: underline;
-    }
-
+    #page-basement .basement-content { padding-top: 200px; padding-bottom: 200px; text-align: center; direction: ltr; }
+    #page-basement .code-container { background: black; border: 15px double yellow; padding: 20px; margin: 0 auto 50px auto; width: 90%; max-width: 500px; }
+    #page-basement .code-line { font-size: 2rem; color: #00ffff; font-family: monospace; animation: blinker 1s linear infinite; }
+    #page-basement .error-line { font-size: 1.5rem; color: red; margin-top: 15px; font-weight: bold; text-decoration: underline; }
     @keyframes blinker { 50% { opacity: 0; } }
 
-    /* כותרת הטענות זזה ומכוערת */
-    #page-basement .allegations-title {
-      color: red; font-size: 3rem; text-transform: uppercase;
-      text-shadow: 5px 5px 0px yellow, -5px -5px 0px blue;
-      margin-bottom: 50px; background: black; display: inline-block; padding: 10px;
-    }
-
+    #page-basement .allegations-title { color: red; font-size: 3rem; text-transform: uppercase; text-shadow: 5px 5px 0px yellow, -5px -5px 0px blue; margin-bottom: 50px; background: black; display: inline-block; padding: 10px; }
     #page-basement .allegations-list { display: flex; flex-direction: column; gap: 80px; padding: 20px; }
-    
     #page-basement .list-item { display: flex; flex-direction: column; align-items: center; }
+    #page-basement .list-number { font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%; width: 100px; height: 100px; line-height: 100px; border: 5px solid red; margin-bottom: 20px; text-shadow: 2px 2px black; }
+    #page-basement .image-placeholder { width: 90%; max-width: 400px; height: 300px; border: 15px groove lime; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat; background-color: pink; display: flex; align-items: center; justify-content: center; color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg); margin-bottom: 10px; }
     
-    #page-basement .list-number {
-      font-size: 5rem; color: fuchsia; background: yellow; border-radius: 50%;
-      width: 100px; height: 100px; line-height: 100px; border: 5px solid red;
-      margin-bottom: 20px; text-shadow: 2px 2px black;
-    }
-
-    #page-basement .image-placeholder {
-      width: 90%; max-width: 400px; height: 300px;
-      border: 15px groove lime; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text y="50" font-size="30">💩</text></svg>') repeat;
-      background-color: pink; display: flex; align-items: center; justify-content: center;
-      color: blue; font-size: 2rem; font-weight: bold; transform: rotate(-3deg);
+    #page-basement .allegation-text {
+      background: white; color: black; font-size: 1.5rem; border: 5px solid red; padding: 10px; width: 90%; max-width: 600px; font-family: 'Arial', sans-serif; text-align: right; direction: rtl;
     }
   </style>
 </head>
 <body onload="init()">
 
-  <!-- מסך טעינה -->
   <div id="loading-screen">
     <div class="loader-logo"></div>
     <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:4px; font-size:0.7rem;">LOADING SYSTEM</div>
@@ -260,11 +200,15 @@
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
-        <div class="hero-overlay"></div>
-        <div class="parasha">פרשת כי תשא</div>
-        <h1 class="main-title" id="animated-name">DOLEV & ROEE</h1>
-        <div class="founded">EST. 2026</div>
-        <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">DIVE IN</div>
+        <!-- קנבס שקוף לאפקט האינטראקטיבי -->
+        <canvas id="hero-canvas"></canvas>
+        
+        <div class="hero-content">
+          <div class="parasha">פרשת כי תשא</div>
+          <h1 class="main-title" id="animated-name">DOLEV & ROEE</h1>
+          <div class="founded">EST. 2026</div>
+          <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">DIVE IN</div>
+        </div>
       </div>
     </div>
     
@@ -278,16 +222,12 @@
     </div>
   </div>
 
-  <!-- עמוד היסטוריה -->
   <div id="page-history" class="page" style="padding-top:200px; text-align:center;">
     <h1 style="font-family:'Inter'; color:var(--text); font-size:4rem; font-weight:900; text-transform:uppercase;">History</h1>
-    <p style="font-family:'Space Mono'; color:var(--gold);">[ DATA NOT FOUND ]</p>
   </div>
 
-  <!-- עמוד סרטים -->
   <div id="page-films" class="page" style="padding-top:200px; text-align:center;">
     <h1 style="font-family:'Inter'; color:var(--text); font-size:4rem; font-weight:900; text-transform:uppercase;">Films</h1>
-    <p style="font-family:'Space Mono'; color:var(--gold);">[ NO MEDIA AVAILABLE ]</p>
   </div>
 
   <!-- העמוד הסודי של המרתף (עיצוב מזעזע) -->
@@ -307,23 +247,16 @@
         <div class="list-item">
           <div class="list-number">1</div>
           <div class="image-placeholder">PUT PIC HERE!</div>
+          <div class="allegation-text">
+            [ הוסף כאן את הטקסט לטענה מספר 1 ]
+          </div>
         </div>
-        <div class="list-item">
-          <div class="list-number">2</div>
-          <div class="image-placeholder">PUT PIC HERE!</div>
-        </div>
-        <div class="list-item">
-          <div class="list-number">3</div>
-          <div class="image-placeholder">PUT PIC HERE!</div>
-        </div>
-        <div class="list-item">
-          <div class="list-number">4</div>
-          <div class="image-placeholder">PUT PIC HERE!</div>
-        </div>
-        <div class="list-item">
-          <div class="list-number">5</div>
-          <div class="image-placeholder">PUT PIC HERE!</div>
-        </div>
+        
+        <!-- שאר הטענות... -->
+        <div class="list-item"><div class="list-number">2</div><div class="image-placeholder">PUT PIC HERE!</div></div>
+        <div class="list-item"><div class="list-number">3</div><div class="image-placeholder">PUT PIC HERE!</div></div>
+        <div class="list-item"><div class="list-number">4</div><div class="image-placeholder">PUT PIC HERE!</div></div>
+        <div class="list-item"><div class="list-number">5</div><div class="image-placeholder">PUT PIC HERE!</div></div>
       </div>
 
     </div>
@@ -350,9 +283,9 @@
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
         ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 800);
+        initCanvas(); // הפעלת האפקט התלת מימדי אחרי הטעינה
       }, 2000);
 
-      // טיפול במקרה של רענון עמוד אם אנחנו לא בבית
       const initialPath = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(initialPath, true);
     }
@@ -372,7 +305,6 @@
     }
 
     function handleRoute(path, isInitial = false) {
-      // איפוס כללי
       document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
       document.body.classList.remove('ugly-basement');
       
@@ -381,7 +313,7 @@
       if(path.includes('films')) id = 'page-films';
       if(path.includes('basement')) {
         id = 'page-basement';
-        document.body.classList.add('ugly-basement'); // מפעיל את העיצוב המזעזע!
+        document.body.classList.add('ugly-basement'); 
       }
       
       const target = document.getElementById(id);
@@ -391,9 +323,9 @@
       }
     }
 
-    // אנימציית הגלילה המדויקת לפונט האאוטליין (Leclerc Vibe)
+    // אנימציית הטקסט בגלילה
     window.addEventListener('scroll', () => {
-      if(document.body.classList.contains('ugly-basement')) return; // מבטל אפקטים במרתף
+      if(document.body.classList.contains('ugly-basement')) return; 
       
       const scrollY = window.scrollY;
       const winH = window.innerHeight;
@@ -403,7 +335,6 @@
       if(name) {
         const xPos = 40 - (progress * 100); 
         name.style.transform = `translateX(${xPos}vw)`;
-        
         if (progress > 0.3) {
           name.style.color = 'var(--text)';
           name.style.webkitTextStroke = '0px';
@@ -418,6 +349,109 @@
       const path = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(path);
     };
+
+    // ==========================================
+    // קוד לחלקיקים האינטראקטיביים ברקע (Canvas)
+    // ==========================================
+    function initCanvas() {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let particlesArray;
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let mouse = { x: null, y: null, radius: 150 };
+
+      window.addEventListener('mousemove', function(event) {
+        mouse.x = event.x;
+        mouse.y = event.y;
+      });
+
+      window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initParticles();
+      });
+
+      class Particle {
+        constructor(x, y, directionX, directionY, size, color) {
+          this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY;
+          this.size = size; this.color = color;
+        }
+        draw() {
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+          ctx.fillStyle = document.body.classList.contains('light-mode') ? '#c5a059' : '#ffffff';
+          ctx.fill();
+        }
+        update() {
+          if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+          if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+
+          // אינטראקציה עם העכבר
+          let dx = mouse.x - this.x;
+          let dy = mouse.y - this.y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < mouse.radius) {
+            const forceDirectionX = dx / distance;
+            const forceDirectionY = dy / distance;
+            const force = (mouse.radius - distance) / mouse.radius;
+            this.x -= forceDirectionX * force * 5;
+            this.y -= forceDirectionY * force * 5;
+          }
+
+          this.x += this.directionX;
+          this.y += this.directionY;
+          this.draw();
+        }
+      }
+
+      function initParticles() {
+        particlesArray = [];
+        let numberOfParticles = (canvas.height * canvas.width) / 9000;
+        for (let i = 0; i < numberOfParticles; i++) {
+          let size = (Math.random() * 2) + 1;
+          let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+          let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+          let directionX = (Math.random() * 2) - 1;
+          let directionY = (Math.random() * 2) - 1;
+          let color = '#ffffff';
+          particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update();
+        }
+        connect();
+      }
+
+      function connect() {
+        let opacityValue = 1;
+        for (let a = 0; a < particlesArray.length; a++) {
+          for (let b = a; b < particlesArray.length; b++) {
+            let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
+                           ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+            if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+              opacityValue = 1 - (distance / 20000);
+              let colorLine = document.body.classList.contains('light-mode') ? `rgba(197, 160, 89, ${opacityValue})` : `rgba(255, 255, 255, ${opacityValue})`;
+              ctx.strokeStyle = colorLine;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+              ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      initParticles();
+      animate();
+    }
   </script>
 </body>
 </html>
