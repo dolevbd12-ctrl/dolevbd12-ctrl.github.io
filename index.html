@@ -144,22 +144,81 @@
       font-weight: 700;
     }
 
-    /* סגנון לעמוד הקוד */
-    .code-container {
-      direction: ltr;
-      font-family: monospace;
+    /* ====== סגנון לעמוד המרתף ====== */
+    .basement-content {
+      padding-top: 150px;
+      padding-bottom: 100px;
       text-align: center;
-      margin-top: 200px;
+      direction: ltr; /* יישור משמאל לימין בשביל האנגלית והקוד */
+    }
+
+    .code-container {
+      font-family: monospace;
+      margin-bottom: 60px;
     }
     .code-line {
       font-size: 1.5rem;
       color: var(--text);
     }
     .error-line {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #ff3333;
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
+    }
+
+    /* כותרת הטענות באדום ענק */
+    .allegations-title {
+      color: #ff0000;
+      font-size: 12vw; /* גודל דינאמי ענק */
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin: 40px 10px;
+      line-height: 1.1;
+      text-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    @media (min-width: 768px) {
+      .allegations-title { font-size: 4rem; }
+    }
+
+    /* רשימת הטענות (מספרים + מקום לתמונה) */
+    .allegations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 60px; /* המרווח הגדול בין כל מספר למספר */
+      padding: 20px;
+    }
+
+    .list-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .list-number {
+      font-family: 'Cinzel', serif;
+      font-size: 3.5rem;
+      color: var(--gold);
+      font-weight: 900;
+      margin-bottom: 15px;
+    }
+
+    /* זה המרווח/מסגרת המוכנה לתמונה - תוכל להחליף את זה ב-<img> בהמשך */
+    .image-placeholder {
+      width: 100%;
+      max-width: 400px;
+      height: 250px;
+      border: 2px dashed rgba(197, 160, 89, 0.5);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      opacity: 0.5;
+      font-family: 'Assistant', sans-serif;
     }
   </style>
 </head>
@@ -218,13 +277,51 @@
 
   <!-- העמוד הסודי של המרתף -->
   <div id="page-basement" class="page">
-    <div class="code-container">
-      <div class="code-line">
-        print, { : "Hello World" } 😊
+    <div class="basement-content">
+      
+      <!-- חלק הקוד -->
+      <div class="code-container">
+        <div class="code-line">
+          print, { : "Hello World" } 😊
+        </div>
+        <div class="error-line">
+          error
+        </div>
       </div>
-      <div class="error-line">
-        error
+
+      <!-- כותרת הטענות -->
+      <h1 class="allegations-title">Addressing the allegations:</h1>
+
+      <!-- הרשימה עם המספרים והרווחים לתמונות -->
+      <div class="allegations-list">
+        
+        <div class="list-item">
+          <div class="list-number">1</div>
+          <div class="image-placeholder">Image Space</div>
+        </div>
+        
+        <div class="list-item">
+          <div class="list-number">2</div>
+          <div class="image-placeholder">Image Space</div>
+        </div>
+        
+        <div class="list-item">
+          <div class="list-number">3</div>
+          <div class="image-placeholder">Image Space</div>
+        </div>
+        
+        <div class="list-item">
+          <div class="list-number">4</div>
+          <div class="image-placeholder">Image Space</div>
+        </div>
+        
+        <div class="list-item">
+          <div class="list-number">5</div>
+          <div class="image-placeholder">Image Space</div>
+        </div>
+
       </div>
+
     </div>
   </div>
 
@@ -237,12 +334,10 @@
     ];
 
     function init() {
-      // שעון
       setInterval(() => {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
       }, 1000);
 
-      // גלריה
       const gal = document.getElementById('gallery-section');
       images.forEach(s => {
         const i = document.createElement('img');
@@ -250,7 +345,6 @@
         gal.appendChild(i);
       });
 
-      // סיום טעינה
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
         ls.style.opacity = '0';
@@ -278,7 +372,7 @@
       let id = 'page-home';
       if(path.includes('history')) id = 'page-history';
       if(path.includes('films')) id = 'page-films';
-      if(path.includes('basement')) id = 'page-basement'; // הוספתי את הנתיב החדש
+      if(path.includes('basement')) id = 'page-basement'; 
       
       const target = document.getElementById(id);
       target.style.display = 'block';
