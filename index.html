@@ -12,22 +12,24 @@
 
   <style>
     /* =========================================
-       F1 PREMIUM DESIGN (Interactive Vibe)
+       ULTRA-PREMIUM F1 DESIGN 
        ========================================= */
     :root { 
-      --gold: #c5a059; 
-      --bg: #030303; 
-      --text: #f0f0f0;
-      --nav-bg: rgba(3, 3, 3, 0.8);
+      --gold: #d4af37; 
+      --bg: #050505; 
+      --text: #fafafa;
+      --nav-bg: rgba(5, 5, 5, 0.4);
       --accent: #ffffff;
+      --glow-color: rgba(212, 175, 55, 0.15); /* הילה זהובה עדינה */
     }
 
     body.light-mode {
-      --bg: #f9f9f9;
-      --text: #111111;
-      --nav-bg: rgba(249, 249, 249, 0.8);
-      --gold: #9c7b3c;
+      --bg: #f5f5f7;
+      --text: #1d1d1f;
+      --nav-bg: rgba(245, 245, 247, 0.4);
+      --gold: #b38b22;
       --accent: #000000;
+      --glow-color: rgba(0, 0, 0, 0.05);
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -35,115 +37,129 @@
     body { 
       margin: 0; background: var(--bg); color: var(--text); 
       font-family: 'Assistant', sans-serif; overflow-x: hidden;
-      transition: background 0.5s cubic-bezier(0.19, 1, 0.22, 1), color 0.5s ease;
+      transition: background 0.7s cubic-bezier(0.19, 1, 0.22, 1), color 0.7s ease;
     }
+
+    /* מרקם קולנועי (Film Grain) שנותן יוקרה */
+    .film-grain {
+      position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.25;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* הילה מגנטית של העכבר */
+    #mouse-glow {
+      position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
+      background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+      mix-blend-mode: screen;
+    }
+    body.light-mode #mouse-glow { mix-blend-mode: multiply; }
 
     /* מסך טעינה */
     #loading-screen {
       position: fixed; inset: 0; background: var(--bg); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10000; transition: opacity 0.8s ease;
+      z-index: 10000; transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1);
     }
     .loader-logo {
       width: 100px; height: 100px; border-radius: 50%;
-      border: 1px solid var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.5);
       background: url('./image_2026-03-13_222345060.png') center/cover;
-      animation: f1-pulse 1.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+      animation: f1-pulse 2s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
       margin-bottom: 20px;
     }
-    @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 40px rgba(197, 160, 89, 0.2); } }
+    @keyframes f1-pulse { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 50px rgba(212, 175, 55, 0.3); } }
 
-    /* ניווט */
+    /* ניווט פרימיום - זכוכית (Glassmorphism) */
     .nav {
       position: fixed; top: 0; left: 0; width: 100%; z-index: 5000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 25px 30px; pointer-events: none;
-      backdrop-filter: blur(10px); background: var(--nav-bg);
-      border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+      padding: 25px 40px; pointer-events: none;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     .nav > * { pointer-events: auto; }
-    .nav-side { display: flex; gap: 20px; flex: 1; }
+    .nav-side { display: flex; gap: 30px; flex: 1; }
     .nav-side.left { justify-content: flex-end; }
 
     .btn {
       background: transparent; border: none; color: var(--text);
       font-family: 'Space Mono', monospace; font-weight: 700;
-      font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;
-      position: relative; padding: 5px 0;
+      font-size: 0.65rem; letter-spacing: 3px; cursor: pointer; text-transform: uppercase;
+      position: relative; padding: 5px 0; opacity: 0.7; transition: opacity 0.3s;
     }
+    .btn:hover { opacity: 1; }
     .btn::after {
       content: ''; position: absolute; bottom: 0; left: 0; width: 0%;
-      height: 1px; background: var(--gold); transition: 0.3s ease;
+      height: 1px; background: var(--gold); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     }
     .btn:hover::after { width: 100%; }
 
-    #clock { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold); font-weight: 400; letter-spacing: 2px; }
+    #clock { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--gold); font-weight: 400; letter-spacing: 3px; opacity: 0.8; }
 
-    .page { display: none; opacity: 0; transition: opacity 0.6s ease; width: 100%; }
+    .page { display: none; opacity: 0; transition: opacity 0.8s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* הירו - רקע קנבס אינטראקטיבי */
+    /* הירו קולנועי */
     .hero-container { height: 600vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: var(--bg);
     }
     
-    #hero-canvas {
-      position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-    }
-
-    body.light-mode #hero-canvas {
-      background: radial-gradient(circle at center, #ffffff 0%, #e0e0e0 100%);
-    }
-
     .hero-content {
-      position: relative; z-index: 1;
+      position: relative; z-index: 10;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      pointer-events: none; /* כדי שהעכבר ישפיע על הקנבס שמתחת */
+      pointer-events: none; 
     }
 
     .parasha { 
-      font-family: 'Assistant'; color: var(--gold); font-size: 0.9rem; 
-      letter-spacing: 8px; margin-bottom: 30px; font-weight: 300; text-transform: uppercase;
+      font-family: 'Assistant'; color: var(--gold); font-size: 0.85rem; 
+      letter-spacing: 12px; margin-bottom: 40px; font-weight: 300; text-transform: uppercase;
+      opacity: 0.8;
     }
 
     .main-title {
-      font-family: 'Inter'; font-size: 16vw; line-height: 0.85;
+      font-family: 'Inter'; font-size: 15vw; line-height: 0.85;
       text-align: center; white-space: nowrap; will-change: transform;
       -webkit-text-stroke: 1px var(--accent); color: transparent;
-      transition: color 0.5s ease; text-transform: uppercase;
+      transition: color 0.6s ease, -webkit-text-stroke 0.6s ease; text-transform: uppercase;
+      letter-spacing: -2px;
     }
 
-    .founded { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); letter-spacing: 4px; opacity: 0.5; margin-top: 20px; }
+    .founded { font-family: 'Space Mono'; font-size: 0.65rem; color: var(--text); letter-spacing: 6px; opacity: 0.4; margin-top: 30px; }
 
     .dive-btn {
-      margin-top: 50px; pointer-events: auto;
-      color: var(--bg); background: var(--accent); padding: 15px 40px; 
-      font-family: 'Inter'; font-weight: 900; letter-spacing: 2px;
-      font-size: 0.7rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+      margin-top: 60px; pointer-events: auto;
+      color: var(--bg); background: var(--text); padding: 16px 45px; 
+      font-family: 'Space Mono'; font-weight: 700; letter-spacing: 4px;
+      font-size: 0.65rem; cursor: pointer; transition: all 0.4s ease; text-transform: uppercase;
+      border-radius: 100px; border: 1px solid transparent;
     }
-    .dive-btn:hover { background: var(--gold); }
+    .dive-btn:hover { background: transparent; color: var(--text); border-color: var(--text); transform: scale(1.05); }
 
     .gallery { 
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
-      padding: 2px; background: var(--bg); max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; 
+      padding: 5px; background: var(--bg); max-width: 1400px; margin: 0 auto;
+      position: relative; z-index: 10;
     }
     .gallery img { 
       width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/5;
-      filter: grayscale(100%); transition: 0.5s ease;
+      filter: grayscale(100%) contrast(1.1); transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      border-radius: 4px;
     }
-    .gallery img:hover { filter: grayscale(0%); }
+    .gallery img:hover { filter: grayscale(0%) contrast(1); transform: scale(0.98); }
 
     .massive-scroll-spacer {
-      height: 5000px; background: var(--bg); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 150px;
+      height: 5000px; background: var(--bg); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 200px; position: relative; z-index: 10;
     }
     .basement-link-wrapper { text-align: center; cursor: pointer; }
-    .basement-text { font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 900; color: var(--bg); -webkit-text-stroke: 1px var(--gold); text-transform: uppercase; transition: 0.3s; letter-spacing: -2px; }
+    .basement-text { font-family: 'Inter', sans-serif; font-size: 2.5rem; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--gold); text-transform: uppercase; transition: 0.4s; letter-spacing: -1px; }
     .basement-link-wrapper:hover .basement-text { color: var(--gold); }
-    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.8rem; color: var(--text); margin-top: 10px; opacity: 0.4; letter-spacing: 2px; }
+    .basement-link-wrapper .sub { display: block; font-family: 'Space Mono'; font-size: 0.7rem; color: var(--text); margin-top: 15px; opacity: 0.3; letter-spacing: 3px; }
 
 
     /* =========================================
@@ -157,8 +173,10 @@
 
     @keyframes seizure-bg { 0% { background-color: #ff00ff; background-position: 0px 0px; } 50% { background-color: #ffff00; background-position: 25px 25px; } 100% { background-color: #00ffff; background-position: 50px 50px; } }
 
+    body.ugly-basement .film-grain, body.ugly-basement #mouse-glow { display: none !important; }
+
     body.ugly-basement .nav { background: blue !important; border: 10px ridge red !important; backdrop-filter: none !important; }
-    body.ugly-basement .btn, body.ugly-basement #clock { color: yellow !important; font-family: 'Comic Sans MS' !important; font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important; }
+    body.ugly-basement .btn, body.ugly-basement #clock { color: yellow !important; font-family: 'Comic Sans MS' !important; font-size: 1.2rem !important; background: fuchsia !important; border: 3px dotted lime !important; opacity: 1 !important; }
 
     #page-basement .basement-content { padding-top: 200px; padding-bottom: 200px; text-align: center; direction: ltr; }
     #page-basement .code-container { background: black; border: 15px double yellow; padding: 20px; margin: 0 auto 50px auto; width: 90%; max-width: 500px; }
@@ -175,13 +193,33 @@
     #page-basement .allegation-text {
       background: white; color: black; font-size: 1.5rem; border: 5px solid red; padding: 10px; width: 90%; max-width: 600px; font-family: 'Arial', sans-serif; text-align: right; direction: rtl;
     }
+
+    /* הטריגר של הגוצים */
+    #gutzim-trigger {
+      color: orange; font-weight: 900; font-size: 2rem; text-decoration: underline;
+      cursor: crosshair; text-shadow: 2px 2px red; transition: 0.2s;
+    }
+    #gutzim-trigger:hover { background: yellow; color: purple; }
+
+    /* החלקיקים שמתפוצצים */
+    .gutz-particle {
+      position: fixed; font-family: 'Comic Sans MS', cursive; font-size: 2.5rem; font-weight: bold;
+      pointer-events: none; z-index: 100000;
+      transition: transform 1s cubic-bezier(0.1, 1, 0.3, 1), opacity 1s ease-out;
+    }
   </style>
 </head>
 <body onload="init()">
 
+  <!-- Film Grain Texture -->
+  <div class="film-grain"></div>
+  
+  <!-- עוקב עכבר יוקרתי -->
+  <div id="mouse-glow"></div>
+
   <div id="loading-screen">
     <div class="loader-logo"></div>
-    <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:4px; font-size:0.7rem;">LOADING SYSTEM</div>
+    <div style="font-family:'Space Mono'; color:var(--text); letter-spacing:6px; font-size:0.6rem;">LOADING EXPERIENCE</div>
   </div>
 
   <nav class="nav">
@@ -200,14 +238,11 @@
   <div id="page-home" class="page">
     <div class="hero-container">
       <div class="hero-sticky">
-        <!-- קנבס שקוף לאפקט האינטראקטיבי -->
-        <canvas id="hero-canvas"></canvas>
-        
         <div class="hero-content">
           <div class="parasha">פרשת כי תשא</div>
           <h1 class="main-title" id="animated-name">DOLEV & ROEE</h1>
           <div class="founded">EST. 2026</div>
-          <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">DIVE IN</div>
+          <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">Explore</div>
         </div>
       </div>
     </div>
@@ -230,7 +265,7 @@
     <h1 style="font-family:'Inter'; color:var(--text); font-size:4rem; font-weight:900; text-transform:uppercase;">Films</h1>
   </div>
 
-  <!-- העמוד הסודי של המרתף (עיצוב מזעזע) -->
+  <!-- העמוד הסודי של המרתף -->
   <div id="page-basement" class="page">
     <div class="basement-content">
       
@@ -239,7 +274,7 @@
         <div class="error-line">error</div>
       </div>
 
-      <marquee scrollamount="15">
+      <marquee scrollamount="25">
         <h1 class="allegations-title">Addressing the allegations:</h1>
       </marquee>
 
@@ -248,11 +283,10 @@
           <div class="list-number">1</div>
           <div class="image-placeholder">PUT PIC HERE!</div>
           <div class="allegation-text">
-            האתר הנגדי fuckgayniggers.org. הם סתם אתר פרובוקטיבי שנוצר על ידי אנשים שמנסים להתחכות לרמת הומור ולשנינות שלנו והם לא טובים כמונו. ובנוסף, זה מאוד היפוקריטי מצידם להתלונן שהאתר שלנו בנוי מ-AI בזמן שגם שלהם בנוי מ-AI (שאנחנו משלמים על AI טוב ושהם mega goocims).
+            האתר הנגדי fuckgayniggers.org. הם סתם אתר פרובוקטיבי שנוצר על ידי אנשים שמנסים להתחכות לרמת הומור ולשנינות שלנו והם לא טובים כמונו. ובנוסף, זה מאוד היפוקריטי מצידם להתלונן שהאתר שלנו בנוי מ-AI בזמן שגם שלהם בנוי מ-AI (שאנחנו משלמים על AI טוב ושהם <span id="gutzim-trigger">מגה גוצים</span>).
           </div>
         </div>
         
-        <!-- שאר הטענות... -->
         <div class="list-item"><div class="list-number">2</div><div class="image-placeholder">PUT PIC HERE!</div></div>
         <div class="list-item"><div class="list-number">3</div><div class="image-placeholder">PUT PIC HERE!</div></div>
         <div class="list-item"><div class="list-number">4</div><div class="image-placeholder">PUT PIC HERE!</div></div>
@@ -270,6 +304,13 @@
       './image_2026-03-13_230748568.png', './image_2026-03-13_222345060.png'
     ];
 
+    // עוקב העכבר היוקרתי
+    const mouseGlow = document.getElementById('mouse-glow');
+    window.addEventListener('mousemove', (e) => {
+      mouseGlow.style.left = e.clientX + 'px';
+      mouseGlow.style.top = e.clientY + 'px';
+    });
+
     function init() {
       setInterval(() => {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString('he-IL', {hour12:false});
@@ -282,9 +323,8 @@
 
       setTimeout(() => {
         const ls = document.getElementById('loading-screen');
-        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 800);
-        initCanvas(); // הפעלת האפקט התלת מימדי אחרי הטעינה
-      }, 2000);
+        ls.style.opacity = '0'; setTimeout(() => { ls.style.display = 'none'; }, 1000);
+      }, 1500);
 
       const initialPath = window.location.pathname === '/' ? '/home' : window.location.pathname;
       handleRoute(initialPath, true);
@@ -323,19 +363,20 @@
       }
     }
 
-    // אנימציית הטקסט בגלילה
+    // אנימציית הטקסט הקולנועית בגלילה (Blend Effect)
     window.addEventListener('scroll', () => {
       if(document.body.classList.contains('ugly-basement')) return; 
       
       const scrollY = window.scrollY;
       const winH = window.innerHeight;
-      const progress = Math.min(scrollY / (winH * 3.5), 1);
+      const progress = Math.min(scrollY / (winH * 3), 1);
       const name = document.getElementById('animated-name');
       
       if(name) {
-        const xPos = 40 - (progress * 100); 
+        const xPos = 50 - (progress * 150); 
         name.style.transform = `translateX(${xPos}vw)`;
-        if (progress > 0.3) {
+        
+        if (progress > 0.25) {
           name.style.color = 'var(--text)';
           name.style.webkitTextStroke = '0px';
         } else {
@@ -351,106 +392,44 @@
     };
 
     // ==========================================
-    // קוד לחלקיקים האינטראקטיביים ברקע (Canvas)
+    // מערכת הפיצוץ של "מגה גוצים" (Easter Egg)
     // ==========================================
-    function initCanvas() {
-      const canvas = document.getElementById('hero-canvas');
-      const ctx = canvas.getContext('2d');
-      let particlesArray;
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      let mouse = { x: null, y: null, radius: 150 };
-
-      window.addEventListener('mousemove', function(event) {
-        mouse.x = event.x;
-        mouse.y = event.y;
+    const gutzimTrigger = document.getElementById('gutzim-trigger');
+    if (gutzimTrigger) {
+      gutzimTrigger.addEventListener('mouseenter', (e) => {
+        // מייצר 60 גוצים שעפים לכל עבר
+        for (let i = 0; i < 60; i++) {
+          createGutz(e.clientX, e.clientY);
+        }
       });
+    }
 
-      window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        initParticles();
+    function createGutz(x, y) {
+      const gutz = document.createElement('div');
+      gutz.textContent = 'גוץ!';
+      gutz.className = 'gutz-particle';
+      gutz.style.left = x + 'px';
+      gutz.style.top = y + 'px';
+      
+      // צבעים אקראיים מזעזעים
+      gutz.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      document.body.appendChild(gutz);
+      
+      // חישוב כיוון הפיצוץ
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 800 + 200; // מרחק תעופה
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const rot = Math.random() * 1080 - 540; // סיבוב אקראי
+      
+      // הפעלת האנימציה דרך RequestAnimationFrame
+      requestAnimationFrame(() => {
+        gutz.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 2 + 0.5})`;
+        gutz.style.opacity = '0';
       });
-
-      class Particle {
-        constructor(x, y, directionX, directionY, size, color) {
-          this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY;
-          this.size = size; this.color = color;
-        }
-        draw() {
-          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-          ctx.fillStyle = document.body.classList.contains('light-mode') ? '#c5a059' : '#ffffff';
-          ctx.fill();
-        }
-        update() {
-          if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-          if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-
-          // אינטראקציה עם העכבר
-          let dx = mouse.x - this.x;
-          let dy = mouse.y - this.y;
-          let distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < mouse.radius) {
-            const forceDirectionX = dx / distance;
-            const forceDirectionY = dy / distance;
-            const force = (mouse.radius - distance) / mouse.radius;
-            this.x -= forceDirectionX * force * 5;
-            this.y -= forceDirectionY * force * 5;
-          }
-
-          this.x += this.directionX;
-          this.y += this.directionY;
-          this.draw();
-        }
-      }
-
-      function initParticles() {
-        particlesArray = [];
-        let numberOfParticles = (canvas.height * canvas.width) / 9000;
-        for (let i = 0; i < numberOfParticles; i++) {
-          let size = (Math.random() * 2) + 1;
-          let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-          let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-          let directionX = (Math.random() * 2) - 1;
-          let directionY = (Math.random() * 2) - 1;
-          let color = '#ffffff';
-          particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
-        }
-      }
-
-      function animate() {
-        requestAnimationFrame(animate);
-        ctx.clearRect(0, 0, innerWidth, innerHeight);
-        for (let i = 0; i < particlesArray.length; i++) {
-          particlesArray[i].update();
-        }
-        connect();
-      }
-
-      function connect() {
-        let opacityValue = 1;
-        for (let a = 0; a < particlesArray.length; a++) {
-          for (let b = a; b < particlesArray.length; b++) {
-            let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
-                           ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-            if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-              opacityValue = 1 - (distance / 20000);
-              let colorLine = document.body.classList.contains('light-mode') ? `rgba(197, 160, 89, ${opacityValue})` : `rgba(255, 255, 255, ${opacityValue})`;
-              ctx.strokeStyle = colorLine;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-              ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-              ctx.stroke();
-            }
-          }
-        }
-      }
-
-      initParticles();
-      animate();
+      
+      // מנקה את האלמנט אחרי שהאנימציה מסתיימת
+      setTimeout(() => gutz.remove(), 1000);
     }
   </script>
 </body>
