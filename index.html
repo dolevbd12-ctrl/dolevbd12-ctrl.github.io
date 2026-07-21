@@ -8,7 +8,7 @@
   <title>D&R | Official</title>
   
   <link rel="icon" type="image/png" href="./image_2026-03-13_222345060.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@400;700&family=Inter:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Assistant:wght@400;700;900&family=Inter:wght@900&display=swap" rel="stylesheet">
 
   <style>
     :root { 
@@ -82,7 +82,7 @@
     .page { display: none; opacity: 0; transition: 0.5s ease; width: 100%; }
     .page.active { display: block; opacity: 1; }
 
-    /* ====== הירו (בית) - הגדלתי את הגובה משמעותית ====== */
+    /* ====== הירו ====== */
     .hero-container { height: 600vh; } 
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
@@ -114,10 +114,31 @@
     .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; background: var(--bg); }
     .gallery img { width: 100%; border-radius: 8px; border: 1.5px solid var(--gold); }
     
-    /* הוספת שטח גלילה עצום בתחתית העמוד */
+    /* ====== שטח גלילה עצום עם "המרתף" ====== */
     .massive-scroll-spacer {
       height: 5000px; 
       background: transparent;
+      display: flex;
+      align-items: flex-end; /* מוריד את התוכן להכי למטה שאפשר */
+      justify-content: center;
+      padding-bottom: 100px; /* נותן קצת אוויר מתחת לטקסט בסוף הגלילה */
+    }
+
+    .basement-text {
+      font-family: 'Assistant', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-align: center;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .basement-text .sub {
+      display: block;
+      font-size: 1.2rem;
+      opacity: 0.7;
+      margin-top: 5px;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -152,9 +173,16 @@
         <div class="dive-btn" onclick="document.getElementById('gallery-section').scrollIntoView({behavior:'smooth'})">DIVE IN</div>
       </div>
     </div>
+    
     <div class="gallery" id="gallery-section"></div>
-    <!-- שטח הגלילה הענק -->
-    <div class="massive-scroll-spacer"></div>
+    
+    <!-- שטח הגלילה הענק עם הטקסט בסוף -->
+    <div class="massive-scroll-spacer">
+      <div class="basement-text">
+        המרתף
+        <span class="sub">(ביותר טוב)</span>
+      </div>
+    </div>
   </div>
 
   <div id="page-history" class="page" style="padding-top:150px; text-align:center;">
@@ -224,7 +252,6 @@
       const scrollY = window.scrollY;
       const winH = window.innerHeight;
       
-      // החישוב חולק ב-4 כדי שהאנימציה תתפרס על פני הגלילה הארוכה
       const progress = Math.min(scrollY / (winH * 4), 1.1);
       const name = document.getElementById('animated-name');
       
